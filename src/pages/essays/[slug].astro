@@ -1,0 +1,261 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import TopicChip from '@/components/TopicChip.astro';
+import TopicPhoto from '@/components/TopicPhoto.astro';
+import { getCollection, render } from 'astro:content';
+import { pickArtTopic } from '@/lib/topics';
+
+export async function getStaticPaths() {
+  const essays = await getCollection('essays');
+  return essays.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const allEssays = await getCollection('essays');
+const sortedEssays = allEssays.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const currentIndex = sortedEssays.findIndex((e) => e.id === entry.id);
+const prevEssay = currentIndex < sortedEssays.length - 1 ? sortedEssays[currentIndex + 1] : null;
+const nextEssay = currentIndex > 0 ? sortedEssays[currentIndex - 1] : null;
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(new Date(entry.data.date));
+
+const artTopic = pickArtTopic(entry.data.topics);
+---
+
+<Layout title={`${entry.data.title} — phurix`} description={entry.data.lede}>
+  <section class="section">
+    <div class="container-phx">
+      <a href="/essays" class="back-link">← Essays</a>
+
+      <article class="essay-article">
+        <header class="essay-header">
+          <div class="essay-art">
+            <TopicPhoto topic={artTopic} scale="lg" />
+          </div>
+
+          <h1 class="essay-title">{entry.data.title}</h1>
+
+          {entry.data.lede && <p class="essay-lede">{entry.data.lede}</p>}
+
+          <div class="essay-meta">
+            <time class="essay-date" datetime={entry.data.date.toISOString()}>
+              {formattedDate}
+            </time>
+            <span class="essay-divider">·</span>
+            <span class="essay-read-time">{Math.max(1, Math.round(entry.body.split(/\s+/).length / 220))} min read</span>
+          </div>
+
+          {entry.data.topics && entry.data.topics.length > 0 && (
+            <div class="essay-topics">
+              {entry.data.topics.map((t) => <TopicChip label={t} />)}
+            </div>
+          )}
+        </header>
+
+        <div class="prose">
+          <Content />
+        </div>
+
+        <nav class="essay-nav">
+          {prevEssay && (
+            <a href={`/essays/${prevEssay.id}`} class="essay-nav-link essay-nav-prev">
+              ← {prevEssay.data.title}
+            </a>
+          )}
+          {nextEssay && (
+            <a href={`/essays/${nextEssay.id}`} class="essay-nav-link essay-nav-next">
+              {nextEssay.data.title} →
+            </a>
+          )}
+        </nav>
+      </article>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .back-link {
+    display: inline-block;
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-green-accent);
+    text-decoration: none;
+    margin-bottom: var(--spacing-5);
+    transition: color var(--duration-button) ease;
+  }
+
+  .back-link:hover {
+    color: var(--color-starbucks-green);
+  }
+
+  .essay-article {
+    max-width: 65ch;
+    margin-inline: auto;
+  }
+
+  .essay-header {
+    margin-bottom: var(--spacing-6);
+  }
+
+  .essay-art {
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .essay-art :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .essay-title {
+    font-size: var(--text-hero-large);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.15;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .essay-lede {
+    font-size: var(--text-body-lg);
+    color: var(--color-text-black-soft);
+    line-height: 1.65;
+    margin-bottom: var(--spacing-4);
+    font-style: italic;
+  }
+
+  .essay-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-3);
+    font-size: var(--text-small);
+    color: var(--color-text-black-soft);
+  }
+
+  .essay-divider { opacity: 0.5; }
+
+  .essay-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-1);
+  }
+
+  .essay-nav {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    margin-top: var(--spacing-7);
+    padding-top: var(--spacing-5);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .essay-nav-link {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-green-accent);
+    text-decoration: none;
+    transition: color var(--duration-button) ease;
+  }
+
+  .essay-nav-link:hover {
+    color: var(--color-starbucks-green);
+  }
+
+  .essay-nav-next {
+    margin-left: auto;
+  }
+
+  /* --- Prose styles ------------------------------------------------ */
+  .prose { max-width: 65ch; }
+
+  .prose :global(h2) {
+    font-size: var(--text-h1);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    margin-top: var(--spacing-6);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .prose :global(h3) {
+    font-size: var(--text-body-lg);
+    font-weight: 600;
+    color: var(--color-text-black);
+    margin-top: var(--spacing-5);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .prose :global(p) {
+    color: var(--color-text-black);
+    line-height: 1.75;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: var(--spacing-5);
+    margin-bottom: var(--spacing-4);
+  }
+
+  .prose :global(li) {
+    color: var(--color-text-black-soft);
+    margin-bottom: var(--spacing-2);
+    line-height: 1.7;
+  }
+
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--color-green-accent);
+    padding-left: var(--spacing-4);
+    margin-left: 0;
+    font-style: italic;
+    color: var(--color-text-black-soft);
+  }
+
+  .prose :global(code) {
+    background: var(--color-ceramic);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  .prose :global(pre) {
+    background: var(--color-house-green);
+    color: var(--color-text-white);
+    padding: var(--spacing-4);
+    border-radius: var(--radius-card);
+    overflow-x: auto;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .prose :global(pre code) {
+    background: none;
+    padding: 0;
+  }
+
+  .prose :global(a) {
+    color: var(--color-green-accent);
+    text-decoration: underline;
+  }
+
+  .prose :global(strong) {
+    font-weight: 600;
+    color: var(--color-text-black);
+  }
+</style>

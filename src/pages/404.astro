@@ -1,0 +1,61 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Button from '@/components/Button.astro';
+---
+
+<Layout title="404 — phurix">
+  <section class="container-phx section not-found">
+    <p class="section-eyebrow">Error 404</p>
+    <h1 class="page-title">Page not found.</h1>
+    <p class="page-lede">
+      That page is no longer at this address. Try heading back to the
+      homepage, or browse recent work.
+    </p>
+
+    <div class="cta-row mt-7">
+      <Button variant="primary" href="/">← Back to Home</Button>
+      <Button variant="outline" href="/projects">Browse Projects</Button>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .not-found {
+    text-align: center;
+    padding-block: var(--spacing-9);
+  }
+
+  .section-eyebrow {
+    font-size: var(--text-small);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .page-title {
+    font-size: var(--text-display); /* 5rem / 80px — largest spec token */
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.05;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .page-lede {
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 50ch;
+    margin-inline: auto;
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    justify-content: center;
+  }
+
+  .mt-7 { margin-top: var(--spacing-7); }
+</style>

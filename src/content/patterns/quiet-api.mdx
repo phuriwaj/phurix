@@ -1,0 +1,21 @@
+---
+title: "Quiet APIs"
+date: 2021-11-11
+topics: ["design", "systems", "tools"]
+lede: "Function and method names that don't compete for attention — small, predictable, and aligned with the rest of the surface. Names look like they were always there."
+---
+
+The API of a system is part of its UI. A method called `makeItFaster` reads like a Slack message; a method called `revalidate(key)` reads like a contract. The quiet API pattern asks for names that look like they were always there — the kind of words you only notice when they're wrong.
+
+## When to use it
+
+- Public APIs, internal SDKs, framework surfaces.
+- Anywhere the names outlive the original author.
+
+## When to avoid it
+
+- Single-use scripts that will be deleted by Friday.
+
+## A small test
+
+Read out loud every public function name in your codebase. If any of them sound like marketing copy, rename them. If any of them sound like a Slack DM, rename them. If they all sound like words you would find in a technical manual written twenty years ago, leave them alone. Quiet APIs are a discipline of restraint, not a vocabulary lesson.

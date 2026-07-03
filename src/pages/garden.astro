@@ -1,0 +1,269 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import GardenCard from '@/components/GardenCard.astro';
+import CollectionGrid from '@/components/CollectionGrid.astro';
+import TopicChip from '@/components/TopicChip.astro';
+import { getCollection } from 'astro:content';
+
+const allEssays = await getCollection('essays');
+const allNotes = await getCollection('notes');
+const allTalks = await getCollection('talks');
+const allPatterns = await getCollection('patterns');
+
+// Merge all entries and sort by date descending
+const allEntries = [
+  ...allEssays.map((e) => ({
+    ...e,
+    entryType: 'essay' as const,
+    displayDate: e.data.date,
+  })),
+  ...allNotes.map((n) => ({
+    ...n,
+    entryType: 'note' as const,
+    displayDate: n.data.date,
+  })),
+  ...allTalks.map((t) => ({
+    ...t,
+    entryType: 'talk' as const,
+    displayDate: t.data.date,
+  })),
+  ...allPatterns.map((p) => ({
+    ...p,
+    entryType: 'pattern' as const,
+    displayDate: p.data.date,
+  })),
+].sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
+
+// Extract unique topics from all entries
+const allTopics = [...new Set(allEntries.flatMap((e) => e.data.topics ?? []))].sort();
+---
+
+<Layout title="Garden" description="Everything I've written, in reverse chronological order.">
+  <section class="page-header-section">
+    <div class="container-phx">
+      <h1 class="page-title">Garden</h1>
+      <p class="page-lede">
+        Everything I've written, in reverse chronological order.
+        Filter by type or topic.
+      </p>
+    </div>
+  </section>
+
+  <section class="filter-section">
+    <div class="container-phx">
+      <div class="filter-group">
+        <span class="filter-label">Type</span>
+        <div class="filter-chips" id="type-filters">
+          <button class="topic-chip topic-chip-active" data-filter-type="all">All</button>
+          <button class="topic-chip" data-filter-type="note">Note</button>
+          <button class="topic-chip" data-filter-type="essay">Essay</button>
+          <button class="topic-chip" data-filter-type="talk">Talk</button>
+          <button class="topic-chip" data-filter-type="pattern">Pattern</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Topic</span>
+        <div class="filter-chips" id="topic-filters">
+          <button class="topic-chip topic-chip-active" data-filter-topic="all">All</button>
+          {allTopics.map((topic) => (
+            <button class="topic-chip" data-filter-topic={topic}>{topic}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Growth</span>
+        <div class="filter-chips" id="growth-filters">
+          <button class="topic-chip topic-chip-active" data-filter-growth="all">All</button>
+          <button class="topic-chip" data-filter-growth="seedling">Seedling</button>
+          <button class="topic-chip" data-filter-growth="budding">Budding</button>
+          <button class="topic-chip" data-filter-growth="evergreen">Evergreen</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    <CollectionGrid cols={3} gap="md" id="entries-grid">
+      {allEntries.map((entry) => {
+        const href = entry.entryType === 'essay'
+          ? `/essays/${entry.id}`
+          : entry.entryType === 'note'
+          ? `/notes/${entry.id}`
+          : entry.entryType === 'pattern'
+          ? `/patterns/${entry.id}`
+          : entry.data.link ?? '#';
+
+        return (
+          <div
+            class="entry-card-wrapper"
+            data-type={entry.entryType}
+            data-topics={JSON.stringify(entry.data.topics ?? [])}
+            data-growth={entry.entryType === 'note' ? (entry as any).data.growthStage ?? '' : ''}
+          >
+            <GardenCard
+              title={entry.data.title}
+              type={entry.entryType}
+              excerpt={entry.entryType === 'essay' || entry.entryType === 'pattern' ? (entry as any).data.lede : (entry as any).data.excerpt ?? (entry as any).data.description}
+              date={entry.displayDate}
+              topics={entry.data.topics}
+              growthStage={entry.entryType === 'note' ? (entry as any).data.growthStage : undefined}
+              href={href}
+            />
+          </div>
+        );
+      })}
+    </CollectionGrid>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-7) var(--spacing-5);
+    background: var(--color-neutral-warm);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .page-title {
+    font-size: var(--text-hero-large);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.15;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .page-lede {
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 60ch;
+  }
+
+  .filter-section {
+    padding-block: var(--spacing-4);
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-hairline);
+    position: sticky;
+    top: var(--nav-h-xs);
+    z-index: 10;
+  }
+
+  @media (min-width: 480px) {
+    .filter-section { top: var(--nav-h-sm); }
+  }
+  @media (min-width: 768px) {
+    .filter-section { top: var(--nav-h-md); }
+  }
+  @media (min-width: 1024px) {
+    .filter-section { top: var(--nav-h-lg); }
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-3);
+    flex-wrap: wrap;
+  }
+
+  .filter-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .filter-label {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-text-black-soft);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    min-width: 4rem;
+  }
+
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-1);
+  }
+
+  .entry-card-wrapper {
+    transition: opacity 0.2s ease;
+  }
+
+  .entry-card-wrapper.hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  function initGardenFilter() {
+    const grid = document.getElementById('entries-grid');
+    if (!grid) return;
+
+    let activeType = 'all';
+    let activeTopic = 'all';
+    let activeGrowth = 'all';
+
+    const typeFilters = document.getElementById('type-filters');
+    const topicFilters = document.getElementById('topic-filters');
+    const growthFilters = document.getElementById('growth-filters');
+
+    function applyFilters() {
+      const cards = grid.querySelectorAll('.entry-card-wrapper');
+      cards.forEach((card) => {
+        const cardType = card.getAttribute('data-type');
+        const cardTopics = JSON.parse(card.getAttribute('data-topics') || '[]');
+        const cardGrowth = card.getAttribute('data-growth') || '';
+
+        const typeMatch = activeType === 'all' || cardType === activeType;
+        const topicMatch = activeTopic === 'all' || cardTopics.includes(activeTopic);
+        const growthMatch = activeGrowth === 'all' || cardGrowth === activeGrowth;
+
+        if (typeMatch && topicMatch && growthMatch) {
+          (card as HTMLElement).style.display = '';
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+    }
+
+    function handleChipClick(e: Event) {
+      const btn = (e.target as HTMLElement).closest('button[data-filter-type], button[data-filter-topic], button[data-filter-growth]');
+      if (!btn) return;
+
+      if ('filterType' in btn.dataset) {
+        activeType = btn.dataset.filterType ?? 'all';
+        typeFilters?.querySelectorAll('button').forEach((b) => b.classList.remove('topic-chip-active'));
+        btn.classList.add('topic-chip-active');
+      } else if ('filterTopic' in btn.dataset) {
+        activeTopic = btn.dataset.filterTopic ?? 'all';
+        topicFilters?.querySelectorAll('button').forEach((b) => b.classList.remove('topic-chip-active'));
+        btn.classList.add('topic-chip-active');
+      } else if ('filterGrowth' in btn.dataset) {
+        activeGrowth = btn.dataset.filterGrowth ?? 'all';
+        growthFilters?.querySelectorAll('button').forEach((b) => b.classList.remove('topic-chip-active'));
+        btn.classList.add('topic-chip-active');
+      }
+
+      applyFilters();
+    }
+
+    typeFilters?.addEventListener('click', handleChipClick);
+    topicFilters?.addEventListener('click', handleChipClick);
+    growthFilters?.addEventListener('click', handleChipClick);
+
+    // Apply filters from URL params on load
+    const params = new URLSearchParams(window.location.search);
+    const typeParam = params.get('type');
+    if (typeParam && ['note', 'essay', 'talk', 'pattern'].includes(typeParam)) {
+      activeType = typeParam;
+      typeFilters?.querySelectorAll('button').forEach((b) => b.classList.remove('topic-chip-active'));
+      const btn = typeFilters?.querySelector(`[data-filter-type="${typeParam}"]`);
+      btn?.classList.add('topic-chip-active');
+      applyFilters();
+    }
+  }
+
+  initGardenFilter();
+  document.addEventListener('astro:after-swap', initGardenFilter);
+</script>

@@ -1,0 +1,13 @@
+---
+title: "Edge Functions, Mental Model"
+date: 2024-06-14
+topics: ["web-development", "tools"]
+growthStage: "budding"
+excerpt: "How I finally internalised edge functions: not 'servers closer to users' but 'logic that moves to where the data lives.' A data-locality optimisation, not a deployment topology."
+---
+
+The "servers closer to users" framing kept leading me astray, because it suggested edge functions were an infrastructure decision rather than a data decision. Once I reframed it as **"move the logic to where the data lives"** everything clicked faster.
+
+If your function reads from a database in `us-east-1`, running it at the edge in Tokyo does not make it faster — it adds a network hop between the edge and your database. The edge is only a win when your data is distributed, or when your function can do its work purely from request context without hitting a central datastore.
+
+The mental model that finally stuck for me: edge functions are not a deployment topology, they are a data-locality optimisation. You reach for them when you have a data problem, not when you have a latency problem. Once you internalise that distinction, a lot of platform docs read very differently.

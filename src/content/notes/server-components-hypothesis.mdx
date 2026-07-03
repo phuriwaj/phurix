@@ -1,0 +1,13 @@
+---
+title: "Server Components, A Working Hypothesis"
+date: 2024-08-22
+topics: ["web-development", "systems"]
+growthStage: "budding"
+excerpt: "Why React Server Components feel awkward at first but click into place once you stop fighting the grain of the model — server by default, client only when you need browser APIs."
+---
+
+The friction most developers hit with RSC is not a UX problem — it's a mental-model mismatch.
+
+We were trained to think in component trees where data fetching lives at the leaves, inside `useEffect` or React Query. RSC inverts that: data fetching lives at the trunk, in server components, and client components become the thin leaf layer that handles only interaction. The moment you stop trying to incrementally adopt RSC alongside your existing client-heavy patterns and instead treat it as the default boundary — server by default, client only when you need browser APIs or event handlers — the architecture starts to feel coherent rather than constraining.
+
+The click happens when you realise the waterfall you were taught to fear is actually a feature: server components let you co-locate data requirements with the JSX that needs them, without sacrificing performance. The mental model stops being a fight the moment you let the inversion be the default.

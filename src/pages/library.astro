@@ -1,0 +1,74 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import BookTile from '@/components/BookTile.astro';
+import { getCollection } from 'astro:content';
+
+const allBooks = await getCollection('books');
+const books = allBooks.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
+---
+
+<Layout title="Library" description="Books that have shaped how I think about design, systems, and the web.">
+  <section class="page-header-section">
+    <div class="container-phx">
+      <h1 class="page-title">Library</h1>
+      <p class="page-lede">
+        Books that have shaped how I think about design, systems, and the web.
+        A working collection — some are reference, some are beloved, all are worn.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    <div class="book-grid">
+      {books.map((book) => (
+        <BookTile
+          title={book.data.title}
+          author={book.data.author}
+          coverColor={book.data.coverColor}
+          year={book.data.year}
+        />
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-7) var(--spacing-5);
+    background: var(--color-neutral-warm);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .page-title {
+    font-size: var(--text-hero-large);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.15;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .page-lede {
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 60ch;
+  }
+
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-5);
+  }
+
+  @media (min-width: 640px) {
+    .book-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .book-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

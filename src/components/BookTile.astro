@@ -1,0 +1,137 @@
+---
+/**
+ * BookTile — library book cover tile.
+ * Placeholder cover with title+author typography on color.
+ */
+interface Props {
+  title: string;
+  author: string;
+  coverColor: string;
+  year?: number;
+  class?: string;
+}
+
+const { title, author, coverColor, year, class: className = '' } = Astro.props;
+
+// Split title into words for typographic treatment
+const titleWords = title.split(' ');
+---
+
+<div class:list={['book-tile', className]} style={`--book-color: ${coverColor}`}>
+  <div class="book-spine" aria-hidden="true" />
+  <div class="book-cover">
+    <div class="book-inner">
+      <p class="book-title">{title}</p>
+      <p class="book-author">{author}</p>
+      {year && <p class="book-year">{year}</p>}
+    </div>
+    {/* Subtle decorative lines */}
+    <div class="book-decoration" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .book-tile {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    display: flex;
+    filter: drop-shadow(var(--shadow-card));
+    transition: transform var(--duration-button) ease;
+  }
+
+  .book-tile:hover {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+
+  /* Spine illusion — left edge of book */
+  .book-spine {
+    width: 8%;
+    background: color-mix(in srgb, var(--book-color) 70%, black 30%);
+    border-radius: 2px 0 0 2px;
+    flex-shrink: 0;
+  }
+
+  .book-cover {
+    flex: 1;
+    background: var(--book-color);
+    border-radius: 0 4px 4px 0;
+    padding: var(--spacing-4);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Subtle gradient overlay for depth */
+  .book-cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.1) 100%
+    );
+    pointer-events: none;
+  }
+
+  .book-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .book-title {
+    font-size: var(--text-h1);
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.2;
+    letter-spacing: var(--tracking-tight);
+    margin: 0;
+  }
+
+  .book-author {
+    font-size: var(--text-small);
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .book-year {
+    font-size: var(--text-micro);
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+    margin-top: var(--spacing-1);
+  }
+
+  /* Decorative horizontal lines */
+  .book-decoration {
+    position: absolute;
+    top: 20%;
+    left: var(--spacing-4);
+    right: var(--spacing-4);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    opacity: 0.15;
+  }
+
+  .book-decoration span {
+    display: block;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 1px;
+  }
+
+  .book-decoration span:nth-child(2) { width: 80%; }
+  .book-decoration span:nth-child(3) { width: 60%; }
+</style>

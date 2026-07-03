@@ -1,0 +1,135 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import NowPage from '@/components/NowPage.astro';
+---
+
+<Layout title="Now — phurix" description="What Phuriwaj is up to right now.">
+  <section class="container-phx section">
+    <p class="section-eyebrow">Now</p>
+    <h1 class="page-title">What I'm up to</h1>
+    <p class="page-lede">
+      A snapshot of life right now — location, work, reading, and thoughts in progress.
+      Updated occasionally, not on a schedule.
+    </p>
+  </section>
+
+  <section class="container-phx section now-sections">
+    <NowPage>
+      <div class="now-block">
+        <h2 class="now-label">Location</h2>
+        <p class="now-value">Bangkok, Thailand</p>
+      </div>
+    </NowPage>
+
+    <NowPage>
+      <div class="now-block">
+        <h2 class="now-label">Working on</h2>
+        <p class="now-value">
+          A new design system for a client; writing more long-form essays; exploring edge rendering patterns.
+        </p>
+      </div>
+    </NowPage>
+
+    <NowPage>
+      <div class="now-block">
+        <h2 class="now-label">Reading</h2>
+        <ul class="reading-list">
+          <li>The Design of Everyday Things — Don Norman</li>
+          <li>Staff Engineer — Will Larson</li>
+          <li>Thinking in Systems — Donella Meadows</li>
+        </ul>
+      </div>
+    </NowPage>
+
+    <NowPage>
+      <div class="now-block">
+        <h2 class="now-label">Thinking about</h2>
+        <p class="now-value">
+          The gap between component-level design and system-level design; how context windows
+          change the way we prompt AI tools.
+        </p>
+      </div>
+    </NowPage>
+
+    <NowPage>
+      <div class="now-block">
+        <h2 class="now-label">Writing</h2>
+        <p class="now-value">
+          Two essays in progress: one on typography hierarchy, one on the anthropology of code review.
+        </p>
+      </div>
+    </NowPage>
+  </section>
+</Layout>
+
+<style>
+  .section-eyebrow {
+    font-size: var(--text-small);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .page-title {
+    font-size: var(--text-hero-large);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.15;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .page-lede {
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 55ch;
+  }
+
+  .now-sections {
+    padding-top: 0;
+  }
+
+  .now-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .now-label {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    margin: 0;
+  }
+
+  .now-value {
+    font-size: var(--text-body);
+    color: var(--color-text-black);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .reading-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
+
+  .reading-list li {
+    font-size: var(--text-body);
+    color: var(--color-text-black);
+    line-height: 1.6;
+  }
+
+  .reading-list li::before {
+    content: '— ';
+    color: var(--color-text-black-soft);
+  }
+</style>

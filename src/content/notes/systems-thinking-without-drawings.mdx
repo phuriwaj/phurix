@@ -1,0 +1,13 @@
+---
+title: "Systems Thinking Without the Drawings"
+date: 2024-10-07
+topics: ["systems", "design"]
+growthStage: "budding"
+excerpt: "You do not need C4 diagrams to think in systems. A well-named function and a clear data model are already system thinking — diagrams are communication tools, not thinking tools."
+---
+
+The conflation of systems thinking with systems diagramming has done real damage to how developers approach architectural problems. The C4 model and UML diagrams are communication tools — they exist to help a team align on a mental model, not to generate the mental model itself.
+
+The actual work of systems thinking is simpler and less theatrical: it is asking "what are the bounded contexts here, and what is the shape of the data that crosses each boundary?" A function with a precise name that does one thing and returns a stable shape of data is already a system boundary. A data model where the relationships reflect real-world causality rather than just normalisation is already systems thinking.
+
+The diagrams come after, if they are needed at all — and for most day-to-day work, they are not. The whiteboard is for communicating what you have already thought. It is a poor place to think from scratch.

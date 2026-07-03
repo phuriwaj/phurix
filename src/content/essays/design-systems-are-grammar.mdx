@@ -1,0 +1,18 @@
+---
+title: "Design Systems Are Grammar, Not Paint"
+date: 2024-11-15
+topics: [design, systems, writing]
+lede: "A design system isn't a component library. It's the grammar of a visual language — and like any grammar, it only becomes interesting once people start bending the rules."
+---
+
+Most teams approach a design system the way a student approaches a dictionary: a reference to consult when stuck, a source of authorised spellings, a way to avoid being wrong. This is the wrong metaphor, and it produces the wrong artefacts.
+
+A design system is grammar, not a dictionary. Grammar doesn't tell you which words to use — it tells you how words relate to each other, how tense and agreement create meaning, when a fragment is expressive and when it's just broken. The component library is the vocabulary: necessary, but inert without the system that gives it structure. When we mistake the library for the system, we end up with tokens named `blue-500` and `gray-600` and wonder why our interfaces feel assembled by committee rather than spoken by a single voice.
+
+The most instructive failure mode I've seen is what I'd call the **alphabetisation trap**. A team audits its existing UI, finds twenty-seven slightly different button styles, and consolidates them into one. One primary, one secondary, one ghost. Three shades of error red. It's correct, in the way that correcting a run-on sentence by deleting all the conjunctions is correct. You've solved the immediate problem and created a deeper one — you've confused standardisation with expressiveness, and you will spend the next six months in Jira requesting an exception for the one case that legitimately needs a warning state that isn't red.
+
+The grammar metaphor explains why design tokens alone never work. Tokens describe the surface features: this colour, that font size, this border radius. They don't describe the rules. They don't tell you when it's appropriate to break the grid, when an accent colour should dominate and when it should retreat, when microcopy should be terse and when it should be apologetic. Those are the grammar — the deep structure that governs how the vocabulary assembles into meaning. A system without grammar is just a list of approved words. You can write with it, technically. You cannot write well with it.
+
+What actually happens when a design system matures — when a team has been living with it for two or three years — is that people start bending it. Not breaking it: bending. They combine tokens in ways the original architects didn't anticipate. They notice that `text-secondary` on `background-elevated` reads differently than `text-secondary` on `background-base` — that the same value produces different meanings in different contexts. This is grammar emerging from use. This is the moment a design system becomes a real language rather than a reference guide. The maintainer's job at this stage is not to prevent deviation but to recognise when deviation has become convention, and to codify it — to look at how the team is actually speaking and update the dictionary accordingly.
+
+The teams that get this right treat their system the way a good style guide treats language: as a living document that reflects how the team actually communicates, not as a set of rules imposed from above. They have a process for proposing changes. They distinguish between personal style and systemic convention. They ask not "is this allowed?" but "does this mean what we want it to mean?" — and that question, it turns out, is much harder to answer, and much more worth answering.

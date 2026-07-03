@@ -1,0 +1,205 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import GardenCard from '@/components/GardenCard.astro';
+import CollectionGrid from '@/components/CollectionGrid.astro';
+import Button from '@/components/Button.astro';
+import TopicPhoto from '@/components/TopicPhoto.astro';
+import Frap from '@/components/Frap.astro';
+import { getCollection } from 'astro:content';
+
+const allEssays = await getCollection('essays');
+const allNotes = await getCollection('notes');
+const allTalks = await getCollection('talks');
+const allPatterns = await getCollection('patterns');
+
+const recentEssays = allEssays
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+
+const recentNotes = allNotes
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+
+const recentPatterns = allPatterns
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+---
+
+<Layout title="phurix" description="Personal website of Phuriwaj Ruengnaowaroj">
+  <section class="hero-section">
+    <div class="container-phx hero-grid">
+      <div class="hero-content">
+        <p class="hero-eyebrow">Phuriwaj Ruengnaowaroj</p>
+        <h1 class="hero-headline">
+          Writing about web craft, design systems, and the occasional rabbit hole.
+        </h1>
+        <p class="hero-lede">
+          A developer and designer thinking out loud about how interfaces
+          communicate — from component APIs to the grammar hiding in our
+          design tokens. Based in London, working on tooling for design
+          systems at scale.
+        </p>
+        <div class="hero-actions">
+          <Button variant="primary" href="/garden">Wander the Garden</Button>
+          <Button variant="outline" href="/about">About Me</Button>
+        </div>
+      </div>
+      <div class="hero-art">
+        <TopicPhoto topic="design" scale="lg" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section-preview container-phx section">
+    <div class="preview-header">
+      <h2>Essays</h2>
+      <Button variant="outline-dark" href="/garden?type=essay">All essays</Button>
+    </div>
+    <CollectionGrid cols={3} gap="md">
+      {recentEssays.map((essay) => (
+        <GardenCard
+          title={essay.data.title}
+          type="essay"
+          lede={essay.data.lede}
+          date={essay.data.date}
+          topics={essay.data.topics}
+          href={`/essays/${essay.id}`}
+        />
+      ))}
+    </CollectionGrid>
+  </section>
+
+  <section class="section-preview container-phx section">
+    <div class="preview-header">
+      <h2>Notes</h2>
+      <Button variant="outline-dark" href="/garden?type=note">All notes</Button>
+    </div>
+    <CollectionGrid cols={3} gap="md">
+      {recentNotes.map((note) => (
+        <GardenCard
+          title={note.data.title}
+          type="note"
+          excerpt={note.data.excerpt}
+          date={note.data.date}
+          topics={note.data.topics}
+          growthStage={note.data.growthStage}
+          href={`/notes/${note.id}`}
+        />
+      ))}
+    </CollectionGrid>
+  </section>
+
+  <section class="section-preview container-phx section">
+    <div class="preview-header">
+      <h2>Patterns</h2>
+      <Button variant="outline-dark" href="/patterns">All patterns</Button>
+    </div>
+    <CollectionGrid cols={3} gap="md">
+      {recentPatterns.map((pattern) => (
+        <GardenCard
+          title={pattern.data.title}
+          type="pattern"
+          excerpt={pattern.data.lede}
+          date={pattern.data.date}
+          topics={pattern.data.topics}
+          href={`/patterns/${pattern.id}`}
+        />
+      ))}
+    </CollectionGrid>
+  </section>
+
+  <Fragment slot="frap">
+    <Frap />
+  </Fragment>
+</Layout>
+
+<style>
+  .hero-section {
+    padding-block: var(--spacing-7) var(--spacing-6);
+    background: var(--color-neutral-warm);
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-6);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-7);
+    }
+  }
+
+  .hero-content { min-width: 0; }
+
+  .hero-eyebrow {
+    font-size: var(--text-small);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .hero-headline {
+    font-size: var(--text-hero-large);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.15;
+    margin-bottom: var(--spacing-4);
+    max-width: 22ch;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-headline { font-size: var(--text-jumbo); }
+  }
+
+  .hero-lede {
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 60ch;
+    margin-bottom: var(--spacing-5);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+  }
+
+  /* TopicPhoto sits beside the hero copy on desktop */
+  .hero-art {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    background: var(--color-ceramic);
+  }
+
+  .hero-art :global(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  @media (max-width: 1023px) {
+    .hero-art { order: -1; }
+  }
+
+  .section-preview {
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .preview-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-5);
+    gap: var(--spacing-3);
+  }
+</style>

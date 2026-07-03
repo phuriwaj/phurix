@@ -1,0 +1,170 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const patterns = (await getCollection('patterns')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+// Relative-time formatter: "Pattern over 2 years ago"
+function relativeTime(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (days < 30) return `${days} days ago`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months} month${months === 1 ? '' : 's'} ago`;
+  const years = Math.floor(months / 12);
+  return `over ${years} year${years === 1 ? '' : 's'} ago`;
+}
+---
+
+<Layout
+  title="Patterns — phurix"
+  description="A catalogue of design and engineering patterns I'm collecting as I work."
+>
+  <section class="page-header-section">
+    <div class="container-phx">
+      <p class="section-eyebrow">Catalogue</p>
+      <h1 class="page-title">Patterns</h1>
+      <p class="page-lede">
+        Named, reusable shapes I'm collecting as I work. Each is a small,
+        opinionated answer to a recurring question.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    <ul class="pattern-list">
+      {patterns.map((pattern) => (
+        <li class="pattern-row">
+          <a href={`/patterns/${pattern.id}`} class="pattern-link">
+            <div class="pattern-body">
+              <h2 class="pattern-title">{pattern.data.title}</h2>
+              <p class="pattern-lede">{pattern.data.lede}</p>
+            </div>
+            <div class="pattern-meta">
+              <span class="pattern-type">Pattern</span>
+              <time
+                class="pattern-date"
+                datetime={pattern.data.date.toISOString()}
+              >
+                {relativeTime(pattern.data.date)}
+              </time>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-7) var(--spacing-5);
+    background: var(--color-neutral-warm);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .section-eyebrow {
+    font-size: var(--text-small);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .page-title {
+    font-size: var(--text-hero-large);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.15;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .page-lede {
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 60ch;
+  }
+
+  .pattern-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .pattern-row {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .pattern-row:first-child {
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .pattern-link {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-3);
+    padding-block: var(--spacing-5);
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--duration-button) ease;
+  }
+
+  @media (min-width: 768px) {
+    .pattern-link {
+      grid-template-columns: 1fr 12rem;
+      align-items: start;
+      gap: var(--spacing-6);
+    }
+  }
+
+  .pattern-link:hover {
+    color: var(--color-starbucks-green);
+  }
+
+  .pattern-title {
+    font-size: var(--text-h1);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    margin-bottom: var(--spacing-2);
+    transition: color var(--duration-button) ease;
+  }
+
+  .pattern-link:hover .pattern-title {
+    color: var(--color-green-accent);
+  }
+
+  .pattern-lede {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 65ch;
+  }
+
+  .pattern-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+    font-size: var(--text-small);
+    color: var(--color-text-black-soft);
+  }
+
+  @media (min-width: 768px) {
+    .pattern-meta {
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+
+  .pattern-type {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    font-size: var(--text-micro);
+    color: var(--color-starbucks-green);
+  }
+</style>

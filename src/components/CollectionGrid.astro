@@ -1,0 +1,43 @@
+---
+/**
+ * CollectionGrid — responsive grid container for garden/card collections.
+ * 1 col mobile → 2 col tablet → 3 col desktop.
+ */
+interface Props {
+  cols?: 1 | 2 | 3;
+  gap?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const { cols = 3, gap = 'md', class: className = '' } = Astro.props;
+---
+
+<div class:list={['collection-grid', `cols-${cols}`, `gap-${gap}`, className]}>
+  <slot />
+</div>
+
+<style>
+  .collection-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .gap-sm { gap: var(--spacing-3); }
+  .gap-md { gap: var(--spacing-4); }
+  .gap-lg { gap: var(--spacing-5); }
+
+  /* Tablet per DESIGN.md §8: 768px+ → 2 col */
+  @media (min-width: 768px) {
+    .cols-2,
+    .cols-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Desktop per DESIGN.md §8: 1024px+ → 3 col for cols-3 */
+  @media (min-width: 1024px) {
+    .cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

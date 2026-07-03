@@ -1,0 +1,127 @@
+---
+/**
+ * Feature Band — full-width House Green hero strip.
+ * 40/60 split on desktop, stacked on mobile.
+ * White text throughout; secondary copy in Text White Soft.
+ */
+import Button from '@/components/Button.astro';
+
+interface Props {
+  headline: string;
+  subhead?: string;
+  /** Optional right-column image (product photo, illustration). */
+  imageSrc?: string;
+  imageAlt?: string;
+  /** CTA pairing: primary (white fill) + secondary (white outline). */
+  primaryCta?: { href: string; label: string };
+  secondaryCta?: { href: string; label: string };
+  /** Use serif headline (Rewards ceremony-style). */
+  serif?: boolean;
+}
+
+const {
+  headline,
+  subhead,
+  imageSrc,
+  imageAlt = '',
+  primaryCta,
+  secondaryCta,
+  serif = false,
+} = Astro.props;
+---
+
+<section class="band-phx">
+  <div class="band-inner">
+    <div class="band-content">
+      <h2 class:list={['band-headline', serif && 'serif-headline']}>
+        {headline}
+      </h2>
+      {subhead && <p class="band-subhead">{subhead}</p>}
+      {(primaryCta || secondaryCta) && (
+        <div class="band-actions">
+          {primaryCta && (
+            <Button variant="on-green" href={primaryCta.href}>
+              {primaryCta.label}
+            </Button>
+          )}
+          {secondaryCta && (
+            <Button variant="on-dark" href={secondaryCta.href}>
+              {secondaryCta.label}
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+    {imageSrc && (
+      <div class="band-media">
+        <img src={imageSrc} alt={imageAlt} loading="lazy" />
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .band-phx {
+    background: var(--color-house-green);
+    color: var(--color-text-white);
+  }
+
+  .band-inner {
+    max-width: var(--container-xl);
+    margin-inline: auto;
+    padding: var(--spacing-7) var(--spacing-gutter);
+    display: grid;
+    gap: var(--spacing-6);
+    grid-template-columns: 1fr;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .band-inner {
+      grid-template-columns: 60% 40%;
+      /* content | media; per DESIGN.md §5 --contentCrateProportion 60% / --headerCrateProportion 40% */
+      padding: var(--spacing-8) var(--spacing-gutter-lg);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .band-headline { font-size: var(--text-hero-large); }
+  }
+
+  .serif-headline {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .band-subhead {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--color-text-white-soft);
+    margin-bottom: var(--spacing-5);
+    max-width: 50ch;
+  }
+
+  .band-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+  }
+
+  .band-media {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--color-green-uplift);
+  }
+
+  .band-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (min-width: 1024px) {
+    .band-media { aspect-ratio: 1; }
+  }
+</style>

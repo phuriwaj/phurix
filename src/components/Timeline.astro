@@ -1,0 +1,128 @@
+---
+/**
+ * Timeline — vertical timeline for /about work history.
+ * Shows role + org + dates + 1-line description.
+ */
+export interface TimelineEntry {
+  role: string;
+  org: string;
+  dates: string;
+  description: string;
+}
+
+interface Props {
+  entries: TimelineEntry[];
+  class?: string;
+}
+
+const { entries, class: className = '' } = Astro.props;
+---
+
+<ol class:list={['timeline', className]}>
+  {entries.map((entry, i) => (
+    <li class="timeline-entry">
+      <div class="timeline-dot" aria-hidden="true" />
+      <div class="timeline-content">
+        <div class="timeline-header">
+          <div>
+            <span class="timeline-role">{entry.role}</span>
+            <span class="timeline-sep"> · </span>
+            <span class="timeline-org">{entry.org}</span>
+          </div>
+          <span class="timeline-dates">{entry.dates}</span>
+        </div>
+        <p class="timeline-description">{entry.description}</p>
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* Vertical line */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--color-green-light);
+    border-radius: 1px;
+  }
+
+  .timeline-entry {
+    position: relative;
+    padding-left: var(--spacing-6);
+    padding-bottom: var(--spacing-5);
+  }
+
+  .timeline-entry:last-child {
+    padding-bottom: 0;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-circle);
+    background: var(--color-green-accent);
+    border: 3px solid var(--color-neutral-warm);
+    box-shadow: 0 0 0 2px var(--color-green-accent);
+  }
+
+  .timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
+
+  .timeline-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+  }
+
+  .timeline-role {
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--color-text-black);
+  }
+
+  .timeline-sep {
+    color: var(--color-text-black-soft);
+    font-weight: 400;
+  }
+
+  .timeline-org {
+    font-size: var(--text-body);
+    color: var(--color-starbucks-green);
+    font-weight: 400;
+  }
+
+  .timeline-dates {
+    font-size: var(--text-micro);
+    color: var(--color-text-black-soft);
+    white-space: nowrap;
+  }
+
+  .timeline-description {
+    font-size: var(--text-small);
+    color: var(--color-text-black-soft);
+    line-height: 1.6;
+    margin: 0;
+  }
+</style>

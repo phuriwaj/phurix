@@ -1,0 +1,128 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Card from '@/components/Card.astro';
+import Button from '@/components/Button.astro';
+
+const projects = [
+  {
+    title: 'flyed',
+    desc: 'Educational platform connecting schools with field trip providers. Astro + React, edge-rendered, optimized for slow networks.',
+    tags: ['Astro', 'React', 'Cloudflare'],
+  },
+  {
+    title: 'café console',
+    desc: 'A static dashboard for indie café owners. Built with Astro and React 19. Calm typography, fast loads.',
+    tags: ['Astro', 'Tailwind', 'MDX'],
+  },
+  {
+    title: 'barista cli',
+    desc: 'Rust-powered scaffolder for greenfield web projects. One command, opinionated defaults.',
+    tags: ['Rust', 'CLI'],
+  },
+  {
+    title: 'steam notes',
+    desc: 'A small editor for the things you read while your coffee cools. End-to-end encrypted drafts.',
+    tags: ['TypeScript', 'IndexedDB'],
+  },
+];
+---
+
+<Layout title="Projects — phurix" description="Projects by phurix">
+  <section class="container-phx section">
+    <p class="section-eyebrow">Projects</p>
+    <h1 class="page-title">Recent work.</h1>
+    <p class="page-lede">
+      A small selection of recent projects — case studies available on
+      request.
+    </p>
+
+    <div class="project-grid mt-7">
+      {projects.map((p) => (
+        <Card emphasis="lifted">
+          <h2 class="project-title">{p.title}</h2>
+          <p class="project-desc">{p.desc}</p>
+          <div class="tag-row">
+            {p.tags.map((t) => <span class="tag">{t}</span>)}
+          </div>
+          <div class="project-cta">
+            <Button variant="outline" size="sm" href="/contact">
+              Discuss this project
+            </Button>
+          </div>
+        </Card>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .section-eyebrow {
+    font-size: var(--text-small);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .page-title {
+    font-size: var(--text-hero-large);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.15;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .page-lede {
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 55ch;
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+
+  @media (min-width: 768px) {
+    .project-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .project-title {
+    font-size: var(--text-h1);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .project-desc {
+    color: var(--color-text-black-soft);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-1);
+    margin-bottom: var(--spacing-4);
+  }
+
+  .tag {
+    font-size: var(--text-micro);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    background: var(--color-green-light);
+    padding: 4px 10px;
+    border-radius: var(--radius-button);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .project-cta {
+    margin-top: auto;
+  }
+
+  .mt-7 { margin-top: var(--spacing-7); }
+</style>

@@ -1,0 +1,82 @@
+---
+/**
+ * Frap — Floating Circular Order Button.
+ * 56px diameter, Green Accent fill, white shopping-bag icon.
+ * Signature elevation element: layered shadow stack.
+ *
+ * Persists fixed bottom-right on every scrolled surface.
+ * Active state collapses ambient shadow + scale(0.95).
+ */
+interface Props {
+  href?: string;
+  size?: 'standard' | 'mini';
+  label?: string;
+}
+
+const { href = '/contact', size = 'standard', label = 'Quick order' } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={['frap-phx', size === 'mini' && 'frap-mini']}
+  aria-label={label}
+>
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M6 7h12l-1 13H7L6 7zm3 0a3 3 0 016 0"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+</a>
+
+<style>
+  .frap-phx {
+    position: fixed;
+    right: var(--spacing-gutter);
+    bottom: calc(var(--spacing-gutter) - 0.8rem);
+    width: 5.6rem;
+    height: 5.6rem;
+    border-radius: var(--radius-circle);
+    background: var(--color-green-accent);
+    color: var(--color-white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      var(--shadow-frap-base),
+      var(--shadow-frap-ambient);
+    z-index: 50;
+    transition:
+      box-shadow var(--duration-button) ease,
+      transform var(--duration-button) ease,
+      background-color var(--duration-button) ease;
+  }
+
+  .frap-phx:hover {
+    background: var(--color-starbucks-green);
+  }
+
+  .frap-phx:active {
+    transform: scale(0.95);
+    box-shadow:
+      var(--shadow-frap-base),
+      var(--shadow-frap-ambient-pressed);
+  }
+
+  .frap-phx svg {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  /* Mini variant for embedded use */
+  .frap-mini {
+    width: 4rem;
+    height: 4rem;
+    position: static;
+  }
+
+  .frap-mini svg { width: 1.2rem; height: 1.2rem; }
+</style>

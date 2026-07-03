@@ -1,0 +1,62 @@
+---
+/**
+ * TopicChip — pill chip for topic tags and filters.
+ * active/inactive variant.
+ */
+interface Props {
+  label: string;
+  active?: boolean;
+  href?: string;
+  class?: string;
+}
+
+const { label, active = false, href, class: className = '' } = Astro.props;
+
+const Tag = href ? 'a' : 'span';
+---
+
+<Tag
+  href={href}
+  class:list={['topic-chip', active && 'topic-chip-active', className]}
+>
+  {label}
+</Tag>
+
+<style>
+  .topic-chip {
+    display: inline-block;
+    font-size: var(--text-micro);
+    font-weight: 500;
+    letter-spacing: var(--tracking-tight);
+    padding: 3px 10px;
+    border-radius: var(--radius-button);
+    background: var(--color-white);
+    color: var(--color-text-black-soft);
+    border: 1px solid var(--color-hairline);
+    text-decoration: none;
+    transition:
+      background-color var(--duration-button) ease,
+      color var(--duration-button) ease,
+      border-color var(--duration-button) ease;
+    cursor: pointer;
+    line-height: 1.5;
+  }
+
+  .topic-chip:hover {
+    background: var(--color-green-light);
+    color: var(--color-house-green);
+    border-color: var(--color-green-light);
+  }
+
+  .topic-chip-active {
+    background: var(--color-green-accent);
+    color: var(--color-white);
+    border-color: var(--color-green-accent);
+  }
+
+  .topic-chip-active:hover {
+    background: var(--color-starbucks-green);
+    border-color: var(--color-starbucks-green);
+    color: var(--color-white);
+  }
+</style>

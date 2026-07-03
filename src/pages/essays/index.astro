@@ -1,0 +1,62 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import CollectionGrid from '@/components/CollectionGrid.astro';
+import GardenCard from '@/components/GardenCard.astro';
+import { getCollection } from 'astro:content';
+
+const essays = await getCollection('essays');
+const sortedEssays = essays.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+---
+
+<Layout title="Essays" description="Longer pieces on design, development, and the practice of building for the web.">
+  <section class="section">
+    <div class="container-phx">
+      <header class="page-header">
+        <p class="section-eyebrow">Collection</p>
+        <h1>Essays</h1>
+        <p class="page-lede">
+          Longer pieces on design, development, and the practice of building for
+          the web.
+        </p>
+      </header>
+
+      <CollectionGrid cols={2} gap="md">
+        {sortedEssays.map((essay) => (
+          <GardenCard
+            title={essay.data.title}
+            type="essay"
+            lede={essay.data.lede}
+            date={new Date(essay.data.date)}
+            topics={essay.data.topics}
+            href={`/essays/${essay.id}`}
+          />
+        ))}
+      </CollectionGrid>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header {
+    margin-bottom: var(--spacing-6);
+  }
+
+  .section-eyebrow {
+    font-size: var(--text-small);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .page-lede {
+    font-size: var(--text-body);
+    color: var(--color-text-black-soft);
+    max-width: 55ch;
+    line-height: 1.6;
+    margin-top: var(--spacing-2);
+  }
+</style>

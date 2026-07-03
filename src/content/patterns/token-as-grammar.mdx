@@ -1,0 +1,23 @@
+---
+title: "Token-as-Grammar"
+date: 2024-11-20
+topics: ["design", "systems"]
+lede: "A finite set of choices that constrains composition the way grammar constrains a sentence. The strong version of this pattern asks you to remove tokens, not add them."
+---
+
+A design system holds its shape when tokens behave like parts of speech, not like decoration. Colour, type, and spacing exist to limit the surface area of decisions a designer or engineer has to make. When someone can pick any hex value, the system has stopped being a system and started being a pantone chart.
+
+The strong version of this pattern asks the team to remove tokens, not add them. If a token isn't doing load-bearing work, it shouldn't survive the next audit.
+
+## When to use it
+
+- Building or refactoring any system that will outlive its first designer.
+- Whenever a designer proposes a new colour because one was "almost right."
+
+## When to avoid it
+
+- One-off marketing pages where a one-shot tone is the point.
+
+## A litmus test
+
+If two designers, given the same brief, would not converge on a small set of tokens, you do not have a system. You have a vocabulary that everyone is using privately. Grammar is what makes the public use converge.

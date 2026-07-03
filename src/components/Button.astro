@@ -1,0 +1,202 @@
+---
+/**
+ * Pill Button — full radius, scale(0.95) active state.
+ *
+ * Variants (mapped 1:1 to DESIGN.md §4):
+ *   primary  — Green Accent fill, white text  (filled CTA)
+ *   outline  — transparent, Green Accent text + border
+ *   black    — #000 fill, white text          (top-of-page strip)
+ *   outline-dark — transparent, Text Black text + border (sign in)
+ *   on-green — white fill, Green Accent text  (inverted on dark-green band)
+ *   on-dark  — transparent, white text + border (secondary on feature band)
+ *   consent  — specific consent module green  (cookie banner)
+ *
+ * Sizes:
+ *   md (default) — 7px 16px padding, 16px label
+ *   sm           — 7px 16px padding, 14px label (nav cluster)
+ *   lg           — 14px 40px padding, 16px label (Customize flow)
+ */
+type Variant =
+  | 'primary'
+  | 'outline'
+  | 'black'
+  | 'outline-dark'
+  | 'on-green'
+  | 'on-dark'
+  | 'consent';
+
+interface Props {
+  variant?: Variant;
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  ariaLabel?: string;
+  /** Optional icon glyph (e.g. "★") shown left of label. */
+  icon?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  class: className = '',
+  ariaLabel,
+  icon,
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const classes = [
+  'btn',
+  `btn-${variant}`,
+  `btn-${size}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag
+  href={href}
+  type={!href ? type : undefined}
+  class={classes}
+  aria-label={ariaLabel}
+>
+  {icon && <span class="btn-icon" aria-hidden="true">{icon}</span>}
+  <slot />
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-1);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: var(--tracking-tight);
+    border-radius: var(--radius-button);
+    border: 1px solid transparent;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color var(--duration-button) ease,
+      color var(--duration-button) ease,
+      border-color var(--duration-button) ease,
+      box-shadow var(--duration-button) ease,
+      transform var(--duration-button) ease;
+    /* Universal active scale(0.95) micro-interaction */
+    --button-active-scale: 0.95;
+  }
+
+  .btn:active:not(:disabled) {
+    transform: scale(var(--button-active-scale));
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* --- Sizes ------------------------------------------------------ */
+  .btn-sm {
+    padding: 7px 16px;
+    font-size: var(--text-small);
+    line-height: 1.2;
+  }
+
+  .btn-md {
+    padding: 7px 16px;
+    font-size: var(--text-body);
+    line-height: 1.2;
+  }
+
+  .btn-lg {
+    padding: 14px 40px;
+    font-size: var(--text-body);
+    line-height: 1.2;
+  }
+
+  /* --- Variant: primary (Green Accent filled, white text) -------- */
+  .btn-primary {
+    background: var(--color-green-accent);
+    color: var(--color-white);
+    border-color: var(--color-green-accent);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-starbucks-green);
+    border-color: var(--color-starbucks-green);
+  }
+
+  /* --- Variant: outline (Green Accent outline, transparent) ----- */
+  .btn-outline {
+    background: transparent;
+    color: var(--color-green-accent);
+    border-color: var(--color-green-accent);
+  }
+  .btn-outline:hover:not(:disabled) {
+    background: var(--color-green-accent);
+    color: var(--color-white);
+  }
+
+  /* --- Variant: black (top-of-page sign-in strip) --------------- */
+  .btn-black {
+    background: var(--color-black);
+    color: var(--color-white);
+    border-color: var(--color-black);
+  }
+  .btn-black:hover:not(:disabled) {
+    background: var(--color-text-black);
+  }
+
+  /* --- Variant: outline-dark (sign in — Text Black border) ------ */
+  .btn-outline-dark {
+    background: transparent;
+    color: var(--color-text-black);
+    border-color: var(--color-text-black);
+  }
+  .btn-outline-dark:hover:not(:disabled) {
+    background: var(--color-text-black);
+    color: var(--color-white);
+  }
+
+  /* --- Variant: on-green (white filled, green text on House) ---- */
+  .btn-on-green {
+    background: var(--color-white);
+    color: var(--color-green-accent);
+    border-color: var(--color-white);
+  }
+  .btn-on-green:hover:not(:disabled) {
+    background: var(--color-green-light);
+  }
+
+  /* --- Variant: on-dark (white outline on feature band) --------- */
+  .btn-on-dark {
+    background: transparent;
+    color: var(--color-white);
+    border-color: var(--color-white);
+  }
+  .btn-on-dark:hover:not(:disabled) {
+    background: var(--color-white);
+    color: var(--color-house-green);
+  }
+
+  /* --- Variant: consent (cookie-banner specific green) ---------- */
+  .btn-consent {
+    background: rgb(0, 130, 72);
+    color: var(--color-white);
+    font-weight: 400;
+  }
+  .btn-consent:hover:not(:disabled) {
+    background: var(--color-green-accent);
+  }
+
+  /* --- Icon gutter ---------------------------------------------- */
+  .btn-icon {
+    font-size: 1em;
+    line-height: 1;
+  }
+</style>

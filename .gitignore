@@ -1,0 +1,35 @@
+# Build output
+dist/
+
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Editor directories
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Graphify output (generated, not source)
+graphify-out/cache/
+graphify-out/.graphify_*
+graphify-out/graph.html
+graphify-out/graph.json
+graphify-out/manifest.json
+graphify-out/cost.json
+
+# Astro build cache
+.astro/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Package manager lockfiles (optional - uncomment if you don't commit them)
+# package-lock.json
+# pnpm-lock.yaml
+# yarn.lock

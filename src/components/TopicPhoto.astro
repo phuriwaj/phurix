@@ -1,0 +1,157 @@
+---
+/**
+ * TopicPhoto — photographic illustration per topic.
+ *
+ * Replaces the old generative Watercolor SVG with topic-relevant photos
+ * sourced from Unsplash and bundled under /photos/.
+ *
+ * Same Props API as Watercolor so call sites didn't need changes.
+ * `composition` and `paper` props are no-ops now (one photo per topic;
+ * image fills the frame).
+ */
+
+type Topic = 'design' | 'writing' | 'tools' | 'systems' | 'web-development' | 'anthropology' | 'ai';
+
+interface Props {
+  topic?: Topic | string;
+  /** Width of the painted area as a fraction of container. */
+  scale?: 'sm' | 'md' | 'lg';
+  /** @deprecated image fills the frame; paper background has no effect. */
+  paper?: boolean;
+  /** Optional class for positioning. */
+  class?: string;
+  /** @deprecated one photo per topic; composition index ignored. */
+  composition?: number;
+}
+
+interface PhotoRef {
+  src: string;
+  alt: string;
+  photographer: string;
+  profile: string;
+}
+
+const {
+  topic = 'design',
+  scale = 'md',
+  class: className = '',
+} = Astro.props;
+
+const PHOTOS: Record<string, PhotoRef> = {
+  design: {
+    src: '/photos/design.jpg',
+    alt: 'Vintage letterpress type case filled with metal letterforms',
+    photographer: 'Unsplash',
+    profile: 'https://unsplash.com/?utm_source=phurix&utm_medium=referral',
+  },
+  writing: {
+    src: '/photos/writing.jpg',
+    alt: 'Vintage typewriter with typed page on a wooden desk',
+    photographer: 'Florian Klauer',
+    profile: 'https://unsplash.com/@florianklauer',
+  },
+  tools: {
+    src: '/photos/tools.jpg',
+    alt: 'Woodworking hand tools resting among shavings',
+    photographer: 'Devin Berko',
+    profile: 'https://unsplash.com/@devinberko',
+  },
+  systems: {
+    src: '/photos/systems.jpg',
+    alt: 'Tangled network cabling and rack infrastructure',
+    photographer: 'Jordan Harrison',
+    profile: 'https://unsplash.com/@jrdnhrrsn',
+  },
+  'web-development': {
+    src: '/photos/web-development.jpg',
+    alt: 'Source code illuminated on a glowing display',
+    photographer: 'Florian Olivo',
+    profile: 'https://unsplash.com/@florianolv',
+  },
+  anthropology: {
+    src: '/photos/anthropology.jpg',
+    alt: 'Cultural heritage artifacts arranged on a table',
+    photographer: 'Angela Compagnone',
+    profile: 'https://unsplash.com/@angelacompagnone',
+  },
+  ai: {
+    src: '/photos/ai.jpg',
+    alt: 'Abstract visualization suggestive of neural network patterns',
+    photographer: 'Steve A Johnson',
+    profile: 'https://unsplash.com/@stevenajohnson',
+  },
+};
+
+const photo = PHOTOS[topic] ?? PHOTOS.design;
+---
+
+<figure class:list={['topic-photo', `tp-${scale}`, className]}>
+  <img
+    src={photo.src}
+    alt={photo.alt}
+    loading="lazy"
+    decoding="async"
+    class="tp-img"
+  />
+  <figcaption class="tp-credit">
+    Photo:&nbsp;<a href={photo.profile} rel="noopener noreferrer" target="_blank">{photo.photographer}</a>&nbsp;/&nbsp;<a href="https://unsplash.com/?utm_source=phurix&utm_medium=referral" rel="noopener noreferrer" target="_blank">Unsplash</a>
+  </figcaption>
+</figure>
+
+<style>
+  .topic-photo {
+    position: relative;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--color-ceramic, #f0ece4);
+    overflow: hidden;
+    border-radius: inherit;
+  }
+
+  .tp-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .tp-sm { aspect-ratio: 4 / 3; }
+  .tp-md { aspect-ratio: 4 / 3; }
+  .tp-lg { aspect-ratio: 16 / 9; }
+
+  .tp-credit {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.4rem;
+    font-size: 0.625rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.92);
+    background: rgba(0, 0, 0, 0.35);
+    padding: 0.25rem 0.45rem;
+    border-radius: 0.25rem;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    text-align: right;
+    opacity: 0;
+    transition: opacity 200ms ease;
+    white-space: nowrap;
+  }
+
+  .topic-photo:hover .tp-credit,
+  .topic-photo:focus-within .tp-credit {
+    opacity: 1;
+  }
+
+  .tp-credit a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.45);
+    text-underline-offset: 1px;
+  }
+
+  .tp-credit a:hover {
+    text-decoration-color: currentColor;
+  }
+</style>

@@ -1,0 +1,99 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Button from '@/components/Button.astro';
+import Card from '@/components/Card.astro';
+
+const channels = [
+  { label: 'Email', value: 'hello@phurix.dev', href: 'mailto:hello@phurix.dev' },
+  { label: 'GitHub', value: '@phurix', href: 'https://github.com/phurix' },
+  { label: 'Mastodon', value: '@phurix@hachyderm.io', href: 'https://hachyderm.io/@phurix' },
+];
+---
+
+<Layout title="Contact — phurix" description="Get in touch with phurix">
+  <section class="container-phx section">
+    <p class="section-eyebrow">Contact</p>
+    <h1 class="page-title">Get in touch.</h1>
+    <p class="page-lede">
+      We reply within two business days. For project briefs, please
+      include scope, timeline, and a link or two to references.
+    </p>
+
+    <div class="contact-grid mt-7">
+      {channels.map((c) => (
+        <Card>
+          <h2 class="channel-label">{c.label}</h2>
+          <a href={c.href} class="channel-value">{c.value}</a>
+        </Card>
+      ))}
+    </div>
+
+    <div class="cta-row mt-7">
+      <Button variant="primary" href="mailto:hello@phurix.dev">
+        Send an Email
+      </Button>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .section-eyebrow {
+    font-size: var(--text-small);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .page-title {
+    font-size: var(--text-hero-large);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.15;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .page-lede {
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 55ch;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-3);
+  }
+
+  @media (min-width: 768px) {
+    .contact-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .channel-label {
+    font-size: var(--text-micro);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
+    font-weight: 700;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .channel-value {
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--color-text-black);
+    word-break: break-all;
+  }
+
+  .channel-value:hover { color: var(--color-green-accent); }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+  }
+
+  .mt-7 { margin-top: var(--spacing-7); }
+</style>

@@ -1,0 +1,149 @@
+---
+/**
+ * Global Navigation — fixed top bar.
+ * Progressive height: 64 (xs) → 72 (sm) → 83 (md) → 99 (lg).
+ * Shadow stack: three-layer soft lift.
+ *
+ * Maggie-style: wordmark left, simple text-link nav right, hamburger mobile.
+ * No Sign in/Join now pills.
+ */
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/garden', label: 'Garden' },
+  { href: '/essays', label: 'Essays' },
+  { href: '/notes', label: 'Notes' },
+  { href: '/patterns', label: 'Patterns' },
+  { href: '/about', label: 'About' },
+];
+const pathname = Astro.url.pathname;
+---
+
+<header class="nav-phx">
+  <div class="nav-inner">
+    {/* Wordmark */}
+    <a href="/" class="nav-wordmark" aria-label="phurix home">
+      <span class="nav-wordmark-text">phurix</span>
+    </a>
+
+    {/* Primary links */}
+    <nav class="nav-links" aria-label="Primary">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'nav-link',
+            (pathname === link.href || pathname.startsWith(link.href + '/')) && 'nav-link-active',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    {/* Mobile menu trigger */}
+    <button class="nav-burger" aria-label="Open menu" type="button">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .nav-phx {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    background: var(--color-white);
+    box-shadow: var(--shadow-nav);
+    height: var(--nav-h-xs);
+  }
+
+  @media (min-width: 480px) {
+    .nav-phx { height: var(--nav-h-sm); }
+  }
+  @media (min-width: 768px) {
+    .nav-phx { height: var(--nav-h-md); }
+  }
+  @media (min-width: 1024px) {
+    .nav-phx { height: var(--nav-h-lg); }
+  }
+
+  .nav-inner {
+    height: 100%;
+    max-width: var(--container-xl);
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+  }
+
+  .nav-wordmark-text {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1.8rem;
+    letter-spacing: var(--tracking-display);
+    color: var(--color-starbucks-green);
+  }
+
+  .nav-links {
+    display: none;
+    margin-left: auto;
+    gap: var(--spacing-5);
+  }
+
+  @media (min-width: 768px) {
+    .nav-links { display: flex; }
+  }
+
+  .nav-link {
+    font-size: var(--text-small);
+    font-weight: 500;
+    color: var(--color-text-black);
+    padding-block: var(--spacing-1);
+    transition: color var(--duration-button) ease;
+    text-decoration: none;
+    position: relative;
+  }
+
+  .nav-link:hover { color: var(--color-starbucks-green); }
+
+  .nav-link-active {
+    color: var(--color-starbucks-green);
+  }
+
+  .nav-link-active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-starbucks-green);
+    border-radius: 1px;
+  }
+
+  .nav-burger {
+    margin-left: auto;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  @media (min-width: 768px) {
+    .nav-burger { display: none; }
+  }
+
+  .nav-burger span {
+    display: block;
+    height: 2px;
+    background: var(--color-text-black);
+    border-radius: 2px;
+  }
+</style>

@@ -1,0 +1,59 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import CollectionGrid from '@/components/CollectionGrid.astro';
+import GardenCard from '@/components/GardenCard.astro';
+import { getCollection } from 'astro:content';
+
+const notes = await getCollection('notes');
+const sortedNotes = notes.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+---
+
+<Layout title="Notes" description="Short thoughts, working ideas, and observations.">
+  <section class="section">
+    <div class="container-phx">
+      <header class="page-header">
+        <h1 class="page-title">Notes</h1>
+        <p class="page-lede">
+          Short thoughts, working ideas, and observations. Roughly in reverse
+          chronological order.
+        </p>
+      </header>
+
+      <CollectionGrid cols={3} gap="md">
+        {sortedNotes.map((note) => (
+          <GardenCard
+            title={note.data.title}
+            type="note"
+            excerpt={note.data.excerpt}
+            date={new Date(note.data.date)}
+            topics={note.data.topics}
+            growthStage={note.data.growthStage}
+            href={`/notes/${note.id}`}
+          />
+        ))}
+      </CollectionGrid>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header {
+    margin-bottom: var(--spacing-6);
+  }
+
+  .page-title {
+    font-size: var(--text-h1);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .page-lede {
+    font-size: var(--text-body);
+    color: var(--color-text-black-soft);
+    max-width: 55ch;
+    line-height: 1.6;
+  }
+</style>

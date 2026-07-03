@@ -1,0 +1,198 @@
+/* =========================================================================
+   Global resets + canvas + base typography.
+   Always loaded after theme.css.
+   ========================================================================= */
+
+@import "./theme.css";
+
+/* --- Root scale: 1rem = 10px (DESIGN.md anchor) ----------------------- */
+:root {
+  font-size: 62.5%; /* 10px base — rem math matches DESIGN.md */
+}
+
+/* --- Resets ---------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Body padding clears the fixed nav — matches nav height tokens per breakpoint */
+body {
+  padding-top: var(--nav-h-xs);
+}
+
+@media (min-width: 480px) {
+  body { padding-top: var(--nav-h-sm); }
+}
+@media (min-width: 768px) {
+  body { padding-top: var(--nav-h-md); }
+}
+@media (min-width: 1024px) {
+  body { padding-top: var(--nav-h-lg); }
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* --- Canvas: warm cream, never pure white ---------------------------- */
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-body); /* 16px */
+  line-height: var(--leading-body); /* 1.5 */
+  letter-spacing: var(--tracking-tight); /* -0.01em */
+  color: var(--color-text-black);
+  background-color: var(--color-neutral-warm);
+  font-feature-settings: "kern" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Restore the user-meaningful default text-size assumption for users with
+   accessibility preferences. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --- Typography baseline -------------------------------------------- */
+/* Per DESIGN.md §3: h1/h2 share size (24px); differ by weight (600 vs 400)
+   and color (Starbucks Green vs Text Black). Body uses -0.01em. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  line-height: var(--leading-display); /* 1.2 */
+  letter-spacing: var(--tracking-tight); /* -0.01em, per §3 universal */
+}
+
+/* h1 = 24px, weight 600, Starbucks Green — heading anchor */
+h1 {
+  font-size: var(--text-h1);
+  font-weight: 600;
+  color: var(--color-starbucks-green);
+}
+
+/* h2 = 24px, weight 400, Text Black — section title */
+h2 {
+  font-size: var(--text-h1);
+  font-weight: 400;
+  color: var(--color-text-black);
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  color: var(--color-text-black);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* --- Image fade-in (DESIGN.md §4) ------------------------------------ */
+img {
+  opacity: 0;
+  transition: opacity var(--duration-image) ease-in;
+}
+
+img[src],
+img[srcset] {
+  opacity: 1;
+}
+
+/* --- Focus ring: Green Accent, never default browser blue ------------- */
+:focus-visible {
+  outline: 2px solid var(--color-green-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* --- Universal button reset ------------------------------------------ */
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* --- Utility: tight tracking for all SoDoSans/Inter surfaces --------- */
+.tight-tracking {
+  letter-spacing: var(--tracking-tight);
+}
+
+/* --- Utility: serif headlines (Rewards ceremony only) ---------------- */
+.serif-headline {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* --- Utility: script (Careers cup-name only) ------------------------- */
+.script-mark {
+  font-family: var(--font-script);
+}
+
+/* --- Container: max-width + responsive gutter ------------------------ */
+.container-phx {
+  width: 100%;
+  max-width: var(--container-xl);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+
+@media (min-width: 768px) {
+  .container-phx {
+    padding-inline: var(--spacing-gutter-md);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-phx {
+    padding-inline: var(--spacing-gutter-lg);
+  }
+}
+
+/* --- Section rhythm -------------------------------------------------- */
+.section {
+  padding-block: var(--spacing-6);
+}
+
+@media (min-width: 1024px) {
+  .section {
+    padding-block: var(--spacing-7);
+  }
+}

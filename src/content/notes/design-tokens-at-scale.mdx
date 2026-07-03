@@ -1,0 +1,13 @@
+---
+title: "Design Tokens at Scale"
+date: 2024-03-15
+topics: ["design", "tools"]
+growthStage: "seedling"
+excerpt: "Most token systems break down at scale. Three patterns that keep them coherent across hundreds of components: tiered naming, single-team ownership, and build-time enforcement."
+---
+
+The breakage usually starts small: a colour token called `brand-primary` that one team wants as blue and another needs as teal. Nobody decided to fragment it, but the product grew faster than the token taxonomy.
+
+The first pattern that holds at scale is **intentional layering** — separating primitive tokens (raw hex values), semantic tokens (role-based references), and component tokens (explicit component overrides) into distinct tiers that are never merged back together. The second pattern is **ownership boundaries**: each token namespace has a single responsible team, and cross-team changes require a lightweight RFC process rather than a free-for-all. The third pattern is tooling that enforces the hierarchy — not just naming conventions, but build-time validation that prevents a component token from directly referencing a primitive.
+
+Without that enforcement, the taxonomy erodes within a year. Token systems fail the way city codes fail: not with one big mistake, but with a thousand small exceptions, each defensible in isolation, each contributing to the slow loss of any shared language.

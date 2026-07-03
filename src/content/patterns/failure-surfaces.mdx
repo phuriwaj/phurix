@@ -1,0 +1,21 @@
+---
+title: "Failure Surfaces"
+date: 2023-12-30
+topics: ["design", "systems"]
+lede: "Designing the failure path first so the happy path has somewhere to land when something goes wrong. Most products get this order backwards."
+---
+
+Most products are designed for the path of least resistance — the short, fortunate journey through a feature. The failure path is treated as afterthought, a small grey box at the bottom of the spec. Reversing that order rewards you with a feature that feels solid in the worst moments because every possible failure was already imagined.
+
+## When to use it
+
+- Forms, payment flows, network-call surfaces.
+- Anywhere a user can lose work without knowing they lost it.
+
+## When to avoid it
+
+- Throwaway UI where errors are not catastrophic.
+
+## The exercise
+
+Before shipping any new form, write down the seven things that can go wrong. Network failure. Server error. Validation mismatch. Stale state. Concurrent edit. Permission revoked. The user's session expired. For each one, design what the user sees. Then ship the happy path knowing that the seven failure paths already have a destination.

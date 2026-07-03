@@ -1,0 +1,77 @@
+---
+/**
+ * GrowthBadge — small badge for garden note growth stage.
+ * seedling 🌱 | budding 🌿 | evergreen 🌳
+ * Uses unicode or inline SVG per DESIGN.md guidance.
+ */
+interface Props {
+  stage: 'seedling' | 'budding' | 'evergreen';
+  class?: string;
+}
+
+const { stage, class: className = '' } = Astro.props;
+
+const config = {
+  seedling: {
+    icon: '🌱',
+    label: 'Seedling',
+    color: 'var(--color-green-accent)',
+  },
+  budding: {
+    icon: '🌿',
+    label: 'Budding',
+    color: 'var(--color-starbucks-green)',
+  },
+  evergreen: {
+    icon: '🌳',
+    label: 'Evergreen',
+    color: 'var(--color-house-green)',
+  },
+};
+
+const { icon, label, color } = config[stage];
+---
+
+<span class:list={['growth-badge', `growth-${stage}`, className]} aria-label={`Growth stage: ${label}`}>
+  <span class="growth-icon" aria-hidden="true">{icon}</span>
+  <span class="growth-label">{label}</span>
+</span>
+
+<style>
+  .growth-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font-size: var(--text-micro);
+    font-weight: 600;
+    letter-spacing: var(--tracking-tight);
+    padding: 2px 8px;
+    border-radius: var(--radius-button);
+    border: 1px solid currentColor;
+    line-height: 1.4;
+  }
+
+  .growth-seedling {
+    color: var(--color-green-accent);
+    background: color-mix(in srgb, var(--color-green-light) 60%, transparent);
+  }
+
+  .growth-budding {
+    color: var(--color-starbucks-green);
+    background: color-mix(in srgb, var(--color-green-light) 40%, transparent);
+  }
+
+  .growth-evergreen {
+    color: var(--color-house-green);
+    background: color-mix(in srgb, var(--color-green-light) 20%, transparent);
+  }
+
+  .growth-icon {
+    font-size: 0.9em;
+    line-height: 1;
+  }
+
+  .growth-label {
+    font-size: inherit;
+  }
+</style>

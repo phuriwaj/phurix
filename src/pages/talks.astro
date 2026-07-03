@@ -1,0 +1,61 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import GardenCard from '@/components/GardenCard.astro';
+import CollectionGrid from '@/components/CollectionGrid.astro';
+import { getCollection } from 'astro:content';
+
+const allTalks = await getCollection('talks');
+const talks = allTalks.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+---
+
+<Layout title="Talks" description="Conference talks and workshop sessions.">
+  <section class="page-header-section">
+    <div class="container-phx">
+      <h1 class="page-title">Talks</h1>
+      <p class="page-lede">
+        Conference talks and workshop sessions on design systems,
+        component architecture, and the quieter ideas underneath.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    <CollectionGrid cols={2} gap="lg">
+      {talks.map((talk) => (
+        <GardenCard
+          title={talk.data.title}
+          type="talk"
+          excerpt={talk.data.description}
+          date={talk.data.date}
+          topics={[talk.data.event]}
+          href={talk.data.link ?? '#'}
+        />
+      ))}
+    </CollectionGrid>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-7) var(--spacing-5);
+    background: var(--color-neutral-warm);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .page-title {
+    font-size: var(--text-hero-large);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.15;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .page-lede {
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 60ch;
+  }
+</style>

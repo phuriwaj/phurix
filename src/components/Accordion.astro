@@ -1,0 +1,70 @@
+---
+/**
+ * Accordion — used on FAQ sections.
+ * Duration 300ms, measured ease-out curve.
+ * Plain details/summary implementation (no JS needed).
+ */
+interface Props {
+  items: Array<{ q: string; a: string }>;
+}
+
+const { items } = Astro.props;
+---
+
+<div class="accordion-phx">
+  {items.map((item) => (
+    <details class="accordion-item">
+      <summary class="accordion-summary">
+        <span>{item.q}</span>
+        <span class="accordion-chev" aria-hidden="true">+</span>
+      </summary>
+      <div class="accordion-answer">
+        <p>{item.a}</p>
+      </div>
+    </details>
+  ))}
+</div>
+
+<style>
+  .accordion-phx {
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .accordion-item {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .accordion-summary {
+    list-style: none;
+    cursor: pointer;
+    padding: var(--spacing-4) 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-3);
+    font-size: var(--text-body-lg);
+    font-weight: 500;
+    color: var(--color-text-black);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .accordion-summary::-webkit-details-marker { display: none; }
+
+  .accordion-chev {
+    font-size: 1.6rem;
+    color: var(--color-starbucks-green);
+    transition: transform var(--duration-expander) var(--ease-out-soft);
+  }
+
+  .accordion-item[open] .accordion-chev {
+    transform: rotate(45deg);
+  }
+
+  .accordion-answer {
+    padding: 0 0 var(--spacing-4);
+    color: var(--color-text-black-soft);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    max-width: 70ch;
+  }
+</style>

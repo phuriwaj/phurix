@@ -1,0 +1,18 @@
+---
+title: "The Case for Boring Technology"
+date: 2025-01-20
+topics: [web-development, tools, systems]
+lede: "Every year, the same conversation: should we use the shiny new thing? Five years in, I've learned to love the boring choice — not out of cowardice, but out of respect for the people who will maintain this code after I'm gone."
+---
+
+The first time I chose PostgreSQL over MongoDB for a project, a colleague asked if I was being deliberately contrarian. It was 2016. Mongo was what cool startups used. Postgres was what banks used. The implicit assumption was that Postgres was for when you didn't know better, not for when you made an active choice.
+
+I've been making that choice ever since, and the reasoning has nothing to do with technology preferences and everything to do with the humans who will eventually inherit my decisions.
+
+Boring technology earns its boredom. It has a large surface area for problems you didn't know you'd hit. Postgres handles JSON if you need it — but it was doing relational data before JSON was a twinkle in a JavaScript engineer's eye. It has a query planner that has been tuned across millions of deployments. It has a replication model that works the way you'd expect, and when it doesn't work, the error messages are comprehensible. These are not small things. These are the difference between a deployment that goes smoothly and one that turns into a three-day incident because the Mongo replica set you chose for its flexibility has entered an undefined state that only happens when two specific failure modes intersect at 2am on a Saturday.
+
+The sunk cost of novelty is always higher than it looks. There's the initial evaluation: understanding the tradeoffs well enough to make an informed choice. There's the implementation: building the integration, learning the API quirks, discovering the sharp edges. There's the operational knowledge that doesn't exist yet: what does the backup process look like? What happens when you need to migrate to a new version? How do you monitor it? What does production traffic look like at 10x your current load? With boring technology, someone has already written the post-mortem. The failure modes are documented. The solutions are Stack Overflow entries with green checkmarks. With novel technology, you are the post-mortem.
+
+I want to be specific about what "boring" does not mean. It does not mean choosing the oldest option. It does not mean refusing to evaluate new tools. It does not mean using jQuery in 2025 because jQuery is boring. Boring means: technology whose failure modes are well-understood, whose community has produced substantial documentation, whose operational characteristics have been mapped across enough deployments that you can reasonably predict how it will behave under stress. PostgreSQL is boring. Redis is boring. Nginx is boring. S3 is so boring it has become infrastructure, the way electricity is boring — you don't think about it, until it stops working.
+
+The question I now ask before choosing any technology is not "is this better?" but "is this better than what I would replace it with, accounting for the maintenance burden over the expected lifetime of this system?" — and maintenance, it turns out, is always longer than you think. The side project you build in a weekend will outlive the startup you built it for. The internal tool you throw together will be mission-critical within eighteen months. The library that seemed perfect for your use case will have a CVE announced the week before your product launches. Boring technology gives you a fighting chance against all three scenarios. The shiny thing gives you a story to tell at conferences. I've started asking myself which one I actually want.

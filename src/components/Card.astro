@@ -1,0 +1,102 @@
+---
+/**
+ * Content Card — white surface, 12px radius, layered whisper-soft shadow.
+ * Default canvas is Neutral Warm (#f2f0eb); cards layer on top.
+ */
+interface Props {
+  /** Visual emphasis level — "default" uses DESIGN.md card shadow. */
+  emphasis?: 'default' | 'lifted' | 'flat';
+  /** Full-bleed image at top of card (e.g. gift-card hero photo). */
+  imageSrc?: string;
+  imageAlt?: string;
+  /** Dark-green Rewards panel. */
+  tone?: 'light' | 'dark';
+  class?: string;
+  as?: 'div' | 'article' | 'section';
+}
+
+const {
+  emphasis = 'default',
+  imageSrc,
+  imageAlt = '',
+  tone = 'light',
+  class: className = '',
+  as: Tag = 'div',
+} = Astro.props;
+
+const classes = [
+  'card-phx',
+  `card-${emphasis}`,
+  tone === 'dark' ? 'card-dark' : 'card-light',
+  imageSrc ? 'card-has-image' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag class={classes}>
+  {imageSrc && (
+    <div class="card-image-wrap">
+      <img src={imageSrc} alt={imageAlt} loading="lazy" />
+    </div>
+  )}
+  <div class="card-body">
+    <slot />
+  </div>
+</Tag>
+
+<style>
+  .card-phx {
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    transition: box-shadow var(--duration-button) ease,
+                transform var(--duration-button) ease;
+  }
+
+  .card-light {
+    background: var(--color-white);
+    color: var(--color-text-black);
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-dark {
+    background: var(--color-house-green);
+    color: var(--color-text-white);
+    box-shadow: none;
+  }
+
+  .card-lifted { /* Hover-eligible cards (project tiles, gift cards) */
+    cursor: pointer;
+  }
+  .card-lifted:hover {
+    transform: translateY(-2px);
+    /* keep base card-shadow layers; bump ambient by 1px to feel lifted */
+    box-shadow:
+      0 0 0.5px rgba(0, 0, 0, 0.14),
+      0 2px 2px rgba(0, 0, 0, 0.18);
+  }
+
+  .card-flat { box-shadow: none; }
+
+  .card-image-wrap {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--color-neutral-cool);
+  }
+
+  .card-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .card-body {
+    padding: var(--spacing-4);
+  }
+
+  @media (min-width: 768px) {
+    .card-body { padding: var(--spacing-5); }
+  }
+</style>
