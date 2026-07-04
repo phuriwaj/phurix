@@ -3,14 +3,25 @@
  * TopicPhoto — photographic illustration per topic.
  *
  * Replaces the old generative Watercolor SVG with topic-relevant photos
- * sourced from Unsplash and bundled under /photos/.
+ * bundled from `src/assets/photos/` via `astro:assets`. Each photo is
+ * processed at build time: WebP output, responsive `widths`, lazy+async.
  *
  * Same Props API as Watercolor so call sites didn't need changes.
  * `composition` and `paper` props are no-ops now (one photo per topic;
  * image fills the frame).
  */
 
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
 import type { TopicKey } from '@/lib/topics';
+
+import designJpg from '@/assets/photos/design.jpg';
+import writingJpg from '@/assets/photos/writing.jpg';
+import toolsJpg from '@/assets/photos/tools.jpg';
+import systemsJpg from '@/assets/photos/systems.jpg';
+import webDevelopmentJpg from '@/assets/photos/web-development.jpg';
+import anthropologyJpg from '@/assets/photos/anthropology.jpg';
+import aiJpg from '@/assets/photos/ai.jpg';
 
 interface Props {
   topic?: TopicKey | string;
@@ -25,7 +36,7 @@ interface Props {
 }
 
 interface PhotoRef {
-  src: string;
+  src: ImageMetadata;
   alt: string;
   photographer: string;
   profile: string;
@@ -39,43 +50,43 @@ const {
 
 const PHOTOS: Record<string, PhotoRef> = {
   design: {
-    src: '/photos/design.jpg',
+    src: designJpg,
     alt: 'Vintage letterpress type case filled with metal letterforms',
     photographer: 'Unsplash',
     profile: 'https://unsplash.com/?utm_source=phurix&utm_medium=referral',
   },
   writing: {
-    src: '/photos/writing.jpg',
+    src: writingJpg,
     alt: 'Vintage typewriter with typed page on a wooden desk',
     photographer: 'Florian Klauer',
     profile: 'https://unsplash.com/@florianklauer',
   },
   tools: {
-    src: '/photos/tools.jpg',
+    src: toolsJpg,
     alt: 'Woodworking hand tools resting among shavings',
     photographer: 'Devin Berko',
     profile: 'https://unsplash.com/@devinberko',
   },
   systems: {
-    src: '/photos/systems.jpg',
+    src: systemsJpg,
     alt: 'Tangled network cabling and rack infrastructure',
     photographer: 'Jordan Harrison',
     profile: 'https://unsplash.com/@jrdnhrrsn',
   },
   'web-development': {
-    src: '/photos/web-development.jpg',
+    src: webDevelopmentJpg,
     alt: 'Source code illuminated on a glowing display',
     photographer: 'Florian Olivo',
     profile: 'https://unsplash.com/@florianolv',
   },
   anthropology: {
-    src: '/photos/anthropology.jpg',
+    src: anthropologyJpg,
     alt: 'Cultural heritage artifacts arranged on a table',
     photographer: 'Angela Compagnone',
     profile: 'https://unsplash.com/@angelacompagnone',
   },
   ai: {
-    src: '/photos/ai.jpg',
+    src: aiJpg,
     alt: 'Abstract visualization suggestive of neural network patterns',
     photographer: 'Steve A Johnson',
     profile: 'https://unsplash.com/@stevenajohnson',
@@ -86,12 +97,15 @@ const photo = PHOTOS[topic] ?? PHOTOS.design;
 ---
 
 <figure class:list={['topic-photo', `tp-${scale}`, className]}>
-  <img
+  <Image
     src={photo.src}
     alt={photo.alt}
     loading="lazy"
     decoding="async"
     class="tp-img"
+    format="webp"
+    widths={[400, 800, 1200]}
+    sizes="(min-width: 1024px) 800px, 100vw"
   />
   <figcaption class="tp-credit">
     Photo:&nbsp;<a href={photo.profile} rel="noopener noreferrer" target="_blank">{photo.photographer}</a>&nbsp;/&nbsp;<a href="https://unsplash.com/?utm_source=phurix&utm_medium=referral" rel="noopener noreferrer" target="_blank">Unsplash</a>

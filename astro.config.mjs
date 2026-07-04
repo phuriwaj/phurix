@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
@@ -24,5 +24,25 @@ export default defineConfig({
     mdx(),
     sitemap(),
     react(),
+  ],
+  fonts: [
+    {
+      provider: fontProviders.google(),
+      name: 'Lora',
+      cssVariable: '--font-serif',
+      fallbacks: ['Iowan Old Style', 'Georgia', 'serif'],
+      weights: [400, 500, 600],
+      styles: ['normal'],
+      subsets: ['latin'],
+    },
+    {
+      provider: fontProviders.google(),
+      name: 'Kalam',
+      cssVariable: '--font-script',
+      fallbacks: ['Comic Sans MS', 'cursive'],
+      weights: [400, 700],
+      styles: ['normal'],
+      subsets: ['latin'],
+    },
   ],
 });
