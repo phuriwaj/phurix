@@ -5,10 +5,27 @@
 | Phase | Tasks | Status | Commits |
 |-------|-------|--------|---------|
 | 1. Foundation & Correctness | 7 + 1 cleanup | ✅ COMPLETE | `a195d73` (phase-1), `24150baa` (phase-1-cleanup) |
-| 2. Schema Tightening & Type Safety | 5 | ⏳ PENDING | — |
-| 3. SEO, Meta & View Transitions | 6 | ⏳ PENDING | — |
-| 4. Performance Refactors | 3 | ⏳ PENDING | — |
-| 5. Cleanup, Accessibility & Polish | 9 | ⏳ PENDING | — |
+| 2. Schema Tightening & Type Safety | 5 | ✅ COMPLETE | `899653d` (phase-2) |
+| 3. SEO, Meta & View Transitions | 6 | ✅ COMPLETE | `39d63ff` (phase-3) |
+| 4. Performance Refactors | 3 | ✅ COMPLETE | `c76d699` (phase-4) |
+| 5. Cleanup, Accessibility & Polish | 9 | ✅ COMPLETE | `c44b839` (phase-5) |
+
+## Final State
+
+- **6 atomic commits** on `master`, all behind a clean linear history.
+- `npm run check`: 0 errors, 0 warnings, 6 hints.
+- `npm run build`: 36 pages, completes in ~3s.
+- `grep -rn "as any" src/`: zero matches.
+- `grep -rn "from 'react'" src/`: zero matches.
+- `grep -rn "fonts.googleapis" dist/`: zero matches.
+- `dist/_astro/`: contains `.webp` image variants + bundled `.woff2` font files.
+- `dist/rss.xml`: valid XML, 4 essay items.
+
+## Carry-forward / Residual observations
+
+- **Talks schema missing `topics` field**: the Phase 5 implementer discovered that MDX talk files include `topics: [...]` frontmatter, but the `talks` schema in `src/content.config.ts:27-36` does not declare it. The garden.astro helper uses a typed (`as unknown as { topics?: string[] }`) escape hatch to read it. **Suggested follow-up**: add `topics: z.array(z.enum(RECOGNIZED_TOPICS_TUPLE)).default([])` to the talks schema (matches the Phase 2 pattern for notes/essays/patterns), and remove the escape hatch.
+- **Lint/format tooling** still absent; `prettier-plugin-astro` would harmonize formatting across the many touched `.astro` files.
+- **Sitemap.xml**: build produces it; sanity-check via `cat dist/sitemap-0.xml | head` to confirm it lists 4 essays + section roots.
 
 ## Phase 1 Detail
 
