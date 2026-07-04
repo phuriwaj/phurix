@@ -2,8 +2,13 @@
 import Layout from '@/layouts/Layout.astro';
 import GardenCard from '@/components/GardenCard.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
-import TopicChip from '@/components/TopicChip.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+type MergedEntry =
+  | (CollectionEntry<'essays'> & { entryType: 'essay'; displayDate: Date })
+  | (CollectionEntry<'notes'> & { entryType: 'note'; displayDate: Date })
+  | (CollectionEntry<'talks'> & { entryType: 'talk'; displayDate: Date })
+  | (CollectionEntry<'patterns'> & { entryType: 'pattern'; displayDate: Date });
 
 const allEssays = await getCollection('essays');
 const allNotes = await getCollection('notes');
@@ -11,7 +16,7 @@ const allTalks = await getCollection('talks');
 const allPatterns = await getCollection('patterns');
 
 // Merge all entries and sort by date descending
-const allEntries = [
+const allEntries: MergedEntry[] = [
   ...allEssays.map((e) => ({
     ...e,
     entryType: 'essay' as const,
@@ -34,8 +39,16 @@ const allEntries = [
   })),
 ].sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
 
-// Extract unique topics from all entries
-const allTopics = [...new Set(allEntries.flatMap((e) => (e as any).data.topics ?? []))].sort();
+// Extract unique topics from all entries (talks may carry loose frontmatter topics; default to [] otherwise)
+const topicsForEntry = (entry: MergedEntry): string[] => {
+  if (entry.entryType === 'talk') {
+    const t = (entry.data as unknown as { topics?: string[] }).topics;
+    return t ?? [];
+  }
+  return entry.data.topics;
+};
+
+const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
 ---
 
 <Layout title="Garden" description="Everything I've written, in reverse chronological order.">
@@ -54,20 +67,20 @@ const allTopics = [...new Set(allEntries.flatMap((e) => (e as any).data.topics ?
       <div class="filter-group">
         <span class="filter-label">Type</span>
         <div class="filter-chips" id="type-filters">
-          <button class="topic-chip topic-chip-active" data-filter-type="all">All</button>
-          <button class="topic-chip" data-filter-type="note">Note</button>
-          <button class="topic-chip" data-filter-type="essay">Essay</button>
-          <button class="topic-chip" data-filter-type="talk">Talk</button>
-          <button class="topic-chip" data-filter-type="pattern">Pattern</button>
+          <button class="topic-chip topic-chip-active" data-filter-type="all" aria-pressed="true">All</button>
+          <button class="topic-chip" data-filter-type="note" aria-pressed="false">Note</button>
+          <button class="topic-chip" data-filter-type="essay" aria-pressed="false">Essay</button>
+          <button class="topic-chip" data-filter-type="talk" aria-pressed="false">Talk</button>
+          <button class="topic-chip" data-filter-type="pattern" aria-pressed="false">Pattern</button>
         </div>
       </div>
 
       <div class="filter-group">
         <span class="filter-label">Topic</span>
         <div class="filter-chips" id="topic-filters">
-          <button class="topic-chip topic-chip-active" data-filter-topic="all">All</button>
+          <button class="topic-chip topic-chip-active" data-filter-topic="all" aria-pressed="true">All</button>
           {allTopics.map((topic) => (
-            <button class="topic-chip" data-filter-topic={topic}>{topic}</button>
+            <button class="topic-chip" data-filter-topic={topic} aria-pressed="false">{topic}</button>
           ))}
         </div>
       </div>
@@ -75,10 +88,10 @@ const allTopics = [...new Set(allEntries.flatMap((e) => (e as any).data.topics ?
       <div class="filter-group">
         <span class="filter-label">Growth</span>
         <div class="filter-chips" id="growth-filters">
-          <button class="topic-chip topic-chip-active" data-filter-growth="all">All</button>
-          <button class="topic-chip" data-filter-growth="seedling">Seedling</button>
-          <button class="topic-chip" data-filter-growth="budding">Budding</button>
-          <button class="topic-chip" data-filter-growth="evergreen">Evergreen</button>
+          <button class="topic-chip topic-chip-active" data-filter-growth="all" aria-pressed="true">All</button>
+          <button class="topic-chip" data-filter-growth="seedling" aria-pressed="false">Seedling</button>
+          <button class="topic-chip" data-filter-growth="budding" aria-pressed="false">Budding</button>
+          <button class="topic-chip" data-filter-growth="evergreen" aria-pressed="false">Evergreen</button>
         </div>
       </div>
     </div>
@@ -96,20 +109,29 @@ const allTopics = [...new Set(allEntries.flatMap((e) => (e as any).data.topics ?
           ? `/patterns/${entry.id}`
           : entry.data.link ?? '#';
 
+        const entryTopics = topicsForEntry(entry);
+
+        const excerpt =
+          entry.entryType === 'essay' || entry.entryType === 'pattern'
+            ? entry.data.lede
+            : entry.entryType === 'note'
+            ? entry.data.excerpt
+            : entry.data.description;
+
         return (
           <div
             class="entry-card-wrapper"
             data-type={entry.entryType}
-            data-topics={JSON.stringify((entry as any).data.topics ?? [])}
-            data-growth={entry.entryType === 'note' ? (entry as any).data.growthStage ?? '' : ''}
+            data-topics={JSON.stringify(entryTopics)}
+            data-growth={entry.entryType === 'note' ? entry.data.growthStage : ''}
           >
             <GardenCard
               title={entry.data.title}
               type={entry.entryType}
-              excerpt={entry.entryType === 'essay' || entry.entryType === 'pattern' ? (entry as any).data.lede : (entry as any).data.excerpt ?? (entry as any).data.description}
+              excerpt={excerpt}
               date={entry.displayDate}
-              topics={(entry as any).data.topics}
-              growthStage={entry.entryType === 'note' ? (entry as any).data.growthStage : undefined}
+              topics={entryTopics}
+              growthStage={entry.entryType === 'note' ? entry.data.growthStage : undefined}
               href={href}
             />
           </div>
@@ -233,18 +255,24 @@ const allTopics = [...new Set(allEntries.flatMap((e) => (e as any).data.topics ?
       const btn = (e.target as HTMLElement).closest('button[data-filter-type], button[data-filter-topic], button[data-filter-growth]') as HTMLElement | null;
       if (!btn) return;
 
+      const setActive = (container: Element | null, selected: HTMLElement) => {
+        container?.querySelectorAll('button').forEach((b) => {
+          b.classList.remove('topic-chip-active');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        selected.classList.add('topic-chip-active');
+        selected.setAttribute('aria-pressed', 'true');
+      };
+
       if ('filterType' in btn.dataset) {
         activeType = btn.dataset.filterType ?? 'all';
-        typeFilters?.querySelectorAll('button').forEach((b) => b.classList.remove('topic-chip-active'));
-        btn.classList.add('topic-chip-active');
+        setActive(typeFilters, btn);
       } else if ('filterTopic' in btn.dataset) {
         activeTopic = btn.dataset.filterTopic ?? 'all';
-        topicFilters?.querySelectorAll('button').forEach((b) => b.classList.remove('topic-chip-active'));
-        btn.classList.add('topic-chip-active');
+        setActive(topicFilters, btn);
       } else if ('filterGrowth' in btn.dataset) {
         activeGrowth = btn.dataset.filterGrowth ?? 'all';
-        growthFilters?.querySelectorAll('button').forEach((b) => b.classList.remove('topic-chip-active'));
-        btn.classList.add('topic-chip-active');
+        setActive(growthFilters, btn);
       }
 
       applyFilters();
@@ -259,9 +287,13 @@ const allTopics = [...new Set(allEntries.flatMap((e) => (e as any).data.topics ?
     const typeParam = params.get('type');
     if (typeParam && ['note', 'essay', 'talk', 'pattern'].includes(typeParam)) {
       activeType = typeParam;
-      typeFilters?.querySelectorAll('button').forEach((b) => b.classList.remove('topic-chip-active'));
+      typeFilters?.querySelectorAll('button').forEach((b) => {
+        b.classList.remove('topic-chip-active');
+        b.setAttribute('aria-pressed', 'false');
+      });
       const btn = typeFilters?.querySelector(`[data-filter-type="${typeParam}"]`);
       btn?.classList.add('topic-chip-active');
+      btn?.setAttribute('aria-pressed', 'true');
       applyFilters();
     }
   }

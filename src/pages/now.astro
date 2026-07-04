@@ -1,6 +1,5 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import NowPage from '@/components/NowPage.astro';
 ---
 
 <Layout title="Now — phurix" description="What Phuriwaj is up to right now.">
@@ -14,23 +13,23 @@ import NowPage from '@/components/NowPage.astro';
   </section>
 
   <section class="container-phx section now-sections">
-    <NowPage>
+    <section class="now-section">
       <div class="now-block">
         <h2 class="now-label">Location</h2>
         <p class="now-value">Bangkok, Thailand</p>
       </div>
-    </NowPage>
+    </section>
 
-    <NowPage>
+    <section class="now-section">
       <div class="now-block">
         <h2 class="now-label">Working on</h2>
         <p class="now-value">
           A new design system for a client; writing more long-form essays; exploring edge rendering patterns.
         </p>
       </div>
-    </NowPage>
+    </section>
 
-    <NowPage>
+    <section class="now-section">
       <div class="now-block">
         <h2 class="now-label">Reading</h2>
         <ul class="reading-list">
@@ -39,9 +38,9 @@ import NowPage from '@/components/NowPage.astro';
           <li>Thinking in Systems — Donella Meadows</li>
         </ul>
       </div>
-    </NowPage>
+    </section>
 
-    <NowPage>
+    <section class="now-section">
       <div class="now-block">
         <h2 class="now-label">Thinking about</h2>
         <p class="now-value">
@@ -49,16 +48,16 @@ import NowPage from '@/components/NowPage.astro';
           change the way we prompt AI tools.
         </p>
       </div>
-    </NowPage>
+    </section>
 
-    <NowPage>
+    <section class="now-section">
       <div class="now-block">
         <h2 class="now-label">Writing</h2>
         <p class="now-value">
           Two essays in progress: one on typography hierarchy, one on the anthropology of code review.
         </p>
       </div>
-    </NowPage>
+    </section>
   </section>
 </Layout>
 
@@ -89,6 +88,12 @@ import NowPage from '@/components/NowPage.astro';
 
   .now-sections {
     padding-top: 0;
+  }
+
+  .now-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
   }
 
   .now-block {

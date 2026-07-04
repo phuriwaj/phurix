@@ -39,13 +39,6 @@ const pathname = Astro.url.pathname;
         </a>
       ))}
     </nav>
-
-    {/* Mobile menu trigger */}
-    <button class="nav-burger" aria-label="Open menu" type="button">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
   </div>
 </header>
 
@@ -124,26 +117,5 @@ const pathname = Astro.url.pathname;
     height: 2px;
     background: var(--color-starbucks-green);
     border-radius: 1px;
-  }
-
-  .nav-burger {
-    margin-left: auto;
-    width: 28px;
-    height: 28px;
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-  }
-
-  @media (min-width: 768px) {
-    .nav-burger { display: none; }
-  }
-
-  .nav-burger span {
-    display: block;
-    height: 2px;
-    background: var(--color-text-black);
-    border-radius: 2px;
   }
 </style>

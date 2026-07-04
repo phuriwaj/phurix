@@ -35,6 +35,19 @@ const artTopic = pickArtTopic(entry.data.topics);
 ---
 
 <Layout title={`${entry.data.title} — phurix`} description={entry.data.lede}>
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: entry.data.title,
+      datePublished: entry.data.date.toISOString(),
+      description: entry.data.lede,
+      keywords: entry.data.topics.join(', '),
+      mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+    })}
+  />
   <section class="section">
     <div class="container-phx">
       <a href="/essays" class="back-link">← Essays</a>

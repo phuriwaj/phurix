@@ -1,4 +1,4 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { RECOGNIZED_TOPICS_TUPLE } from '@/lib/topics';
@@ -11,6 +11,7 @@ const notes = defineCollection({
     topics: z.array(z.enum(RECOGNIZED_TOPICS_TUPLE)).default([]),
     growthStage: z.enum(['seedling', 'budding', 'evergreen']).default('seedling'),
     excerpt: z.string().optional(),
+    related: z.array(reference('notes')).optional(),
   }),
 });
 
@@ -21,6 +22,7 @@ const essays = defineCollection({
     date: z.coerce.date(),
     topics: z.array(z.enum(RECOGNIZED_TOPICS_TUPLE)).default([]),
     lede: z.string(),
+    related: z.array(reference('essays')).optional(),
   }),
 });
 
@@ -52,6 +54,7 @@ const patterns = defineCollection({
     date: z.coerce.date(),
     topics: z.array(z.enum(RECOGNIZED_TOPICS_TUPLE)).default([]),
     lede: z.string(),
+    related: z.array(reference('patterns')).optional(),
   }),
 });
 
