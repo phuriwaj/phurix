@@ -38,6 +38,19 @@ const relatedItems = relatedEntries.filter((e): e is NonNullable<typeof e> => Bo
   description={pattern.data.lede}
   hideFrap
 >
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: pattern.data.title,
+      datePublished: pattern.data.date.toISOString(),
+      description: pattern.data.lede ?? '',
+      keywords: (pattern.data.topics ?? []).join(', '),
+      mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+    })}
+  />
   <article class="pattern-article">
     <header class="pattern-header container-phx">
       <p class="section-eyebrow">

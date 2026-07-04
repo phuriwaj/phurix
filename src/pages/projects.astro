@@ -2,40 +2,12 @@
 /**
  * /projects — A short shelf of side projects.
  * Cite as: DESIGN.md §4 (/projects) — not in top nav; accessible via /about and footer.
- *
- * Note: the `projects` content collection was unavailable at write time, so the
- * hardcoded seed data below stands in for it. When the collection lands, swap
- * the array for `await getCollection('projects')`.
  */
 import Layout from '@/layouts/Layout.astro';
 import Card from '@/components/Card.astro';
+import { getCollection } from 'astro:content';
 
-const projects = [
-  {
-    title: 'flyed',
-    desc: 'Educational platform connecting schools with field trip providers. Astro + React, edge-rendered, optimized for slow networks.',
-    tags: ['Astro', 'React', 'Cloudflare'],
-    url: undefined as string | undefined,
-  },
-  {
-    title: 'café console',
-    desc: 'A static dashboard for indie café owners. Built with Astro and React 19. Calm typography, fast loads.',
-    tags: ['Astro', 'Tailwind', 'MDX'],
-    url: undefined as string | undefined,
-  },
-  {
-    title: 'barista cli',
-    desc: 'Rust-powered scaffolder for greenfield web projects. One command, opinionated defaults.',
-    tags: ['Rust', 'CLI'],
-    url: undefined as string | undefined,
-  },
-  {
-    title: 'steam notes',
-    desc: 'A small editor for the things you read while your coffee cools. End-to-end encrypted drafts.',
-    tags: ['TypeScript', 'IndexedDB'],
-    url: undefined as string | undefined,
-  },
-];
+const projects = await getCollection('projects');
 ---
 
 <Layout title="Projects — phurix" description="Projects by phurix">
@@ -50,15 +22,15 @@ const projects = [
     <div class="project-grid mt-7">
       {projects.map((p) => (
         <Card emphasis="lifted">
-          <h2 class="project-title">{p.title}</h2>
-          <p class="project-desc">{p.desc}</p>
+          <h2 class="project-title">{p.data.title}</h2>
+          <p class="project-desc">{p.data.desc}</p>
           <div class="tag-row">
-            {p.tags.map((t) => <span class="tag">{t}</span>)}
+            {p.data.tags.map((t) => <span class="tag">{t}</span>)}
           </div>
-          {p.url && (
+          {p.data.url && (
             <div class="project-cta">
               <a
-                href={p.url}
+                href={p.data.url}
                 class="project-link"
                 target="_blank"
                 rel="noopener noreferrer"

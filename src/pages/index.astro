@@ -12,7 +12,6 @@ import Button from '@/components/Button.astro';
 import TopicPhoto from '@/components/TopicPhoto.astro';
 import CuratedPicks from '@/components/CuratedPicks.astro';
 import NewsletterBand from '@/components/NewsletterBand.astro';
-import Frap from '@/components/Frap.astro';
 import BookTile from '@/components/BookTile.astro';
 import { getCollection } from 'astro:content';
 
@@ -154,10 +153,6 @@ const curatedPicks = [
       <NewsletterBand />
     </div>
   </section>
-
-  <Fragment slot="frap">
-    <Frap />
-  </Fragment>
 </Layout>
 
 <style>

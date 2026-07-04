@@ -5,42 +5,8 @@
  * Frap suppressed via `hideFrap` per the deep-focus surface rule.
  */
 import Layout from '@/layouts/Layout.astro';
+import { nowItems, lastUpdated } from '@/data/now';
 
-type NowItem =
-  | { label: string; value: string }
-  | { label: string; list: string[] };
-
-const nowItems: NowItem[] = [
-  {
-    label: 'Location',
-    value: 'Bangkok, Thailand.',
-  },
-  {
-    label: 'Working on',
-    value:
-      'A design system for a client; a long essay on typography hierarchy; exploring edge-rendering patterns more seriously.',
-  },
-  {
-    label: 'Reading',
-    list: [
-      'The Design of Everyday Things — Don Norman.',
-      'Staff Engineer — Will Larson.',
-      'Thinking in Systems — Donella Meadows.',
-    ],
-  },
-  {
-    label: 'Thinking about',
-    value:
-      'The gap between component-level design and system-level design. How context windows change the way we prompt AI tools.',
-  },
-  {
-    label: 'Writing',
-    value:
-      'Two essays in progress: one on typography hierarchy, one on the anthropology of code review.',
-  },
-];
-
-const lastUpdated = '2026-07-04';
 const lastUpdatedDate = new Date(lastUpdated);
 const formattedDate = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
