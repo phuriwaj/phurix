@@ -230,18 +230,27 @@ src/
 ├── layouts/
 │   └── Layout.astro    ← <html>, fonts, Nav, Footer, Frap slot
 ├── components/
-│   ├── Nav.astro       ← global top bar (progressive height)
-│   ├── Footer.astro    ← dark-green footer with columns
-│   ├── Button.astro    ← 7 variants × 3 sizes
-│   ├── Card.astro      ← content card (light / dark)
-│   ├── FeatureBand.astro ← 40/60 dark-green hero strip
-│   ├── Frap.astro      ← floating circular CTA
-│   ├── GiftCardTile.astro ← illustrated gift-card grid item
-│   ├── SizeOptionRow.astro ← PDP size selector
-│   ├── RewardsPill.astro ← gold cost pill
-│   └── Accordion.astro ← FAQ list (no JS, details/summary)
+│   ├── Layout chrome
+│   │   ├── Nav.astro          ← global top bar (progressive height)
+│   │   ├── Footer.astro       ← dark-green footer with social links
+│   │   └── Frap.astro         ← floating circular CTA
+│   ├── Content cards
+│   │   ├── Card.astro         ← content card (light / dark)
+│   │   ├── BookTile.astro     ← book cover tile with placeholder color
+│   │   ├── GardenCard.astro   ← garden entry card (note/essay/talk/pattern)
+│   │   ├── CollectionGrid.astro ← grid wrapper for collection items
+│   │   └── FeatureBand.astro  ← 60/40 dark-green hero strip
+│   ├── Display
+│   │   ├── Timeline.astro     ← chronological timeline view
+│   │   ├── TopicPhoto.astro   ← photo tied to a topic key
+│   │   └── GrowthBadge.astro  ← seedling/budding/evergreen badge
+│   ├── Layout helpers
+│   │   ├── NowPage.astro      ← /now page section wrapper
+│   │   ├── TopicChip.astro    ← topic pill for filters
+│   │   ├── Accordion.astro    ← FAQ list (no JS, details/summary)
+│   │   └── Button.astro       ← 7 variants × 3 sizes
 └── pages/
-    └── index.astro     ← demo: hero, cards, band, gifts, PDP, FAQ
+    └── index.astro            ← landing page
 ```
 
 ---

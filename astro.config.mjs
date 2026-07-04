@@ -8,6 +8,7 @@ import react from '@astrojs/react';
 export default defineConfig({
   site: 'https://phurix.dev',
   output: 'static',
+  trailingSlash: 'always',
   server: {
     host: '0.0.0.0',
   },
