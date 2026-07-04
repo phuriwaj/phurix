@@ -10,10 +10,10 @@
  * image fills the frame).
  */
 
-type Topic = 'design' | 'writing' | 'tools' | 'systems' | 'web-development' | 'anthropology' | 'ai';
+import type { TopicKey } from '@/lib/topics';
 
 interface Props {
-  topic?: Topic | string;
+  topic?: TopicKey | string;
   /** Width of the painted area as a fraction of container. */
   scale?: 'sm' | 'md' | 'lg';
   /** @deprecated image fills the frame; paper background has no effect. */

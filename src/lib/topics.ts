@@ -5,16 +5,7 @@
  * if the topic isn't in the recognized photo keys.
  */
 
-export type TopicKey =
-  | 'design'
-  | 'writing'
-  | 'tools'
-  | 'systems'
-  | 'web-development'
-  | 'anthropology'
-  | 'ai';
-
-export const RECOGNIZED_TOPICS: TopicKey[] = [
+export const RECOGNIZED_TOPICS_TUPLE = [
   'design',
   'writing',
   'tools',
@@ -22,12 +13,16 @@ export const RECOGNIZED_TOPICS: TopicKey[] = [
   'web-development',
   'anthropology',
   'ai',
-];
+] as const;
+
+export type TopicKey = (typeof RECOGNIZED_TOPICS_TUPLE)[number];
+
+export const RECOGNIZED_TOPICS: readonly TopicKey[] = RECOGNIZED_TOPICS_TUPLE;
 
 export function pickArtTopic(topics: string[] | undefined | null): TopicKey {
   if (!topics || topics.length === 0) return 'design';
   const first = topics[0];
-  return (RECOGNIZED_TOPICS as string[]).includes(first)
+  return (RECOGNIZED_TOPICS as readonly string[]).includes(first)
     ? (first as TopicKey)
     : 'design';
 }

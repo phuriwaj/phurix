@@ -1,14 +1,14 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { RECOGNIZED_TOPICS_TUPLE } from '@/lib/topics';
 
 const notes = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/notes' }),
   schema: z.object({
     title: z.string(),
-    slug: z.string().optional(),
     date: z.coerce.date(),
-    topics: z.array(z.string()).default([]),
+    topics: z.array(z.enum(RECOGNIZED_TOPICS_TUPLE)).default([]),
     growthStage: z.enum(['seedling', 'budding', 'evergreen']).default('seedling'),
     excerpt: z.string().optional(),
   }),
@@ -18,9 +18,8 @@ const essays = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/essays' }),
   schema: z.object({
     title: z.string(),
-    slug: z.string().optional(),
     date: z.coerce.date(),
-    topics: z.array(z.string()).default([]),
+    topics: z.array(z.enum(RECOGNIZED_TOPICS_TUPLE)).default([]),
     lede: z.string(),
   }),
 });
@@ -32,7 +31,7 @@ const talks = defineCollection({
     event: z.string(),
     date: z.coerce.date(),
     description: z.string(),
-    link: z.string().optional(),
+    link: z.string().url().optional(),
   }),
 });
 
@@ -41,7 +40,7 @@ const books = defineCollection({
   schema: z.object({
     title: z.string(),
     author: z.string(),
-    coverColor: z.string(), // hex color for placeholder cover
+    coverColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Expected #RRGGBB hex'),
     year: z.number().optional(),
   }),
 });
@@ -50,9 +49,8 @@ const patterns = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/patterns' }),
   schema: z.object({
     title: z.string(),
-    slug: z.string().optional(),
     date: z.coerce.date(),
-    topics: z.array(z.string()).default([]),
+    topics: z.array(z.enum(RECOGNIZED_TOPICS_TUPLE)).default([]),
     lede: z.string(),
   }),
 });
