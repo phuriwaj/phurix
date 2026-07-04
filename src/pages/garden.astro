@@ -35,7 +35,7 @@ const allEntries = [
 ].sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
 
 // Extract unique topics from all entries
-const allTopics = [...new Set(allEntries.flatMap((e) => e.data.topics ?? []))].sort();
+const allTopics = [...new Set(allEntries.flatMap((e) => (e as any).data.topics ?? []))].sort();
 ---
 
 <Layout title="Garden" description="Everything I've written, in reverse chronological order.">
@@ -85,7 +85,8 @@ const allTopics = [...new Set(allEntries.flatMap((e) => e.data.topics ?? []))].s
   </section>
 
   <section class="container-phx section">
-    <CollectionGrid cols={3} gap="md" id="entries-grid">
+    <div id="entries-grid">
+      <CollectionGrid cols={3} gap="md">
       {allEntries.map((entry) => {
         const href = entry.entryType === 'essay'
           ? `/essays/${entry.id}`
@@ -99,7 +100,7 @@ const allTopics = [...new Set(allEntries.flatMap((e) => e.data.topics ?? []))].s
           <div
             class="entry-card-wrapper"
             data-type={entry.entryType}
-            data-topics={JSON.stringify(entry.data.topics ?? [])}
+            data-topics={JSON.stringify((entry as any).data.topics ?? [])}
             data-growth={entry.entryType === 'note' ? (entry as any).data.growthStage ?? '' : ''}
           >
             <GardenCard
@@ -107,14 +108,15 @@ const allTopics = [...new Set(allEntries.flatMap((e) => e.data.topics ?? []))].s
               type={entry.entryType}
               excerpt={entry.entryType === 'essay' || entry.entryType === 'pattern' ? (entry as any).data.lede : (entry as any).data.excerpt ?? (entry as any).data.description}
               date={entry.displayDate}
-              topics={entry.data.topics}
+              topics={(entry as any).data.topics}
               growthStage={entry.entryType === 'note' ? (entry as any).data.growthStage : undefined}
               href={href}
             />
           </div>
         );
       })}
-    </CollectionGrid>
+      </CollectionGrid>
+    </div>
   </section>
 </Layout>
 
@@ -209,7 +211,7 @@ const allTopics = [...new Set(allEntries.flatMap((e) => e.data.topics ?? []))].s
     const growthFilters = document.getElementById('growth-filters');
 
     function applyFilters() {
-      const cards = grid.querySelectorAll('.entry-card-wrapper');
+      const cards = grid!.querySelectorAll('.entry-card-wrapper');
       cards.forEach((card) => {
         const cardType = card.getAttribute('data-type');
         const cardTopics = JSON.parse(card.getAttribute('data-topics') || '[]');
@@ -228,7 +230,7 @@ const allTopics = [...new Set(allEntries.flatMap((e) => e.data.topics ?? []))].s
     }
 
     function handleChipClick(e: Event) {
-      const btn = (e.target as HTMLElement).closest('button[data-filter-type], button[data-filter-topic], button[data-filter-growth]');
+      const btn = (e.target as HTMLElement).closest('button[data-filter-type], button[data-filter-topic], button[data-filter-growth]') as HTMLElement | null;
       if (!btn) return;
 
       if ('filterType' in btn.dataset) {

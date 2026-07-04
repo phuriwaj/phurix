@@ -54,7 +54,7 @@ const artTopic = pickArtTopic(entry.data.topics);
               {formattedDate}
             </time>
             <span class="essay-divider">·</span>
-            <span class="essay-read-time">{Math.max(1, Math.round(entry.body.split(/\s+/).length / 220))} min read</span>
+            <span class="essay-read-time">{Math.max(1, Math.round((entry.body ?? '').split(/\s+/).length / 220))} min read</span>
           </div>
 
           {entry.data.topics && entry.data.topics.length > 0 && (
