@@ -3,6 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import GardenCard from '@/components/GardenCard.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { findOnThisDay } from '@/lib/onThisDay';
 
 type MergedEntry =
   | (CollectionEntry<'essays'> & { entryType: 'essay'; displayDate: Date })
@@ -49,18 +50,44 @@ const topicsForEntry = (entry: MergedEntry): string[] => {
 };
 
 const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
+
+// "On this day" — surface one entry whose MM-DD matches today, from any prior year.
+// Helper returns matches sorted by date desc; we take the most recent (first).
+const today = new Date();
+const onThisDayMatches = findOnThisDay(allEntries, today);
+const onThisDay = onThisDayMatches[0] ?? null;
+const onThisDayHref = onThisDay
+  ? onThisDay.entryType === 'essay'
+    ? `/essays/${onThisDay.id}`
+    : onThisDay.entryType === 'note'
+    ? `/notes/${onThisDay.id}`
+    : onThisDay.entryType === 'pattern'
+    ? `/patterns/${onThisDay.id}`
+    : onThisDay.data.link ?? '#'
+  : '#';
+const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.getFullYear();
 ---
 
 <Layout title="Garden" description="Everything I've written, in reverse chronological order.">
   <section class="page-header-section">
     <div class="container-phx">
-      <h1 class="page-title">Garden</h1>
+      <h1 class="page-title">The Garden</h1>
       <p class="page-lede">
         Everything I've written, in reverse chronological order.
-        Filter by type or topic.
+        Filter by type, topic, or growth stage.
       </p>
     </div>
   </section>
+
+  {onThisDay && (
+    <section class="on-this-day">
+      <div class="container-phx">
+        <p class="on-this-day-line">
+          On this day in {onThisDayYear} — <a href={onThisDayHref}>{onThisDay.data.title}</a>
+        </p>
+      </div>
+    </section>
+  )}
 
   <section class="filter-section">
     <div class="container-phx">
@@ -133,12 +160,18 @@ const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
               topics={entryTopics}
               growthStage={entry.entryType === 'note' ? entry.data.growthStage : undefined}
               href={href}
+              newSince={entry.displayDate}
             />
           </div>
         );
       })}
       </CollectionGrid>
+      <p class="garden-empty" id="garden-empty" hidden>No matches — clear filters.</p>
     </div>
+
+    <p class="garden-random-link">
+      Or — <a href="/random">read something random</a>.
+    </p>
   </section>
 </Layout>
 
@@ -150,11 +183,17 @@ const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
   }
 
   .page-title {
-    font-size: var(--text-hero-large);
+    font-size: var(--text-jumbo);
     font-weight: 600;
     color: var(--color-starbucks-green);
     line-height: 1.15;
     margin-bottom: var(--spacing-3);
+  }
+
+  @media (min-width: 1024px) {
+    .page-title {
+      font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
+    }
   }
 
   .page-lede {
@@ -162,6 +201,31 @@ const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
     line-height: 1.6;
     color: var(--color-text-black-soft);
     max-width: 60ch;
+  }
+
+  /* On this day — single quiet Lora-italic line above the filter bar. */
+  .on-this-day {
+    padding-block: var(--spacing-4) var(--spacing-2);
+    background: var(--color-neutral-warm);
+  }
+
+  .on-this-day-line {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-body);
+    color: var(--color-text-black);
+    margin: 0;
+  }
+
+  .on-this-day-line a {
+    color: var(--color-green-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .on-this-day-line a:hover {
+    color: var(--color-starbucks-green);
   }
 
   .filter-section {
@@ -217,6 +281,36 @@ const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
   .entry-card-wrapper.hidden {
     display: none;
   }
+
+  .garden-empty {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-body);
+    color: var(--color-text-black-soft);
+    text-align: center;
+    padding-block: var(--spacing-7);
+    margin: 0;
+  }
+
+  .garden-random-link {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-body);
+    color: var(--color-text-black-soft);
+    text-align: center;
+    margin-block-start: var(--spacing-6);
+  }
+
+  .garden-random-link a {
+    color: var(--color-green-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .garden-random-link a:hover {
+    color: var(--color-starbucks-green);
+  }
 </style>
 
 <script>
@@ -231,9 +325,20 @@ const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
     const typeFilters = document.getElementById('type-filters');
     const topicFilters = document.getElementById('topic-filters');
     const growthFilters = document.getElementById('growth-filters');
+    const emptyState = document.getElementById('garden-empty');
+
+    function setActive(container: Element | null, selected: HTMLElement) {
+      container?.querySelectorAll('button').forEach((b) => {
+        b.classList.remove('topic-chip-active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      selected.classList.add('topic-chip-active');
+      selected.setAttribute('aria-pressed', 'true');
+    }
 
     function applyFilters() {
       const cards = grid!.querySelectorAll('.entry-card-wrapper');
+      let visibleCount = 0;
       cards.forEach((card) => {
         const cardType = card.getAttribute('data-type');
         const cardTopics = JSON.parse(card.getAttribute('data-topics') || '[]');
@@ -245,24 +350,24 @@ const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
 
         if (typeMatch && topicMatch && growthMatch) {
           (card as HTMLElement).style.display = '';
+          visibleCount += 1;
         } else {
           (card as HTMLElement).style.display = 'none';
         }
       });
+
+      if (emptyState) {
+        if (visibleCount === 0) {
+          emptyState.removeAttribute('hidden');
+        } else {
+          emptyState.setAttribute('hidden', '');
+        }
+      }
     }
 
     function handleChipClick(e: Event) {
       const btn = (e.target as HTMLElement).closest('button[data-filter-type], button[data-filter-topic], button[data-filter-growth]') as HTMLElement | null;
       if (!btn) return;
-
-      const setActive = (container: Element | null, selected: HTMLElement) => {
-        container?.querySelectorAll('button').forEach((b) => {
-          b.classList.remove('topic-chip-active');
-          b.setAttribute('aria-pressed', 'false');
-        });
-        selected.classList.add('topic-chip-active');
-        selected.setAttribute('aria-pressed', 'true');
-      };
 
       if ('filterType' in btn.dataset) {
         activeType = btn.dataset.filterType ?? 'all';
@@ -282,20 +387,38 @@ const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
     topicFilters?.addEventListener('click', handleChipClick);
     growthFilters?.addEventListener('click', handleChipClick);
 
-    // Apply filters from URL params on load
+    // Hydrate filters from URL params on load.
+    // Unknown values fall back silently to 'all' (no crash).
     const params = new URLSearchParams(window.location.search);
+
     const typeParam = params.get('type');
     if (typeParam && ['note', 'essay', 'talk', 'pattern'].includes(typeParam)) {
       activeType = typeParam;
-      typeFilters?.querySelectorAll('button').forEach((b) => {
-        b.classList.remove('topic-chip-active');
-        b.setAttribute('aria-pressed', 'false');
-      });
-      const btn = typeFilters?.querySelector(`[data-filter-type="${typeParam}"]`);
-      btn?.classList.add('topic-chip-active');
-      btn?.setAttribute('aria-pressed', 'true');
-      applyFilters();
+      const btn = typeFilters?.querySelector(`[data-filter-type="${typeParam}"]`) as HTMLElement | null;
+      if (btn) {
+        setActive(typeFilters, btn);
+      }
     }
+
+    const topicParam = params.get('topic');
+    if (topicParam) {
+      const btn = topicFilters?.querySelector(`[data-filter-topic="${topicParam}"]`) as HTMLElement | null;
+      if (btn) {
+        activeTopic = topicParam;
+        setActive(topicFilters, btn);
+      }
+    }
+
+    const growthParam = params.get('growth');
+    if (growthParam && ['seedling', 'budding', 'evergreen'].includes(growthParam)) {
+      activeGrowth = growthParam;
+      const btn = growthFilters?.querySelector(`[data-filter-growth="${growthParam}"]`) as HTMLElement | null;
+      if (btn) {
+        setActive(growthFilters, btn);
+      }
+    }
+
+    applyFilters();
   }
 
   initGardenFilter();

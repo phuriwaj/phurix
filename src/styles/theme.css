@@ -93,6 +93,7 @@
   --text-hero-large: 2.8rem; /* 45px */
   --text-jumbo: 3.6rem; /* 58px */
   --text-display: 5rem; /* 80px */
+  --text-prose: 1.8rem; /* 18px — long-form prose body (DESIGN.md §1) */
 
   /* --- Shadows (layered, whisper-soft) ---------------------------------- */
   --shadow-card: 0 0 0.5px rgba(0, 0, 0, 0.14), 0 1px 1px rgba(0, 0, 0, 0.24);

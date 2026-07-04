@@ -1,4 +1,9 @@
 ---
+/**
+ * Note detail — `/notes/[slug]` (DESIGN.md §4 — read the note).
+ * Same reading-frame as essay detail, no hero unless growthStage === 'evergreen'.
+ * Cite: DESIGN.md §4 (notes detail).
+ */
 import Layout from '@/layouts/Layout.astro';
 import TopicChip from '@/components/TopicChip.astro';
 import GrowthBadge from '@/components/GrowthBadge.astro';
@@ -35,16 +40,18 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 const artTopic = pickArtTopic(entry.data.topics);
 ---
 
-<Layout title={entry.data.title} description={entry.data.excerpt}>
+<Layout title={entry.data.title} description={entry.data.excerpt} hideFrap>
   <section class="section">
     <div class="container-phx">
       <a href="/notes" class="back-link">← Notes</a>
 
       <article class="note-article">
         <header class="note-header">
-          <div class="note-art">
-            <TopicPhoto topic={artTopic} scale="md" />
-          </div>
+          {entry.data.growthStage === 'evergreen' && (
+            <div class="note-art">
+              <TopicPhoto topic={artTopic} scale="md" showCredit={true} />
+            </div>
+          )}
 
           <h1 class="note-title">{entry.data.title}</h1>
 
@@ -52,14 +59,17 @@ const artTopic = pickArtTopic(entry.data.topics);
             <time class="note-date" datetime={entry.data.date.toISOString()}>
               {formattedDate}
             </time>
+            <span class="note-divider">·</span>
             {entry.data.growthStage && (
-              <GrowthBadge stage={entry.data.growthStage} />
+              <GrowthBadge stage={entry.data.growthStage} size="md" />
             )}
+            <span class="note-divider">·</span>
+            <span class="note-read-time">{Math.max(1, Math.round((entry.body ?? '').split(/\s+/).length / 220))} min read</span>
           </div>
 
           {entry.data.topics && entry.data.topics.length > 0 && (
             <div class="note-topics">
-              {entry.data.topics.map((t) => <TopicChip label={t} />)}
+              {entry.data.topics.map((t) => <TopicChip label={t} href={`/garden?topic=${t}`} />)}
             </div>
           )}
         </header>
@@ -109,26 +119,31 @@ const artTopic = pickArtTopic(entry.data.topics);
     margin-bottom: var(--spacing-6);
   }
 
+  /* Hero only for evergreen notes (DESIGN.md §6); max-width 32rem keeps
+     short notes visually tighter than essay hero. */
   .note-art {
     aspect-ratio: 4 / 3;
     border-radius: var(--radius-card);
     overflow: hidden;
     box-shadow: var(--shadow-card);
     margin-bottom: var(--spacing-5);
-    max-width: 36rem;
+    max-width: 32rem;
   }
 
-  .note-art :global(svg) {
+  .note-art :global(svg),
+  .note-art :global(img) {
     width: 100%;
     height: 100%;
     display: block;
   }
 
+  /* Title in Lora 600 — matches essay detail (DESIGN.md §1) */
   .note-title {
-    font-size: var(--text-hero-large);
+    font-family: var(--font-serif);
+    font-size: var(--text-h1);
     font-weight: 600;
     color: var(--color-starbucks-green);
-    line-height: 1.15;
+    line-height: 1.2;
     margin-bottom: var(--spacing-3);
   }
 
@@ -138,12 +153,11 @@ const artTopic = pickArtTopic(entry.data.topics);
     flex-wrap: wrap;
     gap: var(--spacing-2);
     margin-bottom: var(--spacing-3);
-  }
-
-  .note-date {
     font-size: var(--text-small);
     color: var(--color-text-black-soft);
   }
+
+  .note-divider { opacity: 0.5; }
 
   .note-topics {
     display: flex;
@@ -177,81 +191,10 @@ const artTopic = pickArtTopic(entry.data.topics);
     margin-left: auto;
   }
 
-  /* --- Prose styles ------------------------------------------------ */
-  .prose {
-    max-width: 65ch;
-  }
-
-  .prose :global(h2) {
-    font-size: var(--text-h1);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
-    margin-top: var(--spacing-6);
-    margin-bottom: var(--spacing-3);
-  }
-
-  .prose :global(h3) {
-    font-size: var(--text-body-lg);
-    font-weight: 600;
-    color: var(--color-text-black);
-    margin-top: var(--spacing-5);
-    margin-bottom: var(--spacing-2);
-  }
-
-  .prose :global(p) {
-    color: var(--color-text-black);
-    line-height: 1.75;
-    margin-bottom: var(--spacing-4);
-  }
-
-  .prose :global(ul),
-  .prose :global(ol) {
-    padding-left: var(--spacing-5);
-    margin-bottom: var(--spacing-4);
-  }
-
-  .prose :global(li) {
-    color: var(--color-text-black-soft);
-    margin-bottom: var(--spacing-2);
-    line-height: 1.7;
-  }
-
-  .prose :global(blockquote) {
-    border-left: 3px solid var(--color-green-accent);
-    padding-left: var(--spacing-4);
-    margin-left: 0;
-    font-style: italic;
-    color: var(--color-text-black-soft);
-  }
-
-  .prose :global(code) {
-    background: var(--color-ceramic);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.9em;
-  }
-
-  .prose :global(pre) {
-    background: var(--color-house-green);
-    color: var(--color-text-white);
-    padding: var(--spacing-4);
-    border-radius: var(--radius-card);
-    overflow-x: auto;
-    margin-bottom: var(--spacing-4);
-  }
-
-  .prose :global(pre code) {
-    background: none;
-    padding: 0;
-  }
-
-  .prose :global(a) {
-    color: var(--color-green-accent);
-    text-decoration: underline;
-  }
-
-  .prose :global(strong) {
-    font-weight: 600;
-    color: var(--color-text-black);
+  /* Notes are shorter — slightly tighter body line-height than the shared
+     `.prose` utility's 1.7. Scoped to .note-article so other prose pages
+     are unaffected. */
+  .note-article .prose {
+    line-height: 1.65;
   }
 </style>

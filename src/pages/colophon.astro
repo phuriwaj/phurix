@@ -1,0 +1,200 @@
+---
+/**
+ * /colophon — single-page design statement.
+ * Cite as: DESIGN.md §1 (typography stack), §3 (containers).
+ *
+ * Per Sloan §1 the colophon is a design statement as a page, not a footer
+ * link. ~10 Lora paragraphs documenting stack, fonts, host, RSS, privacy,
+ * and how to cite. Inline JSX (no MDX collection — keep it cheap).
+ *
+ * TODO: author can revise each paragraph.
+ */
+import Layout from '@/layouts/Layout.astro';
+
+const githubUrl = 'https://github.com/phurix';
+const rssUrl = '/rss.xml';
+const newsletterAnchor = '#newsletter';
+---
+
+<Layout
+  title="Colophon — phurix"
+  description="Notes on how this site is built, hosted, and licensed."
+>
+  <section class="page-header-section">
+    <div class="container-phx">
+      <p class="section-eyebrow">Colophon</p>
+      <h1 class="page-title">Colophon</h1>
+      <p class="page-lede">
+        Notes on how this site is built, hosted, and licensed.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-phx colophon-section">
+    <div class="prose">
+      <p>
+        <strong>Stack.</strong> Astro 7, statically generated with
+        <code>output: 'static'</code>. Tailwind 4 via its Vite plugin. MDX
+        content collections for essays, notes, patterns, books, talks, and
+        projects. TypeScript in strict mode. React is mounted for islands
+        only — there are no React pages.
+      </p>
+
+      <p>
+        <strong>Host.</strong> The site lives at
+        <a href="https://phurix.dev">phurix.dev</a>. Deploys run from the
+        <code>master</code> branch and the build emits a flat
+        <code>dist/</code> that any CDN can serve.
+      </p>
+
+      <p>
+        <strong>Fonts.</strong> Two faces do almost all the work: Lora
+        (serif, for long-form prose) and Inter (sans, for chrome — the
+        nav, the footer, the chips, the buttons). A third, Kalam, is
+        loaded as a script face for future use; nothing on the site uses
+        it yet.
+      </p>
+
+      <p>
+        <strong>Type.</strong> All type is hand-set. The body face is Lora
+        at 18px on a 1.7 line-height on long-form pages, capped at 65
+        characters per line. The chrome runs Inter at 14–16px. There is
+        one display size for page h1s (jumbo, fluid) and one for
+        section headings.
+      </p>
+
+      <p>
+        <strong>Palette.</strong> A warm cream canvas
+        (<code>#f2f0eb</code>), house green for dark bands
+        (<code>#1e3932</code>), and a single accent — Starbucks green
+        (<code>#006241</code>) — for headings, inline links, and the
+        primary call to action. One accent. One job: signal where the
+        author is talking.
+      </p>
+
+      <p>
+        <strong>Imagery.</strong> Topic photographs come from Unsplash,
+        bundled locally and processed at build time via
+        <code>astro:assets</code> to WebP with responsive widths. They
+        appear with rounded corners and a soft card shadow. No overlays,
+        no filters, no parallax.
+      </p>
+
+      <p>
+        <strong>RSS.</strong> Available at <a href={rssUrl}>/rss.xml</a>.
+        The feed merges essays, notes, and patterns into a single
+        reverse-chronological stream. Per-tag feeds are not generated.
+      </p>
+
+      <p>
+        <strong>Privacy.</strong> No third-party analytics. No tracking.
+        No cookies. The only network requests beyond this domain are the
+        font files (Google Fonts via Astro Fonts) and the optional
+        Unsplash photo CDN. If a feature ever needs analytics, it will
+        be added deliberately and documented here.
+      </p>
+
+      <p>
+        <strong>How to cite.</strong> Suggested format: Author, "Title,"
+        phurix, DATE, URL. Unless otherwise noted, all writing is
+        licensed
+        <a
+          href="https://creativecommons.org/licenses/by-nc/4.0/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          CC BY-NC 4.0
+        </a>. Short quotes are welcome with attribution.
+      </p>
+
+      <p>
+        <strong>Acknowledgements.</strong> With thanks to the libraries
+        and tools that make this site possible — Astro, Tailwind, the
+        MDX community, and the photographers whose work appears
+        throughout.
+      </p>
+
+      <p class="colophon-subscribe">
+        Subscribe via <a href={rssUrl}>RSS</a>,
+        <a href={newsletterAnchor}>email</a>, or
+        <a
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >GitHub</a>.
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-7) var(--spacing-5);
+    background: var(--color-neutral-warm);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .section-eyebrow {
+    font-size: var(--text-small);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .page-title {
+    font-family: var(--font-sans);
+    font-size: var(--text-jumbo);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.1;
+    margin-bottom: var(--spacing-3);
+  }
+
+  @media (min-width: 1024px) {
+    .page-title {
+      font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
+    }
+  }
+
+  .page-lede {
+    font-family: var(--font-serif);
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 60ch;
+  }
+
+  .colophon-section {
+    padding-block: var(--spacing-6);
+  }
+
+  @media (min-width: 1024px) {
+    .colophon-section {
+      padding-block: var(--spacing-7);
+    }
+  }
+
+  /* Subscribe line — sits at the bottom of the prose, hairline-divided,
+     three inline links, Lora body. */
+  .colophon-subscribe {
+    margin-block-start: var(--spacing-6);
+    padding-block-start: var(--spacing-5);
+    border-top: 1px solid var(--color-hairline);
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    color: var(--color-text-black-soft);
+  }
+
+  .colophon-subscribe a {
+    color: var(--color-starbucks-green);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .colophon-subscribe a:hover {
+    color: var(--color-green-accent);
+  }
+</style>

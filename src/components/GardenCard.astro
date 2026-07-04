@@ -9,6 +9,7 @@ import Card from './Card.astro';
 import TopicChip from './TopicChip.astro';
 import GrowthBadge from './GrowthBadge.astro';
 import TopicPhoto from './TopicPhoto.astro';
+import CuratedMark from './CuratedMark.astro';
 import { pickArtTopic } from '@/lib/topics';
 
 interface Props {
@@ -22,6 +23,8 @@ interface Props {
   href: string;
   imageSrc?: string;
   class?: string;
+  /** When set, if the date is within the past 30 days, render a ✦ mark. */
+  newSince?: Date;
 }
 
 const {
@@ -35,6 +38,7 @@ const {
   href,
   imageSrc,
   class: className = '',
+  newSince,
 } = Astro.props;
 
 const displayText = excerpt ?? lede ?? '';
@@ -46,6 +50,12 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 }).format(date);
 
 const typeLabels = { note: 'Note', essay: 'Essay', talk: 'Talk', pattern: 'Pattern' };
+
+// "Newly added" badge: mark the entry when its newSince date is within 30 days
+// of the build's "now" (precomputed at request time so the comparison is stable).
+const NOW_MS = Date.now();
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+const isNew = newSince instanceof Date && (NOW_MS - newSince.getTime()) <= THIRTY_DAYS_MS;
 ---
 
 <Card emphasis="lifted" class:list={['garden-card', className]}>
@@ -57,6 +67,7 @@ const typeLabels = { note: 'Note', essay: 'Essay', talk: 'Talk', pattern: 'Patte
         <TopicPhoto
           topic={pickArtTopic(topics)}
           scale="sm"
+          showCredit={false}
         />
       )}
     </div>
@@ -68,7 +79,10 @@ const typeLabels = { note: 'Note', essay: 'Essay', talk: 'Talk', pattern: 'Patte
         <time class="garden-date" datetime={date.toISOString()}>{formattedDate}</time>
       </div>
 
-      <h3 class="garden-card-title">{title}</h3>
+      <h3 class="garden-card-title">
+        {isNew && <CuratedMark size="sm" />}
+        {title}
+      </h3>
 
       {displayText && <p class="garden-card-excerpt">{displayText}</p>}
 

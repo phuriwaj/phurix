@@ -44,6 +44,7 @@ const books = defineCollection({
     author: z.string(),
     coverColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Expected #RRGGBB hex'),
     year: z.number().optional(),
+    currentlyReading: z.boolean().default(false),
   }),
 });
 
@@ -58,4 +59,15 @@ const patterns = defineCollection({
   }),
 });
 
-export const collections = { notes, essays, talks, books, patterns };
+const projects = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/projects' }),
+  schema: z.object({
+    title: z.string(),
+    desc: z.string(),
+    tags: z.array(z.string()).default([]),
+    year: z.number().int().optional(),
+    url: z.string().url().optional(),
+  }),
+});
+
+export const collections = { notes, essays, talks, books, patterns, projects };

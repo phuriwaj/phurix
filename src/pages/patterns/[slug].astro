@@ -1,7 +1,13 @@
 ---
+/**
+ * Pattern detail — `/patterns/[slug]` (DESIGN.md §4 — read the pattern).
+ * Same reading-frame as essay/notes detail. Optional "Used in:" footer
+ * line that resolves `related[]` references to other patterns.
+ * Cite: DESIGN.md §4 (patterns detail).
+ */
 import Layout from '@/layouts/Layout.astro';
 import TopicPhoto from '@/components/TopicPhoto.astro';
-import { getCollection, render } from 'astro:content';
+import { getCollection, render, getEntry } from 'astro:content';
 import { pickArtTopic } from '@/lib/topics';
 
 export async function getStaticPaths() {
@@ -16,11 +22,21 @@ const { pattern } = Astro.props;
 const { Content } = await render(pattern);
 const allTopics = pattern.data.topics ?? [];
 const artTopic = pickArtTopic(allTopics);
+
+// Resolve related[] references — currently limited to other patterns
+// (per src/content.config.ts schema). If the schema ever expands to
+// cross-collection references, extend this resolver.
+const relatedRefs = pattern.data.related ?? [];
+const relatedEntries = await Promise.all(
+  relatedRefs.map((ref) => getEntry(ref))
+);
+const relatedItems = relatedEntries.filter((e): e is NonNullable<typeof e> => Boolean(e));
 ---
 
 <Layout
   title={`${pattern.data.title} — phurix`}
   description={pattern.data.lede}
+  hideFrap
 >
   <article class="pattern-article">
     <header class="pattern-header container-phx">
@@ -29,18 +45,18 @@ const artTopic = pickArtTopic(allTopics);
       </p>
 
       <div class="pattern-art">
-        <TopicPhoto topic={artTopic} scale="md" />
+        <TopicPhoto topic={artTopic} scale="md" showCredit={true} />
       </div>
 
       <h1 class="pattern-h1">{pattern.data.title}</h1>
       <p class="pattern-lede">{pattern.data.lede}</p>
       <div class="pattern-meta-row">
         <time datetime={pattern.data.date.toISOString()} class="pattern-date">
-          {pattern.data.date.toLocaleDateString('en-GB', {
+          {new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
-          })}
+          }).format(new Date(pattern.data.date))}
         </time>
         {allTopics.length > 0 && (
           <ul class="pattern-topics">
@@ -51,8 +67,24 @@ const artTopic = pickArtTopic(allTopics);
     </header>
 
     <div class="pattern-body container-phx">
-      <Content />
+      <div class="prose">
+        <Content />
+      </div>
     </div>
+
+    {relatedItems.length > 0 && (
+      <aside class="pattern-related container-phx">
+        <p class="pattern-related-label">Used in:</p>
+        <ul class="pattern-related-list">
+          {relatedItems.map((entry, i) => (
+            <li>
+              <a href={`/patterns/${entry.id}`}>{entry.data.title}</a>
+              {i < relatedItems.length - 1 && <span class="pattern-related-sep"> · </span>}
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
 
     <footer class="pattern-footer container-phx">
       <a href="/patterns" class="back-link">← Back to all patterns</a>
@@ -80,7 +112,8 @@ const artTopic = pickArtTopic(allTopics);
     max-width: 32rem;
   }
 
-  .pattern-art :global(svg) {
+  .pattern-art :global(svg),
+  .pattern-art :global(img) {
     width: 100%;
     height: 100%;
     display: block;
@@ -99,21 +132,25 @@ const artTopic = pickArtTopic(allTopics);
     color: var(--color-green-accent);
     font-weight: 600;
     text-decoration: none;
+    transition: color var(--duration-button) ease;
   }
 
   .back-link:hover {
     color: var(--color-starbucks-green);
   }
 
+  /* Title in Lora 600 — matches essay/notes detail (DESIGN.md §1) */
   .pattern-h1 {
-    font-size: var(--text-hero-large);
+    font-family: var(--font-serif);
+    font-size: var(--text-h1);
     font-weight: 600;
     color: var(--color-starbucks-green);
-    line-height: 1.15;
+    line-height: 1.2;
     margin-bottom: var(--spacing-3);
   }
 
   .pattern-lede {
+    font-family: var(--font-serif);
     font-size: var(--text-body-lg);
     line-height: 1.6;
     color: var(--color-text-black-soft);
@@ -152,57 +189,51 @@ const artTopic = pickArtTopic(allTopics);
 
   .pattern-body {
     max-width: 65ch;
-    font-size: var(--text-body);
-    line-height: 1.7;
-    color: var(--color-text-black);
+    margin-inline: auto;
   }
 
-  .pattern-body :global(h2) {
-    font-size: var(--text-h1);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
+  /* "Used in:" footer line — only renders when related[] is populated */
+  .pattern-related {
+    max-width: 65ch;
+    margin-inline: auto;
     margin-top: var(--spacing-6);
-    margin-bottom: var(--spacing-3);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--color-hairline);
   }
 
-  .pattern-body :global(h3) {
-    font-size: 1.8rem;
+  .pattern-related-label {
+    font-family: var(--font-sans);
+    font-size: var(--text-micro);
     font-weight: 600;
-    color: var(--color-text-black);
-    margin-top: var(--spacing-5);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
     margin-bottom: var(--spacing-2);
   }
 
-  .pattern-body :global(p) {
-    margin-bottom: var(--spacing-3);
+  .pattern-related-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    color: var(--color-text-black);
   }
 
-  .pattern-body :global(ul),
-  .pattern-body :global(ol) {
-    margin-bottom: var(--spacing-3);
-    padding-left: var(--spacing-4);
-  }
-
-  .pattern-body :global(li) {
-    margin-bottom: var(--spacing-1);
-  }
-
-  .pattern-body :global(a) {
+  .pattern-related-list a {
     color: var(--color-green-accent);
     text-decoration: underline;
     text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
   }
 
-  .pattern-body :global(a:hover) {
+  .pattern-related-list a:hover {
     color: var(--color-starbucks-green);
   }
 
-  .pattern-body :global(blockquote) {
-    margin: var(--spacing-4) 0;
-    padding: var(--spacing-3) var(--spacing-4);
-    border-left: 3px solid var(--color-green-accent);
+  .pattern-related-sep {
     color: var(--color-text-black-soft);
-    font-style: italic;
+    margin-inline-start: 0.3em;
   }
 
   .pattern-footer {

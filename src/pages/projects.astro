@@ -1,28 +1,39 @@
 ---
+/**
+ * /projects — A short shelf of side projects.
+ * Cite as: DESIGN.md §4 (/projects) — not in top nav; accessible via /about and footer.
+ *
+ * Note: the `projects` content collection was unavailable at write time, so the
+ * hardcoded seed data below stands in for it. When the collection lands, swap
+ * the array for `await getCollection('projects')`.
+ */
 import Layout from '@/layouts/Layout.astro';
 import Card from '@/components/Card.astro';
-import Button from '@/components/Button.astro';
 
 const projects = [
   {
     title: 'flyed',
     desc: 'Educational platform connecting schools with field trip providers. Astro + React, edge-rendered, optimized for slow networks.',
     tags: ['Astro', 'React', 'Cloudflare'],
+    url: undefined as string | undefined,
   },
   {
     title: 'café console',
     desc: 'A static dashboard for indie café owners. Built with Astro and React 19. Calm typography, fast loads.',
     tags: ['Astro', 'Tailwind', 'MDX'],
+    url: undefined as string | undefined,
   },
   {
     title: 'barista cli',
     desc: 'Rust-powered scaffolder for greenfield web projects. One command, opinionated defaults.',
     tags: ['Rust', 'CLI'],
+    url: undefined as string | undefined,
   },
   {
     title: 'steam notes',
     desc: 'A small editor for the things you read while your coffee cools. End-to-end encrypted drafts.',
     tags: ['TypeScript', 'IndexedDB'],
+    url: undefined as string | undefined,
   },
 ];
 ---
@@ -30,7 +41,7 @@ const projects = [
 <Layout title="Projects — phurix" description="Projects by phurix">
   <section class="container-phx section">
     <p class="section-eyebrow">Projects</p>
-    <h1 class="page-title">Recent work.</h1>
+    <h1 class="page-title">Projects</h1>
     <p class="page-lede">
       A small selection of recent projects — case studies available on
       request.
@@ -44,14 +55,29 @@ const projects = [
           <div class="tag-row">
             {p.tags.map((t) => <span class="tag">{t}</span>)}
           </div>
-          <div class="project-cta">
-            <Button variant="outline" size="sm" href="/contact">
-              Discuss this project
-            </Button>
-          </div>
+          {p.url && (
+            <div class="project-cta">
+              <a
+                href={p.url}
+                class="project-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View project →
+              </a>
+            </div>
+          )}
         </Card>
       ))}
     </div>
+
+    <p class="projects-more">
+      More on <a
+        href="https://github.com/phurix"
+        target="_blank"
+        rel="noopener noreferrer"
+      >github.com/phurix</a>.
+    </p>
   </section>
 </Layout>
 
@@ -66,18 +92,19 @@ const projects = [
   }
 
   .page-title {
-    font-size: var(--text-hero-large);
+    font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
     font-weight: 600;
     color: var(--color-starbucks-green);
-    line-height: 1.15;
+    line-height: 1.1;
     margin-bottom: var(--spacing-4);
   }
 
   .page-lede {
+    font-family: var(--font-serif);
     font-size: var(--text-body-lg);
     line-height: 1.6;
     color: var(--color-text-black-soft);
-    max-width: 55ch;
+    max-width: 60ch;
   }
 
   .project-grid {
@@ -91,6 +118,7 @@ const projects = [
   }
 
   .project-title {
+    font-family: var(--font-sans);
     font-size: var(--text-h1);
     font-weight: 600;
     color: var(--color-starbucks-green);
@@ -98,6 +126,8 @@ const projects = [
   }
 
   .project-desc {
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
     color: var(--color-text-black-soft);
     line-height: 1.6;
     margin-bottom: var(--spacing-3);
@@ -111,6 +141,7 @@ const projects = [
   }
 
   .tag {
+    font-family: var(--font-sans);
     font-size: var(--text-micro);
     font-weight: 600;
     color: var(--color-starbucks-green);
@@ -122,6 +153,45 @@ const projects = [
 
   .project-cta {
     margin-top: auto;
+  }
+
+  .project-link {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-green-accent);
+    background: transparent;
+    border: 1px solid var(--color-green-accent);
+    padding: 7px 16px;
+    border-radius: var(--radius-button);
+    text-decoration: none;
+    transition:
+      color var(--duration-button) ease,
+      background-color var(--duration-button) ease;
+  }
+
+  .project-link:hover {
+    color: var(--color-white);
+    background: var(--color-green-accent);
+  }
+
+  .projects-more {
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    color: var(--color-text-black-soft);
+    margin-block-start: var(--spacing-6);
+  }
+
+  .projects-more a {
+    color: var(--color-green-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .projects-more a:hover {
+    color: var(--color-starbucks-green);
   }
 
   .mt-7 { margin-top: var(--spacing-7); }

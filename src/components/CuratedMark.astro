@@ -1,0 +1,36 @@
+---
+/**
+ * CuratedMark — single accent glyph for curated picks.
+ * One glyph, one job: mark "currently featured" or "newly added."
+ * Cite as: DESIGN.md §7 (interaction — accent glyph).
+ */
+interface Props {
+  /** Visual size. Default 'md'. */
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const { size = 'md', class: className = '' } = Astro.props;
+const sizeMap = { sm: '0.9em', md: '1.1em', lg: '1.4em' };
+---
+
+<span
+  class:list={['curated-mark', `curated-mark-${size}`, className]}
+  aria-hidden="true"
+  style={`font-size: ${sizeMap[size]}`}
+>✦</span>
+
+<style>
+  .curated-mark {
+    display: inline-block;
+    color: var(--color-starbucks-green);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    line-height: 0;
+    vertical-align: 0.05em;
+    margin-inline-end: 0.4em;
+  }
+  .curated-mark-sm { font-size: 0.9em; }
+  .curated-mark-md { font-size: 1.1em; }
+  .curated-mark-lg { font-size: 1.4em; }
+</style>

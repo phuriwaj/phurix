@@ -1,0 +1,175 @@
+---
+/**
+ * NewsletterBand — dark-green subscribe band (DESIGN.md §9 — subscribe surface).
+ * Extracted from the inline dark card in src/pages/about.astro.
+ * Cite as: DESIGN.md §9 (subscribe surface).
+ */
+interface Props {
+  /** Override the default headline. */
+  headline?: string;
+  /** Override the default subhead. */
+  subhead?: string;
+  /** Form submit target. */
+  action?: string;
+  /** CTA label. */
+  ctaLabel?: string;
+  class?: string;
+}
+
+const {
+  headline = 'Letters from a working library.',
+  subhead = "Occasional notes from the studio — essays, experiments, things I'm thinking about. No spam, no marketing. Just a short dispatch when there's something worth sharing.",
+  ctaLabel = 'Subscribe',
+  action = '/api/subscribe', // TODO: backend agent wires up the real endpoint
+  class: className = '',
+} = Astro.props;
+---
+
+<section class:list={['newsletter-band', className]}>
+  <div class="newsletter-band-inner">
+    <div class="newsletter-band-text">
+      <h2 class="newsletter-band-headline">{headline}</h2>
+      <p class="newsletter-band-blurb">{subhead}</p>
+    </div>
+    <form class="newsletter-band-form" action={action} method="post">
+      <label for="newsletter-email" class="sr-only">Email address</label>
+      <input
+        type="email"
+        id="newsletter-email"
+        name="email"
+        placeholder="your@email.com"
+        class="newsletter-band-input"
+        required
+      />
+      <button type="submit" class="newsletter-band-submit">{ctaLabel}</button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .newsletter-band {
+    background: var(--color-house-green);
+    color: var(--color-text-white);
+    border-radius: var(--radius-card);
+    padding: var(--spacing-5);
+  }
+
+  @media (min-width: 768px) {
+    .newsletter-band {
+      padding: var(--spacing-6);
+    }
+  }
+
+  .newsletter-band-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+  }
+
+  @media (min-width: 768px) {
+    .newsletter-band-inner {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--spacing-6);
+    }
+  }
+
+  .newsletter-band-text {
+    flex: 1;
+    max-width: 50ch;
+  }
+
+  .newsletter-band-headline {
+    font-family: var(--font-sans);
+    font-size: var(--text-h1);
+    font-weight: 600;
+    color: var(--color-text-white);
+    line-height: 1.3;
+    margin: 0 0 var(--spacing-3);
+  }
+
+  .newsletter-band-blurb {
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    color: var(--color-text-white-soft);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .newsletter-band-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    min-width: 280px;
+  }
+
+  @media (min-width: 480px) {
+    .newsletter-band-form {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+  }
+
+  .newsletter-band-input {
+    flex: 1;
+    padding: 7px 16px;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    color: var(--color-text-black);
+    background: var(--color-white);
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--radius-button);
+    outline: none;
+    min-width: 0;
+    transition:
+      border-color var(--duration-button) ease,
+      box-shadow var(--duration-button) ease;
+  }
+
+  .newsletter-band-input::placeholder {
+    color: var(--color-text-black-soft);
+  }
+
+  .newsletter-band-input:focus {
+    border-color: var(--color-green-accent);
+    box-shadow: 0 0 0 2px var(--color-green-accent);
+  }
+
+  .newsletter-band-submit {
+    padding: 7px 16px;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--color-green-accent);
+    background: var(--color-white);
+    border: 1px solid var(--color-white);
+    border-radius: var(--radius-button);
+    cursor: pointer;
+    letter-spacing: var(--tracking-tight);
+    transition:
+      background-color var(--duration-button) ease,
+      color var(--duration-button) ease,
+      transform var(--duration-button) ease;
+  }
+
+  .newsletter-band-submit:hover {
+    background: var(--color-green-light);
+  }
+
+  .newsletter-band-submit:active {
+    transform: scale(0.95);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

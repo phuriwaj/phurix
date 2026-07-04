@@ -1,63 +1,86 @@
 ---
+/**
+ * /now — What the author is up to this month.
+ * Cite as: DESIGN.md §4 (/now) — single ordered list, hairline dividers, Lora values.
+ * Frap suppressed via `hideFrap` per the deep-focus surface rule.
+ */
 import Layout from '@/layouts/Layout.astro';
+
+type NowItem =
+  | { label: string; value: string }
+  | { label: string; list: string[] };
+
+const nowItems: NowItem[] = [
+  {
+    label: 'Location',
+    value: 'Bangkok, Thailand.',
+  },
+  {
+    label: 'Working on',
+    value:
+      'A design system for a client; a long essay on typography hierarchy; exploring edge-rendering patterns more seriously.',
+  },
+  {
+    label: 'Reading',
+    list: [
+      'The Design of Everyday Things — Don Norman.',
+      'Staff Engineer — Will Larson.',
+      'Thinking in Systems — Donella Meadows.',
+    ],
+  },
+  {
+    label: 'Thinking about',
+    value:
+      'The gap between component-level design and system-level design. How context windows change the way we prompt AI tools.',
+  },
+  {
+    label: 'Writing',
+    value:
+      'Two essays in progress: one on typography hierarchy, one on the anthropology of code review.',
+  },
+];
+
+const lastUpdated = '2026-07-04';
+const lastUpdatedDate = new Date(lastUpdated);
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(lastUpdatedDate);
 ---
 
-<Layout title="Now — phurix" description="What Phuriwaj is up to right now.">
+<Layout title="Now — phurix" description="What Phuriwaj is up to right now." hideFrap>
   <section class="container-phx section">
     <p class="section-eyebrow">Now</p>
     <h1 class="page-title">What I'm up to</h1>
     <p class="page-lede">
-      A snapshot of life right now — location, work, reading, and thoughts in progress.
-      Updated occasionally, not on a schedule.
+      A snapshot of life right now — location, work, reading, and thoughts in
+      progress. Updated occasionally, not on a schedule.
+    </p>
+    <p class="now-last-updated">
+      Last updated <time datetime={lastUpdatedDate.toISOString()}>{formattedDate}</time>
     </p>
   </section>
 
   <section class="container-phx section now-sections">
-    <section class="now-section">
-      <div class="now-block">
-        <h2 class="now-label">Location</h2>
-        <p class="now-value">Bangkok, Thailand</p>
-      </div>
-    </section>
-
-    <section class="now-section">
-      <div class="now-block">
-        <h2 class="now-label">Working on</h2>
-        <p class="now-value">
-          A new design system for a client; writing more long-form essays; exploring edge rendering patterns.
-        </p>
-      </div>
-    </section>
-
-    <section class="now-section">
-      <div class="now-block">
-        <h2 class="now-label">Reading</h2>
-        <ul class="reading-list">
-          <li>The Design of Everyday Things — Don Norman</li>
-          <li>Staff Engineer — Will Larson</li>
-          <li>Thinking in Systems — Donella Meadows</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="now-section">
-      <div class="now-block">
-        <h2 class="now-label">Thinking about</h2>
-        <p class="now-value">
-          The gap between component-level design and system-level design; how context windows
-          change the way we prompt AI tools.
-        </p>
-      </div>
-    </section>
-
-    <section class="now-section">
-      <div class="now-block">
-        <h2 class="now-label">Writing</h2>
-        <p class="now-value">
-          Two essays in progress: one on typography hierarchy, one on the anthropology of code review.
-        </p>
-      </div>
-    </section>
+    <dl class="now-list">
+      {nowItems.map((item) => (
+        <div class="now-item">
+          <dt class="now-label">{item.label}</dt>
+          <dd class="now-value">
+            {'value' in item ? (
+              <p>{item.value}</p>
+            ) : (
+              <ul class="reading-list">
+                {item.list.map((entry) => (
+                  <li>{entry}</li>
+                ))}
+              </ul>
+            )}
+          </dd>
+        </div>
+      ))}
+    </dl>
   </section>
 </Layout>
 
@@ -72,37 +95,53 @@ import Layout from '@/layouts/Layout.astro';
   }
 
   .page-title {
-    font-size: var(--text-hero-large);
+    font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
     font-weight: 600;
     color: var(--color-starbucks-green);
-    line-height: 1.15;
+    line-height: 1.1;
     margin-bottom: var(--spacing-4);
   }
 
   .page-lede {
+    font-family: var(--font-serif);
     font-size: var(--text-body-lg);
     line-height: 1.6;
     color: var(--color-text-black-soft);
-    max-width: 55ch;
+    max-width: 60ch;
+  }
+
+  .now-last-updated {
+    font-family: var(--font-sans);
+    font-size: var(--text-micro);
+    color: var(--color-text-black-soft);
+    margin-block-start: var(--spacing-2);
   }
 
   .now-sections {
-    padding-top: 0;
+    padding-block: var(--spacing-6);
   }
 
-  .now-section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-5);
+  .now-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: 65ch;
   }
 
-  .now-block {
+  .now-item {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-2);
+    padding-block: var(--spacing-5);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .now-item:first-child {
+    border-top: 1px solid var(--color-hairline);
   }
 
   .now-label {
+    font-family: var(--font-sans);
     font-size: var(--text-small);
     font-weight: 600;
     color: var(--color-starbucks-green);
@@ -112,9 +151,14 @@ import Layout from '@/layouts/Layout.astro';
   }
 
   .now-value {
-    font-size: var(--text-body);
+    margin: 0;
+  }
+
+  .now-value p {
+    font-family: var(--font-serif);
+    font-size: var(--text-prose);
+    line-height: 1.65;
     color: var(--color-text-black);
-    line-height: 1.6;
     margin: 0;
   }
 
@@ -128,9 +172,10 @@ import Layout from '@/layouts/Layout.astro';
   }
 
   .reading-list li {
-    font-size: var(--text-body);
+    font-family: var(--font-serif);
+    font-size: var(--text-prose);
     color: var(--color-text-black);
-    line-height: 1.6;
+    line-height: 1.65;
   }
 
   .reading-list li::before {

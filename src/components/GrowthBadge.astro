@@ -6,10 +6,12 @@
  */
 interface Props {
   stage: 'seedling' | 'budding' | 'evergreen';
+  /** 'sm' = --text-micro (cards). 'md' = --text-small (notes detail, prominent). */
+  size?: 'sm' | 'md';
   class?: string;
 }
 
-const { stage, class: className = '' } = Astro.props;
+const { stage, size = 'sm', class: className = '' } = Astro.props;
 
 const config = {
   seedling: {
@@ -32,7 +34,7 @@ const config = {
 const { icon, label, color } = config[stage];
 ---
 
-<span class:list={['growth-badge', `growth-${stage}`, className]} aria-label={`Growth stage: ${label}`}>
+<span class:list={['growth-badge', `growth-${stage}`, `growth-size-${size}`, className]} aria-label={`Growth stage: ${label}`}>
   <span class="growth-icon" aria-hidden="true">{icon}</span>
   <span class="growth-label">{label}</span>
 </span>
@@ -49,6 +51,10 @@ const { icon, label, color } = config[stage];
     border-radius: var(--radius-button);
     border: 1px solid currentColor;
     line-height: 1.4;
+  }
+
+  .growth-size-md {
+    font-size: var(--text-small);
   }
 
   .growth-seedling {

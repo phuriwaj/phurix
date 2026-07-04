@@ -3,57 +3,127 @@ import Layout from '@/layouts/Layout.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
 import GardenCard from '@/components/GardenCard.astro';
 import { getCollection } from 'astro:content';
+import { findOnThisDay, type MergedEntry } from '@/lib/onThisDay';
 
-const notes = await getCollection('notes');
-const sortedNotes = notes.sort(
-  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
-);
+type NoteMergedEntry = MergedEntry & { entryType: 'note' };
+
+const allNotes = await getCollection('notes');
+
+const notes: NoteMergedEntry[] = allNotes
+  .map((n) => ({
+    ...n,
+    entryType: 'note' as const,
+    displayDate: n.data.date,
+  }))
+  .sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
+
+// "On this day" — surface one note whose MM-DD matches today, from any prior year.
+const today = new Date();
+const onThisDayMatches = findOnThisDay(notes, today);
+const onThisDay = onThisDayMatches[0] ?? null;
+const onThisDayHref = onThisDay ? `/notes/${onThisDay.id}` : '#';
+const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.getFullYear();
 ---
 
 <Layout title="Notes" description="Short thoughts, working ideas, and observations.">
-  <section class="section">
+  <section class="page-header-section">
     <div class="container-phx">
-      <header class="page-header">
-        <h1 class="page-title">Notes</h1>
-        <p class="page-lede">
-          Short thoughts, working ideas, and observations. Roughly in reverse
-          chronological order.
-        </p>
-      </header>
-
-      <CollectionGrid cols={3} gap="md">
-        {sortedNotes.map((note) => (
-          <GardenCard
-            title={note.data.title}
-            type="note"
-            excerpt={note.data.excerpt}
-            date={new Date(note.data.date)}
-            topics={note.data.topics}
-            growthStage={note.data.growthStage}
-            href={`/notes/${note.id}`}
-          />
-        ))}
-      </CollectionGrid>
+      <p class="section-eyebrow">Garden</p>
+      <h1 class="page-title">Notes</h1>
+      <p class="page-lede">
+        Short thoughts, working ideas, and observations. Roughly in reverse
+        chronological order.
+      </p>
     </div>
+  </section>
+
+  {onThisDay && (
+    <section class="on-this-day">
+      <div class="container-phx">
+        <p class="on-this-day-line">
+          On this day in {onThisDayYear} — <a href={onThisDayHref}>{onThisDay.data.title}</a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <section class="container-phx section">
+    <CollectionGrid cols={3} gap="md">
+      {notes.map((note) => (
+        <GardenCard
+          title={note.data.title}
+          type="note"
+          excerpt={note.data.excerpt}
+          date={note.displayDate}
+          topics={note.data.topics}
+          growthStage={note.data.growthStage}
+          href={`/notes/${note.id}`}
+          newSince={note.displayDate}
+        />
+      ))}
+    </CollectionGrid>
   </section>
 </Layout>
 
 <style>
-  .page-header {
-    margin-bottom: var(--spacing-6);
+  .page-header-section {
+    padding-block: var(--spacing-7) var(--spacing-5);
+    background: var(--color-neutral-warm);
+    border-bottom: 1px solid var(--color-hairline);
   }
 
-  .page-title {
-    font-size: var(--text-h1);
-    font-weight: 600;
+  .section-eyebrow {
+    font-size: var(--text-small);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
     color: var(--color-starbucks-green);
+    font-weight: 600;
     margin-bottom: var(--spacing-2);
   }
 
+  .page-title {
+    font-size: var(--text-jumbo);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.15;
+    margin-bottom: var(--spacing-3);
+  }
+
+  @media (min-width: 1024px) {
+    .page-title {
+      font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
+    }
+  }
+
   .page-lede {
-    font-size: var(--text-body);
-    color: var(--color-text-black-soft);
-    max-width: 55ch;
+    font-size: var(--text-body-lg);
     line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 60ch;
+  }
+
+  /* On this day — single quiet Lora-italic line above the grid. */
+  .on-this-day {
+    padding-block: var(--spacing-4) var(--spacing-2);
+    background: var(--color-neutral-warm);
+  }
+
+  .on-this-day-line {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-body);
+    color: var(--color-text-black);
+    margin: 0;
+  }
+
+  .on-this-day-line a {
+    color: var(--color-green-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .on-this-day-line a:hover {
+    color: var(--color-starbucks-green);
   }
 </style>

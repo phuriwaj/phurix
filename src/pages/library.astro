@@ -1,4 +1,8 @@
 ---
+/**
+ * /library — A visual shelf of books that shaped thinking.
+ * Cite as: DESIGN.md §4 (/library) — tiles, gold border for "currently reading".
+ */
 import Layout from '@/layouts/Layout.astro';
 import BookTile from '@/components/BookTile.astro';
 import { getCollection } from 'astro:content';
@@ -26,9 +30,11 @@ const books = allBooks.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
           author={book.data.author}
           coverColor={book.data.coverColor}
           year={book.data.year}
+          currentlyReading={(book.data as { currentlyReading?: boolean }).currentlyReading}
         />
       ))}
     </div>
+    <p class="library-updated">Updated quarterly</p>
   </section>
 </Layout>
 
@@ -40,14 +46,15 @@ const books = allBooks.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
   }
 
   .page-title {
-    font-size: var(--text-hero-large);
+    font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
     font-weight: 600;
     color: var(--color-starbucks-green);
-    line-height: 1.15;
+    line-height: 1.1;
     margin-bottom: var(--spacing-3);
   }
 
   .page-lede {
+    font-family: var(--font-serif);
     font-size: var(--text-body-lg);
     line-height: 1.6;
     color: var(--color-text-black-soft);
@@ -70,5 +77,13 @@ const books = allBooks.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
     .book-grid {
       grid-template-columns: repeat(4, 1fr);
     }
+  }
+
+  .library-updated {
+    font-family: var(--font-sans);
+    font-size: var(--text-micro);
+    color: var(--color-text-black-soft);
+    text-align: center;
+    margin-block-start: var(--spacing-6);
   }
 </style>

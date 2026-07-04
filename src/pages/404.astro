@@ -1,4 +1,8 @@
 ---
+/**
+ * /404 — Recover from a missed link.
+ * Cite as: DESIGN.md §4 (/404) — display-scale h1 is earned here (Cohere: massive type sparingly).
+ */
 import Layout from '@/layouts/Layout.astro';
 import Button from '@/components/Button.astro';
 ---
@@ -9,13 +13,13 @@ import Button from '@/components/Button.astro';
     <p class="section-eyebrow">Error 404</p>
     <h1 class="page-title">Page not found.</h1>
     <p class="page-lede">
-      That page is no longer at this address. Try heading back to the
-      homepage, or browse recent work.
+      That page is no longer at this address. Try heading home, or browse the
+      Garden.
     </p>
 
     <div class="cta-row mt-7">
       <Button variant="primary" href="/">← Back to Home</Button>
-      <Button variant="outline" href="/projects">Browse Projects</Button>
+      <Button variant="outline" href="/garden">Browse the Garden</Button>
     </div>
   </section>
 </Layout>
@@ -36,7 +40,7 @@ import Button from '@/components/Button.astro';
   }
 
   .page-title {
-    font-size: var(--text-display); /* 5rem / 80px — largest spec token */
+    font-size: clamp(3.6rem, 8vw, 5rem);
     font-weight: 600;
     color: var(--color-starbucks-green);
     line-height: 1.05;
@@ -44,7 +48,8 @@ import Button from '@/components/Button.astro';
   }
 
   .page-lede {
-    font-size: var(--text-body-lg);
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
     line-height: 1.6;
     color: var(--color-text-black-soft);
     max-width: 50ch;

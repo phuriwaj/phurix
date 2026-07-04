@@ -1,0 +1,170 @@
+---
+/**
+ * /concepts — author-curated glossary of recurring terms used across essays.
+ * Cite as: DESIGN.md §1 (typography stack), §3 (containers), §4 (spacing).
+ *
+ * 7 seed entries — alphabetical by term. Definitions are inline JSX; the page
+ * is intentionally NOT a content collection (per brief: "lives in markdown,
+ * not a collection — keep it cheap").
+ *
+ * TODO: author can add or revise definitions over time.
+ */
+import Layout from '@/layouts/Layout.astro';
+
+interface Concept {
+  term: string;
+  definition: string;
+}
+
+const concepts: Concept[] = [
+  {
+    term: 'Affordance',
+    definition:
+      'A property of an object that suggests how it can be used. Coined by J. J. Gibson, popularized in design by Don Norman. In interface work, the affordance is the perceived action the element invites — a button that looks pressable.',
+  },
+  {
+    term: 'Design token',
+    definition:
+      'A named, reusable value (a color, a spacing, a radius) that captures a design decision in a single variable. Tokens are the smallest unit of a design system. The grammar’s vocabulary.',
+  },
+  {
+    term: 'Digital garden',
+    definition:
+      'A site that grows in public over time, where pieces are added, revised, and returned to — never removed from the archive. Tended rather than published. The opposite of a feed.',
+  },
+  {
+    term: 'Interface grammar',
+    definition:
+      'The implicit rules a design system uses to compose UI: which components nest inside which, which colors travel together, which spacing scales with which density. Tokens are the alphabet; grammar is the syntax.',
+  },
+  {
+    term: 'Second-order effect',
+    definition:
+      'A consequence of a consequence. The thing that happens because of the thing that happens. In systems work, second-order effects are usually where the actual leverage lives — first-order effects are usually the ones the proposer of a change already saw.',
+  },
+  {
+    term: 'Type system',
+    definition:
+      'The full stack of typographic decisions a publication makes: which faces, which sizes, which weights, which pairings, which tracking rules. The type system is what makes a publication feel like itself across many pages.',
+  },
+  {
+    term: 'Vibe shift',
+    definition:
+      'A sudden change in the cultural mood — aesthetic, linguistic, attitudinal — that renders the previous register stale. In interface design, this looks like a wholesale replacement of visual conventions over roughly three to five years.',
+  },
+];
+
+// Sort alphabetically (case-insensitive) — matches the proposal's order.
+concepts.sort((a, b) => a.term.toLowerCase().localeCompare(b.term.toLowerCase()));
+---
+
+<Layout
+  title="Concepts — phurix"
+  description="A short, evolving glossary of terms I use across essays."
+>
+  <section class="page-header-section">
+    <div class="container-phx">
+      <p class="section-eyebrow">Glossary</p>
+      <h1 class="page-title">Concepts</h1>
+      <p class="page-lede">
+        A short, evolving glossary of terms I use across essays. Definitions
+        are mine — they may not match canonical usage.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-phx concept-section">
+    <dl class="concept-list">
+      {concepts.map(({ term, definition }) => (
+        <div class="concept-item">
+          <dt class="concept-term">{term}</dt>
+          <dd class="concept-definition">{definition}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-7) var(--spacing-5);
+    background: var(--color-neutral-warm);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .section-eyebrow {
+    font-size: var(--text-small);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .page-title {
+    font-family: var(--font-sans);
+    font-size: var(--text-jumbo);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.1;
+    margin-bottom: var(--spacing-3);
+  }
+
+  @media (min-width: 1024px) {
+    .page-title {
+      font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
+    }
+  }
+
+  .page-lede {
+    font-family: var(--font-serif);
+    font-size: var(--text-body-lg);
+    line-height: 1.6;
+    color: var(--color-text-black-soft);
+    max-width: 60ch;
+  }
+
+  .concept-section {
+    padding-block: var(--spacing-6);
+  }
+
+  @media (min-width: 1024px) {
+    .concept-section {
+      padding-block: var(--spacing-7);
+    }
+  }
+
+  .concept-list {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .concept-item {
+    padding-block: var(--spacing-5);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .concept-item:first-child {
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .concept-term {
+    font-family: var(--font-sans);
+    font-size: var(--text-h1);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.2;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .concept-definition {
+    font-family: var(--font-serif);
+    font-size: var(--text-prose);
+    line-height: 1.65;
+    color: var(--color-text-black);
+    max-width: 65ch;
+    margin: 0;
+  }
+</style>

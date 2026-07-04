@@ -1,4 +1,8 @@
 ---
+/**
+ * /patterns — Catalogue of named, reusable primitives.
+ * Cite as: DESIGN.md §4 (/patterns) — row list, right column tightened 12rem → 10rem.
+ */
 import Layout from '@/layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
@@ -76,14 +80,15 @@ function relativeTime(date: Date): string {
   }
 
   .page-title {
-    font-size: var(--text-hero-large);
+    font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
     font-weight: 600;
     color: var(--color-starbucks-green);
-    line-height: 1.15;
+    line-height: 1.1;
     margin-bottom: var(--spacing-3);
   }
 
   .page-lede {
+    font-family: var(--font-serif);
     font-size: var(--text-body-lg);
     line-height: 1.6;
     color: var(--color-text-black-soft);
@@ -116,7 +121,7 @@ function relativeTime(date: Date): string {
 
   @media (min-width: 768px) {
     .pattern-link {
-      grid-template-columns: 1fr 12rem;
+      grid-template-columns: 1fr 10rem;
       align-items: start;
       gap: var(--spacing-6);
     }
@@ -127,6 +132,7 @@ function relativeTime(date: Date): string {
   }
 
   .pattern-title {
+    font-family: var(--font-sans);
     font-size: var(--text-h1);
     font-weight: 600;
     color: var(--color-starbucks-green);
@@ -139,6 +145,7 @@ function relativeTime(date: Date): string {
   }
 
   .pattern-lede {
+    font-family: var(--font-serif);
     font-size: var(--text-body);
     line-height: 1.6;
     color: var(--color-text-black-soft);
@@ -149,6 +156,7 @@ function relativeTime(date: Date): string {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-1);
+    font-family: var(--font-sans);
     font-size: var(--text-small);
     color: var(--color-text-black-soft);
   }

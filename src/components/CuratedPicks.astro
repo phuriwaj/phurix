@@ -1,0 +1,80 @@
+---
+/**
+ * CuratedPicks — three-line Lora-italic curated picks block.
+ * Renders an <ol> where each item is "✦ <a href=...>{title}</a>"
+ * separated by hairline <hr>s. Used on / and /essays.
+ * Cite as: DESIGN.md §7 (interaction — curated picks).
+ */
+import CuratedMark from './CuratedMark.astro';
+
+interface Props {
+  /** Each entry: a title + href. The ✦ mark is added automatically. */
+  items: Array<{ title: string; href: string }>;
+  /** Optional heading shown above the block. Default: no heading. */
+  heading?: string;
+  class?: string;
+}
+
+const { items, heading, class: className = '' } = Astro.props;
+---
+
+<div class:list={['curated-picks', className]}>
+  {heading && <p class="curated-picks-heading">{heading}</p>}
+  <ol class="curated-picks-list">
+    {items.map((item) => (
+      <li class="curated-picks-item">
+        <CuratedMark size="md" />
+        <a href={item.href} class="curated-picks-link">{item.title}</a>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .curated-picks {
+    width: 100%;
+  }
+
+  .curated-picks-heading {
+    font-family: var(--font-sans);
+    font-size: var(--text-small);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-loose);
+    color: var(--color-starbucks-green);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .curated-picks-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  .curated-picks-item {
+    display: flex;
+    align-items: baseline;
+    padding-block: var(--spacing-3);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .curated-picks-item:last-child {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .curated-picks-link {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-body-lg);
+    color: var(--color-green-accent);
+    text-decoration: none;
+    transition: color var(--duration-button) ease;
+  }
+
+  .curated-picks-link:hover {
+    color: var(--color-starbucks-green);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>

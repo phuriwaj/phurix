@@ -1,0 +1,64 @@
+---
+/**
+ * /random — bare-HTML redirect surface.
+ * No Layout, no Nav, no Footer, no Frap. Inline script picks a random
+ * entry from a build-time manifest and replaces the location.
+ * Cite as: DESIGN.md §7 (interaction — random reader affordance).
+ */
+import { getCollection } from 'astro:content';
+
+const essays = await getCollection('essays');
+const notes = await getCollection('notes');
+const patterns = await getCollection('patterns');
+
+const manifest = [
+  ...essays.map((e) => ({ type: 'essays', slug: e.id })),
+  ...notes.map((n) => ({ type: 'notes', slug: n.id })),
+  ...patterns.map((p) => ({ type: 'patterns', slug: p.id })),
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Redirecting…</title>
+  </head>
+  <body>
+    <main class="random-interstitial">
+      <p>Picking a random post…</p>
+      <noscript>
+        <p>
+          This page requires JavaScript.
+          <a href="/garden/">Browse the Garden</a> instead.
+        </p>
+      </noscript>
+    </main>
+    <script is:inline define:vars={{ manifest }}>
+      if (manifest.length > 0) {
+        const entry = manifest[Math.floor(Math.random() * manifest.length)];
+        window.location.replace('/' + entry.type + '/' + entry.slug + '/');
+      } else {
+        window.location.replace('/garden/');
+      }
+    </script>
+    <style>
+      html, body { margin: 0; padding: 0; height: 100%; }
+      body {
+        font-family: var(--font-serif);
+        font-size: var(--text-body-lg);
+        color: var(--color-text-black-soft);
+        background: var(--color-neutral-warm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: var(--spacing-5);
+      }
+      .random-interstitial p { margin: 0; }
+      a { color: var(--color-green-accent); text-decoration: underline; }
+    </style>
+  </body>
+</html>

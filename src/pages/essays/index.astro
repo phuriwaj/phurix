@@ -1,46 +1,66 @@
 ---
+/**
+ * Essays index — `/essays` (DESIGN.md §4 — long-form catalogue).
+ * Page header + "If you only read three" curated picks + 2-col grid.
+ * Cite: DESIGN.md §4 (essays index).
+ */
 import Layout from '@/layouts/Layout.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
 import GardenCard from '@/components/GardenCard.astro';
+import CuratedPicks from '@/components/CuratedPicks.astro';
 import { getCollection } from 'astro:content';
 
 const essays = await getCollection('essays');
 const sortedEssays = essays.sort(
   (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
+
+// TODO(author): hand-curate these three picks — these are placeholders.
+const curatedEssays = [
+  { title: 'On Typography, and the Trust It Quietly Asks For', href: '/essays/on-typography-and-trust' },
+  { title: 'Design Systems Are Grammar, Not Paint', href: '/essays/design-systems-are-grammar' },
+  { title: 'The Case for Boring Technology', href: '/essays/the-case-for-boring-technology' },
+];
 ---
 
 <Layout title="Essays" description="Longer pieces on design, development, and the practice of building for the web.">
-  <section class="section">
+  <section class="page-header-section">
     <div class="container-phx">
-      <header class="page-header">
-        <p class="section-eyebrow">Collection</p>
-        <h1>Essays</h1>
-        <p class="page-lede">
-          Longer pieces on design, development, and the practice of building for
-          the web.
-        </p>
-      </header>
-
-      <CollectionGrid cols={2} gap="md">
-        {sortedEssays.map((essay) => (
-          <GardenCard
-            title={essay.data.title}
-            type="essay"
-            lede={essay.data.lede}
-            date={new Date(essay.data.date)}
-            topics={essay.data.topics}
-            href={`/essays/${essay.id}`}
-          />
-        ))}
-      </CollectionGrid>
+      <p class="section-eyebrow">Collection</p>
+      <h1 class="page-title">Essays</h1>
+      <p class="page-lede">
+        Longer pieces on design, development, and the practice of building for
+        the web.
+      </p>
     </div>
+  </section>
+
+  <section class="container-phx section">
+    <p class="section-eyebrow">If you only read three</p>
+    <CuratedPicks items={curatedEssays} />
+  </section>
+
+  <section class="container-phx section grid-section">
+    <CollectionGrid cols={2} gap="md">
+      {sortedEssays.map((essay) => (
+        <GardenCard
+          title={essay.data.title}
+          type="essay"
+          lede={essay.data.lede}
+          date={new Date(essay.data.date)}
+          topics={essay.data.topics}
+          href={`/essays/${essay.id}`}
+        />
+      ))}
+    </CollectionGrid>
   </section>
 </Layout>
 
 <style>
-  .page-header {
-    margin-bottom: var(--spacing-6);
+  .page-header-section {
+    padding-block: var(--spacing-7) var(--spacing-5);
+    background: var(--color-neutral-warm);
+    border-bottom: 1px solid var(--color-hairline);
   }
 
   .section-eyebrow {
@@ -49,14 +69,27 @@ const sortedEssays = essays.sort(
     letter-spacing: var(--tracking-loose);
     color: var(--color-starbucks-green);
     font-weight: 600;
-    margin-bottom: var(--spacing-2);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .page-title {
+    font-family: var(--font-sans);
+    font-size: var(--text-jumbo);
+    font-weight: 600;
+    color: var(--color-starbucks-green);
+    line-height: 1.15;
+    margin-bottom: var(--spacing-3);
   }
 
   .page-lede {
-    font-size: var(--text-body);
-    color: var(--color-text-black-soft);
-    max-width: 55ch;
+    font-family: var(--font-serif);
+    font-size: var(--text-body-lg);
     line-height: 1.6;
-    margin-top: var(--spacing-2);
+    color: var(--color-text-black-soft);
+    max-width: 60ch;
+  }
+
+  .grid-section {
+    border-top: 1px solid var(--color-hairline);
   }
 </style>

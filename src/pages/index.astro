@@ -1,16 +1,25 @@
 ---
+/**
+ * Home — `/` (DESIGN.md §4 — identity page).
+ * Hero + "If you only read three things" curated picks + four recent strips
+ * (Essays / Notes / Patterns / Library) + dark-green Newsletter closing band.
+ * Cite: DESIGN.md §4 (home).
+ */
 import Layout from '@/layouts/Layout.astro';
 import GardenCard from '@/components/GardenCard.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
 import Button from '@/components/Button.astro';
 import TopicPhoto from '@/components/TopicPhoto.astro';
+import CuratedPicks from '@/components/CuratedPicks.astro';
+import NewsletterBand from '@/components/NewsletterBand.astro';
 import Frap from '@/components/Frap.astro';
+import BookTile from '@/components/BookTile.astro';
 import { getCollection } from 'astro:content';
 
 const allEssays = await getCollection('essays');
 const allNotes = await getCollection('notes');
-const allTalks = await getCollection('talks');
 const allPatterns = await getCollection('patterns');
+const allBooks = await getCollection('books');
 
 const recentEssays = allEssays
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
@@ -23,6 +32,17 @@ const recentNotes = allNotes
 const recentPatterns = allPatterns
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3);
+
+const recentBooks = allBooks
+  .sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0))
+  .slice(0, 6);
+
+// TODO(author): hand-curate these three picks — these are placeholders.
+const curatedPicks = [
+  { title: 'On Typography, and the Trust It Quietly Asks For', href: '/essays/on-typography-and-trust' },
+  { title: 'Design Systems Are Grammar, Not Paint', href: '/essays/design-systems-are-grammar' },
+  { title: 'Token-as-Grammar', href: '/patterns/token-as-grammar' },
+];
 ---
 
 <Layout title="phurix" description="Personal website of Phuriwaj Ruengnaowaroj">
@@ -40,20 +60,24 @@ const recentPatterns = allPatterns
           systems at scale.
         </p>
         <div class="hero-actions">
-          <Button variant="primary" href="/garden">Wander the Garden</Button>
-          <Button variant="outline" href="/about">About Me</Button>
+          <Button variant="primary" href="/garden">Open the Garden</Button>
+          <Button variant="outline" href="/essays">Read the latest essay</Button>
         </div>
       </div>
       <div class="hero-art">
-        <TopicPhoto topic="design" scale="lg" />
+        <TopicPhoto topic="design" scale="lg" showCredit={true} />
       </div>
     </div>
+  </section>
+
+  <section class="section container-phx curated-section">
+    <CuratedPicks items={curatedPicks} />
   </section>
 
   <section class="section-preview container-phx section">
     <div class="preview-header">
       <h2>Essays</h2>
-      <Button variant="outline-dark" href="/garden?type=essay">All essays</Button>
+      <Button variant="outline-dark" href="/essays">All essays →</Button>
     </div>
     <CollectionGrid cols={3} gap="md">
       {recentEssays.map((essay) => (
@@ -72,7 +96,7 @@ const recentPatterns = allPatterns
   <section class="section-preview container-phx section">
     <div class="preview-header">
       <h2>Notes</h2>
-      <Button variant="outline-dark" href="/garden?type=note">All notes</Button>
+      <Button variant="outline-dark" href="/notes">All notes →</Button>
     </div>
     <CollectionGrid cols={3} gap="md">
       {recentNotes.map((note) => (
@@ -92,7 +116,7 @@ const recentPatterns = allPatterns
   <section class="section-preview container-phx section">
     <div class="preview-header">
       <h2>Patterns</h2>
-      <Button variant="outline-dark" href="/patterns">All patterns</Button>
+      <Button variant="outline-dark" href="/patterns">All patterns →</Button>
     </div>
     <CollectionGrid cols={3} gap="md">
       {recentPatterns.map((pattern) => (
@@ -108,12 +132,36 @@ const recentPatterns = allPatterns
     </CollectionGrid>
   </section>
 
+  <section class="section-preview container-phx section">
+    <div class="preview-header">
+      <h2>Library</h2>
+      <Button variant="outline-dark" href="/library">Browse the library →</Button>
+    </div>
+    <div class="library-strip">
+      {recentBooks.map((book) => (
+        <BookTile
+          title={book.data.title}
+          author={book.data.author}
+          coverColor={book.data.coverColor}
+          year={book.data.year}
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="newsletter-closing">
+    <div class="container-phx">
+      <NewsletterBand />
+    </div>
+  </section>
+
   <Fragment slot="frap">
     <Frap />
   </Fragment>
 </Layout>
 
 <style>
+  /* Hero — full-bleed warm cream, 2-col grid on desktop (DESIGN.md §4) */
   .hero-section {
     padding-block: var(--spacing-7) var(--spacing-6);
     background: var(--color-neutral-warm);
@@ -146,7 +194,8 @@ const recentPatterns = allPatterns
   }
 
   .hero-headline {
-    font-size: var(--text-hero-large);
+    font-family: var(--font-sans);
+    font-size: var(--text-jumbo);
     font-weight: 600;
     color: var(--color-starbucks-green);
     line-height: 1.15;
@@ -154,11 +203,8 @@ const recentPatterns = allPatterns
     max-width: 22ch;
   }
 
-  @media (min-width: 1024px) {
-    .hero-headline { font-size: var(--text-jumbo); }
-  }
-
   .hero-lede {
+    font-family: var(--font-serif);
     font-size: var(--text-body-lg);
     line-height: 1.6;
     color: var(--color-text-black-soft);
@@ -172,16 +218,17 @@ const recentPatterns = allPatterns
     gap: var(--spacing-3);
   }
 
-  /* TopicPhoto sits beside the hero copy on desktop */
+  /* TopicPhoto sits beside the hero copy on desktop, above on mobile */
   .hero-art {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9;
     border-radius: var(--radius-card);
     overflow: hidden;
     box-shadow: var(--shadow-card);
     background: var(--color-ceramic);
   }
 
-  .hero-art :global(svg) {
+  .hero-art :global(svg),
+  .hero-art :global(img) {
     width: 100%;
     height: 100%;
     display: block;
@@ -191,6 +238,12 @@ const recentPatterns = allPatterns
     .hero-art { order: -1; }
   }
 
+  /* Curated picks strip — hairline above, no heading per brief */
+  .curated-section {
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  /* Section preview strips — single-column rhythm, hairline-separated */
   .section-preview {
     border-top: 1px solid var(--color-hairline);
   }
@@ -201,5 +254,31 @@ const recentPatterns = allPatterns
     justify-content: space-between;
     margin-bottom: var(--spacing-5);
     gap: var(--spacing-3);
+  }
+
+  /* Library strip — 6-on-desktop / 2-on-mobile grid (DESIGN.md §4) */
+  .library-strip {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-4);
+  }
+
+  @media (min-width: 640px) {
+    .library-strip { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (min-width: 1024px) {
+    .library-strip {
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--spacing-3);
+    }
+  }
+
+  /* Newsletter closing band — full-width dark-green wrapper */
+  .newsletter-closing {
+    background: var(--color-house-green);
+    color: var(--color-text-white);
+    padding-block: var(--spacing-7);
+    margin-block-start: var(--spacing-7);
   }
 </style>
