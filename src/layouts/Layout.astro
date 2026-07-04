@@ -2,6 +2,7 @@
 import '@/styles/global.css';
 // @ts-expect-error — @fontsource-variable/inter ships JS-only with no types
 import '@fontsource-variable/inter';
+import { ClientRouter } from 'astro:transitions';
 import Nav from '@/components/Nav.astro';
 import Footer from '@/components/Footer.astro';
 
@@ -28,6 +29,14 @@ const fullTitle = title === 'phurix' ? title : `${title} — phurix`;
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <title>{fullTitle}</title>
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site).href} />
+    <meta property="og:type" content={Astro.url.pathname === '/' ? 'website' : 'article'} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site).href} />
+    <meta property="og:site_name" content="phurix" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" type="application/rss+xml" title="phurix" href={new URL('rss.xml', Astro.site).href} />
 
     {/* Google Fonts: Inter (primary), Lora (serif), Kalam (script) */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -36,6 +45,7 @@ const fullTitle = title === 'phurix' ? title : `${title} — phurix`;
       href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Lora:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <ClientRouter />
   </head>
   <body>
     <a
