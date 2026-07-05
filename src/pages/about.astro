@@ -2,23 +2,13 @@
 /**
  * /about — portrait of the author.
  * Cite as: DESIGN.md §4 (subscribe surface), §8 (chrome), §9 (about page).
- *
- * Sections (top to bottom):
- *   1. Page header
- *   2. Identity (long-form prose + portrait photo)
- *   3. Subscribe band (single, dark-green)
- *   4. Now preview (top 3 items from /now)
- *   5. Work history (Timeline)
- *   6. Projects — recent 2
- *   7. Talks — recent 3
- *   8. Skills chip row
- *   9. Closing CTA row
  */
 import Layout from '@/layouts/Layout.astro';
 import Card from '@/components/Card.astro';
 import Button from '@/components/Button.astro';
 import Timeline from '@/components/Timeline.astro';
 import TopicPhoto from '@/components/TopicPhoto.astro';
+import TopicChip from '@/components/TopicChip.astro';
 import NewsletterBand from '@/components/NewsletterBand.astro';
 import GardenCard from '@/components/GardenCard.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
@@ -56,15 +46,10 @@ const skills = [
   'TypeScript', 'React', 'Astro', 'CSS / Tailwind', 'Node.js', 'PostgreSQL', 'Figma', 'Design Systems',
 ];
 
-// Now preview — top three items from the shared data source.
-// Filter to entries that carry a `value` string (the data file also has
-// `list` entries; those render as bullet lists on /now and aren't suited
-// to the inline preview on /about).
 const nowPreview = nowItems
   .filter((item): item is { label: string; value: string } => 'value' in item)
   .slice(0, 3);
 
-// Projects — 2 most-recent by year desc (or by title if year missing).
 const allProjects = await getCollection('projects');
 const projects = allProjects
   .slice()
@@ -75,7 +60,6 @@ const projects = allProjects
   })
   .slice(0, 2);
 
-// Talks — 3 most-recent by date desc.
 const allTalks = await getCollection('talks');
 const talks = allTalks
   .slice()
@@ -87,7 +71,6 @@ const talks = allTalks
   title="About — phurix"
   description="About Phuriwaj, web developer and designer based in Bangkok."
 >
-  {/* ---- 1. Page header ------------------------------------------------ */}
   <section class="page-header-section">
     <div class="container-phx">
       <p class="section-eyebrow">About</p>
@@ -99,14 +82,12 @@ const talks = allTalks
     </div>
   </section>
 
-  {/* ---- 2. Identity (long-form prose + portrait) --------------------- */}
   <section class="container-phx section">
     <div class="identity-grid">
       <div class="identity-photo">
         <TopicPhoto topic="anthropology" scale="portrait" showCredit={true} />
       </div>
       <div class="prose identity-prose">
-        {/* TODO: author can revise the identity prose. */}
         <p>
           I'm a web developer and designer based in Bangkok, working at
           the intersection of design systems and the everyday interfaces
@@ -138,12 +119,10 @@ const talks = allTalks
     </div>
   </section>
 
-  {/* ---- 3. Subscribe band (single instance on this page) ------------- */}
   <section class="container-phx section subscribe-section">
     <NewsletterBand />
   </section>
 
-  {/* ---- 4. Now preview (top 3) --------------------------------------- */}
   <section class="container-phx section">
     <header class="section-header">
       <h2 class="section-heading">Now</h2>
@@ -162,7 +141,6 @@ const talks = allTalks
     </div>
   </section>
 
-  {/* ---- 5. Work history (Timeline) ----------------------------------- */}
   <section class="container-phx section">
     <header class="section-header">
       <h2 class="section-heading">Work History</h2>
@@ -170,19 +148,18 @@ const talks = allTalks
     <Timeline entries={workHistory} />
   </section>
 
-  {/* ---- 6. Projects — recent 2 --------------------------------------- */}
   <section class="container-phx section">
     <header class="section-header section-header-row">
       <h2 class="section-heading">Projects</h2>
-      <Button variant="outline-dark" href="/projects">All projects →</Button>
+      <Button variant="outline" href="/projects">All projects →</Button>
     </header>
     <div class="project-grid">
       {projects.map((p) => (
-        <Card emphasis="lifted">
+        <Card emphasis="bordered">
           <h3 class="project-title">{p.data.title}</h3>
           <p class="project-desc">{p.data.desc}</p>
           <div class="tag-row">
-            {p.data.tags.map((t) => <span class="tag">{t}</span>)}
+            {p.data.tags.map((t) => <TopicChip label={t} size="sm" />)}
           </div>
           <div class="project-cta">
             {p.data.url ? (
@@ -196,11 +173,10 @@ const talks = allTalks
     </div>
   </section>
 
-  {/* ---- 7. Talks — recent 3 ------------------------------------------ */}
   <section class="container-phx section">
     <header class="section-header section-header-row">
       <h2 class="section-heading">Talks</h2>
-      <Button variant="outline-dark" href="/talks">All talks →</Button>
+      <Button variant="outline" href="/talks">All talks →</Button>
     </header>
     <CollectionGrid cols={3} gap="md">
       {talks.map((talk) => (
@@ -216,17 +192,15 @@ const talks = allTalks
     </CollectionGrid>
   </section>
 
-  {/* ---- 8. Skills chip row ------------------------------------------- */}
   <section class="container-phx section">
     <header class="section-header">
       <h2 class="section-heading">Skills</h2>
     </header>
     <ul class="skill-grid">
-      {skills.map((s) => <li class="skill-chip">{s}</li>)}
+      {skills.map((s) => <li><TopicChip label={s} size="sm" /></li>)}
     </ul>
   </section>
 
-  {/* ---- 9. Closing CTA row ------------------------------------------- */}
   <section class="container-phx section cta-section">
     <div class="cta-row">
       <Button variant="primary" href="/garden">See my work</Button>
@@ -238,46 +212,42 @@ const talks = allTalks
 <style>
   /* --- Page header ---------------------------------------------------- */
   .page-header-section {
-    padding-block: var(--spacing-7) var(--spacing-5);
-    background: var(--color-neutral-warm);
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-soft-stone);
     border-bottom: 1px solid var(--color-hairline);
   }
 
   .section-eyebrow {
-    font-size: var(--text-small);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    font-weight: 600;
-    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
   }
 
   .page-title {
-    font-family: var(--font-sans);
-    font-size: var(--text-jumbo);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-cohere-black);
     line-height: 1.1;
-    margin-bottom: var(--spacing-3);
-  }
-
-  @media (min-width: 1024px) {
-    .page-title {
-      font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
-    }
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
   }
 
   .page-lede {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-size: var(--text-body-lg);
-    line-height: 1.6;
-    color: var(--color-text-black-soft);
+    line-height: 1.5;
+    color: var(--color-ink);
     max-width: 60ch;
   }
 
   /* --- Section header (h2 + optional right CTA) ---------------------- */
   .section-header {
-    margin-bottom: var(--spacing-5);
+    margin-bottom: var(--spacing-8);
   }
 
   .section-header-row {
@@ -285,47 +255,46 @@ const talks = allTalks
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: var(--spacing-3);
+    gap: var(--spacing-5);
   }
 
   .section-heading {
-    /* h2 base applies — Inter 600 24px green not used here; we want black. */
-    color: var(--color-text-black);
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: var(--text-card-heading);
+    font-weight: 400;
+    color: var(--color-cohere-black);
   }
 
   .section-link {
-    color: var(--color-starbucks-green);
+    color: var(--color-action-blue);
     text-decoration: underline;
     text-underline-offset: 2px;
-    margin-inline-start: var(--spacing-2);
+    margin-inline-start: var(--spacing-4);
     transition: color var(--duration-button) ease;
   }
 
   .section-link:hover {
-    color: var(--color-green-accent);
+    color: var(--color-cohere-black);
   }
 
   /* --- Identity grid: prose + portrait photo ------------------------- */
   .identity-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--spacing-6);
+    gap: var(--spacing-12);
     align-items: start;
   }
 
   @media (min-width: 1024px) {
     .identity-grid {
       grid-template-columns: 1fr 18rem;
-      gap: var(--spacing-7);
+      gap: var(--spacing-15);
     }
   }
 
   .identity-photo {
-    border-radius: var(--radius-card);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: var(--shadow-card);
-    /* On mobile, stack the photo above the prose. */
     order: -1;
   }
 
@@ -336,18 +305,17 @@ const talks = allTalks
   }
 
   .identity-prose {
-    /* The shared .prose utility sets 65ch; keep that. */
     max-width: 65ch;
   }
 
   /* --- Subscribe band wrapper ---------------------------------------- */
   .subscribe-section {
-    padding-block: var(--spacing-6);
+    padding-block: var(--spacing-12);
   }
 
   @media (min-width: 1024px) {
     .subscribe-section {
-      padding-block: var(--spacing-7);
+      padding-block: var(--spacing-15);
     }
   }
 
@@ -355,47 +323,47 @@ const talks = allTalks
   .now-section-subhead {
     font-family: var(--font-serif);
     font-size: var(--text-body);
-    color: var(--color-text-black-soft);
-    margin-bottom: var(--spacing-5);
-    line-height: 1.6;
+    color: var(--color-muted-slate);
+    margin-bottom: var(--spacing-8);
+    line-height: 1.5;
   }
 
   .now-preview {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-3);
+    gap: var(--spacing-5);
   }
 
   .now-preview-row {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: var(--spacing-3);
+    gap: var(--spacing-5);
   }
 
   .now-preview-label {
-    font-family: var(--font-sans);
+    font-family: var(--font-mono);
     font-size: var(--text-micro);
-    font-weight: 600;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
     flex-shrink: 0;
     min-width: 9rem;
   }
 
   .now-preview-value {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-size: var(--text-body);
-    color: var(--color-text-black);
-    line-height: 1.6;
+    color: var(--color-ink);
+    line-height: 1.5;
   }
 
   /* --- Projects grid ------------------------------------------------- */
   .project-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--spacing-4);
+    gap: var(--spacing-7);
   }
 
   @media (min-width: 768px) {
@@ -403,33 +371,26 @@ const talks = allTalks
   }
 
   .project-title {
-    font-size: var(--text-h1);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
-    margin-bottom: var(--spacing-2);
+    font-family: var(--font-display);
+    font-size: var(--text-feature-heading);
+    font-weight: 400;
+    color: var(--color-cohere-black);
+    margin-bottom: var(--spacing-4);
+    letter-spacing: var(--tracking-display-tight);
   }
 
   .project-desc {
-    color: var(--color-text-black-soft);
-    line-height: 1.6;
-    margin-bottom: var(--spacing-3);
+    font-family: var(--font-sans);
+    color: var(--color-muted-slate);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-5);
   }
 
   .tag-row {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-1);
-    margin-bottom: var(--spacing-4);
-  }
-
-  .tag {
-    font-size: var(--text-micro);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
-    background: var(--color-green-light);
-    padding: 4px 10px;
-    border-radius: var(--radius-button);
-    letter-spacing: var(--tracking-tight);
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-7);
   }
 
   .project-cta {
@@ -443,18 +404,7 @@ const talks = allTalks
     margin: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-2);
-  }
-
-  .skill-chip {
-    padding: var(--spacing-2) var(--spacing-4);
-    background: var(--color-white);
-    border-radius: var(--radius-button);
-    font-size: var(--text-small);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
-    box-shadow: var(--shadow-card);
-    letter-spacing: var(--tracking-tight);
+    gap: var(--spacing-4);
   }
 
   /* --- CTA ----------------------------------------------------------- */
@@ -465,6 +415,6 @@ const talks = allTalks
   .cta-row {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-3);
+    gap: var(--spacing-5);
   }
 </style>

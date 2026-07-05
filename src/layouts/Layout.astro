@@ -1,24 +1,25 @@
 ---
 import '@/styles/global.css';
+import '@/styles/dark.css';
 // @ts-expect-error — @fontsource-variable/inter ships JS-only with no types
 import '@fontsource-variable/inter';
 import { ClientRouter } from 'astro:transitions';
 import { Font } from 'astro:assets';
 import Nav from '@/components/Nav.astro';
 import Footer from '@/components/Footer.astro';
-import Frap from '@/components/Frap.astro';
+import AnnouncementBar from '@/components/AnnouncementBar.astro';
 
 interface Props {
   title: string;
   description?: string;
-  /** Hide the persistent floating Frap (e.g. on checkout-confirmation pages). */
-  hideFrap?: boolean;
+  /** Hide the announcement bar (e.g. on deep-focus pages like /now). */
+  hideAnnouncement?: boolean;
 }
 
 const {
   title,
   description = 'Personal website of Phuriwaj Ruengnaowaroj',
-  hideFrap = false,
+  hideAnnouncement = false,
 } = Astro.props;
 const fullTitle = title === 'phurix' ? title : `${title} — phurix`;
 ---
@@ -26,6 +27,44 @@ const fullTitle = title === 'phurix' ? title : `${title} — phurix`;
 <!doctype html>
 <html lang="en">
   <head>
+    {/* Anti-FOUC: resolve theme synchronously before first paint.
+        1. localStorage('phurix-theme') — explicit user choice wins.
+        2. prefers-color-scheme — fall back to OS preference.
+        Also subscribes to OS changes; only follows them when the user has
+        NOT made an explicit choice. */}
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('phurix-theme');
+          var resolved;
+          if (stored === 'light' || stored === 'dark') {
+            resolved = stored;
+          } else {
+            var mq = window.matchMedia('(prefers-color-scheme: dark)');
+            resolved = mq.matches ? 'dark' : 'light';
+          }
+          document.documentElement.dataset.theme = resolved;
+
+          // React to OS-level preference changes — only when the user hasn't
+          // explicitly chosen. Uses addEventListener where available,
+          // addListener as a Safari < 14 fallback.
+          var mq = window.matchMedia('(prefers-color-scheme: dark)');
+          var onChange = function (e) {
+            var s = localStorage.getItem('phurix-theme');
+            if (s === 'light' || s === 'dark') return;
+            document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
+          };
+          if (mq.addEventListener) {
+            mq.addEventListener('change', onChange);
+          } else if (mq.addListener) {
+            mq.addListener(onChange);
+          }
+        } catch (err) {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
@@ -40,18 +79,20 @@ const fullTitle = title === 'phurix' ? title : `${title} — phurix`;
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="alternate" type="application/rss+xml" title="phurix" href={new URL('rss.xml', Astro.site).href} />
 
-    {/* Lora (serif) and Kalam (script) — build-time downloaded via Astro Fonts API. */}
+    {/* Lora (serif) and Space Grotesk (display) — build-time downloaded via Astro Fonts API. */}
     <Font cssVariable="--font-serif" preload />
-    <Font cssVariable="--font-script" preload />
+    <Font cssVariable="--font-display" preload />
     <ClientRouter />
   </head>
   <body>
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-green-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-button"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-near-black focus:text-white focus:px-4 focus:py-2 focus:rounded-pill"
     >
       Skip to content
     </a>
+
+    {!hideAnnouncement && <AnnouncementBar />}
 
     <Nav />
 
@@ -62,7 +103,5 @@ const fullTitle = title === 'phurix' ? title : `${title} — phurix`;
     </main>
 
     <Footer />
-
-    {!hideFrap && <Frap />}
   </body>
 </html>

@@ -17,7 +17,7 @@ import Button from '@/components/Button.astro';
       Garden.
     </p>
 
-    <div class="cta-row mt-7">
+    <div class="cta-row mt-15">
       <Button variant="primary" href="/">← Back to Home</Button>
       <Button variant="outline" href="/garden">Browse the Garden</Button>
     </div>
@@ -27,31 +27,34 @@ import Button from '@/components/Button.astro';
 <style>
   .not-found {
     text-align: center;
-    padding-block: var(--spacing-9);
+    padding-block: var(--spacing-18);
   }
 
   .section-eyebrow {
-    font-size: var(--text-small);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    font-weight: 600;
-    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
   }
 
   .page-title {
-    font-size: clamp(3.6rem, 8vw, 5rem);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
-    line-height: 1.05;
-    margin-bottom: var(--spacing-4);
+    font-family: var(--font-display);
+    font-size: clamp(4.8rem, 12vw, 9.6rem);
+    font-weight: 400;
+    color: var(--color-cohere-black);
+    line-height: 1.0;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-7);
   }
 
   .page-lede {
     font-family: var(--font-serif);
     font-size: var(--text-body);
-    line-height: 1.6;
-    color: var(--color-text-black-soft);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
     max-width: 50ch;
     margin-inline: auto;
   }
@@ -59,9 +62,9 @@ import Button from '@/components/Button.astro';
   .cta-row {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-3);
+    gap: var(--spacing-5);
     justify-content: center;
   }
 
-  .mt-7 { margin-top: var(--spacing-7); }
+  .mt-15 { margin-top: var(--spacing-15); }
 </style>

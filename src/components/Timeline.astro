@@ -19,14 +19,14 @@ const { entries, class: className = '' } = Astro.props;
 ---
 
 <ol class:list={['timeline', className]}>
-  {entries.map((entry, i) => (
+  {entries.map((entry) => (
     <li class="timeline-entry">
       <div class="timeline-dot" aria-hidden="true" />
       <div class="timeline-content">
         <div class="timeline-header">
           <div>
             <span class="timeline-role">{entry.role}</span>
-            <span class="timeline-sep"> · </span>
+            <span class="timeline-sep"> — </span>
             <span class="timeline-org">{entry.org}</span>
           </div>
           <span class="timeline-dates">{entry.dates}</span>
@@ -48,7 +48,6 @@ const { entries, class: className = '' } = Astro.props;
     gap: 0;
   }
 
-  /* Vertical line */
   .timeline::before {
     content: '';
     position: absolute;
@@ -56,14 +55,14 @@ const { entries, class: className = '' } = Astro.props;
     top: 8px;
     bottom: 8px;
     width: 2px;
-    background: var(--color-green-light);
+    background: var(--color-hairline);
     border-radius: 1px;
   }
 
   .timeline-entry {
     position: relative;
-    padding-left: var(--spacing-6);
-    padding-bottom: var(--spacing-5);
+    padding-left: var(--spacing-10);
+    padding-bottom: var(--spacing-8);
   }
 
   .timeline-entry:last-child {
@@ -76,16 +75,15 @@ const { entries, class: className = '' } = Astro.props;
     top: 6px;
     width: 16px;
     height: 16px;
-    border-radius: var(--radius-circle);
-    background: var(--color-neutral-warm);
-    border: 1px solid var(--color-green-accent);
-    box-shadow: 0 0 0 1px var(--color-green-accent);
+    border-radius: var(--radius-full);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-ink);
   }
 
   .timeline-content {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-1);
+    gap: var(--spacing-2);
   }
 
   .timeline-header {
@@ -93,36 +91,42 @@ const { entries, class: className = '' } = Astro.props;
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: var(--spacing-2);
+    gap: var(--spacing-4);
   }
 
   .timeline-role {
+    font-family: var(--font-display);
     font-size: var(--text-body);
-    font-weight: 600;
-    color: var(--color-text-black);
+    font-weight: 500;
+    color: var(--color-ink);
+    letter-spacing: var(--tracking-display-tight);
   }
 
   .timeline-sep {
-    color: var(--color-text-black-soft);
+    color: var(--color-muted-slate);
     font-weight: 400;
   }
 
   .timeline-org {
+    font-family: var(--font-sans);
     font-size: var(--text-body);
-    color: var(--color-starbucks-green);
+    color: var(--color-ink);
     font-weight: 400;
   }
 
   .timeline-dates {
+    font-family: var(--font-mono);
     font-size: var(--text-micro);
-    color: var(--color-text-black-soft);
+    color: var(--color-muted-slate);
     white-space: nowrap;
+    letter-spacing: var(--tracking-mono);
   }
 
   .timeline-description {
-    font-size: var(--text-small);
-    color: var(--color-text-black-soft);
-    line-height: 1.6;
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    color: var(--color-muted-slate);
+    line-height: 1.5;
     margin: 0;
   }
 </style>

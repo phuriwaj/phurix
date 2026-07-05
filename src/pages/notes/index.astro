@@ -17,7 +17,6 @@ const notes: NoteMergedEntry[] = allNotes
   }))
   .sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
 
-// "On this day" — surface one note whose MM-DD matches today, from any prior year.
 const today = new Date();
 const onThisDayMatches = findOnThisDay(notes, today);
 const onThisDay = onThisDayMatches[0] ?? null;
@@ -67,63 +66,60 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
 
 <style>
   .page-header-section {
-    padding-block: var(--spacing-7) var(--spacing-5);
-    background: var(--color-neutral-warm);
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-canvas);
     border-bottom: 1px solid var(--color-hairline);
   }
 
   .section-eyebrow {
-    font-size: var(--text-small);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    font-weight: 600;
-    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
   }
 
   .page-title {
-    font-size: var(--text-jumbo);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
-    line-height: 1.15;
-    margin-bottom: var(--spacing-3);
-  }
-
-  @media (min-width: 1024px) {
-    .page-title {
-      font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
-    }
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-cohere-black);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
   }
 
   .page-lede {
+    font-family: var(--font-serif);
     font-size: var(--text-body-lg);
-    line-height: 1.6;
-    color: var(--color-text-black-soft);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
     max-width: 60ch;
   }
 
-  /* On this day — single quiet Lora-italic line above the grid. */
   .on-this-day {
-    padding-block: var(--spacing-4) var(--spacing-2);
-    background: var(--color-neutral-warm);
+    padding-block: var(--spacing-7) var(--spacing-4);
+    background: var(--color-soft-stone);
   }
 
   .on-this-day-line {
     font-family: var(--font-serif);
     font-style: italic;
     font-size: var(--text-body);
-    color: var(--color-text-black);
+    color: var(--color-ink);
     margin: 0;
   }
 
   .on-this-day-line a {
-    color: var(--color-green-accent);
+    color: var(--color-action-blue);
     text-decoration: underline;
     text-underline-offset: 2px;
     transition: color var(--duration-button) ease;
   }
 
   .on-this-day-line a:hover {
-    color: var(--color-starbucks-green);
+    color: var(--color-cohere-black);
   }
 </style>

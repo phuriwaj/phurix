@@ -1,7 +1,7 @@
 ---
 /**
  * Accordion — used on FAQ sections.
- * Duration 300ms, measured ease-out curve.
+ * 300ms duration, ease-out-soft curve.
  * Plain details/summary implementation (no JS needed).
  */
 interface Props {
@@ -37,22 +37,23 @@ const { items } = Astro.props;
   .accordion-summary {
     list-style: none;
     cursor: pointer;
-    padding: var(--spacing-4) 0;
+    padding: var(--spacing-5) 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: var(--spacing-3);
+    gap: var(--spacing-5);
+    font-family: var(--font-display);
     font-size: var(--text-body-lg);
-    font-weight: 500;
-    color: var(--color-text-black);
-    letter-spacing: var(--tracking-tight);
+    font-weight: 400;
+    color: var(--color-ink);
+    letter-spacing: var(--tracking-display-tight);
   }
 
   .accordion-summary::-webkit-details-marker { display: none; }
 
   .accordion-chev {
     font-size: 1.6rem;
-    color: var(--color-starbucks-green);
+    color: var(--color-action-blue);
     transition: transform var(--duration-expander) var(--ease-out-soft);
   }
 
@@ -61,10 +62,11 @@ const { items } = Astro.props;
   }
 
   .accordion-answer {
-    padding: 0 0 var(--spacing-4);
-    color: var(--color-text-black-soft);
+    padding: 0 0 var(--spacing-7);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
     font-size: var(--text-body);
-    line-height: 1.6;
+    line-height: 1.5;
     max-width: 70ch;
   }
 </style>

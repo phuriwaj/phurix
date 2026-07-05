@@ -1,14 +1,14 @@
 ---
 /**
  * Pattern detail — `/patterns/[slug]` (DESIGN.md §4 — read the pattern).
- * Same reading-frame as essay/notes detail. Optional "Used in:" footer
- * line that resolves `related[]` references to other patterns.
+ * Same reading-frame as essay/notes detail.
  * Cite: DESIGN.md §4 (patterns detail).
  */
 import Layout from '@/layouts/Layout.astro';
 import TopicPhoto from '@/components/TopicPhoto.astro';
 import { getCollection, render, getEntry } from 'astro:content';
 import { pickArtTopic } from '@/lib/topics';
+import { findBacklinks } from '@/lib/backlinks';
 
 export async function getStaticPaths() {
   const patterns = await getCollection('patterns');
@@ -23,20 +23,24 @@ const { Content } = await render(pattern);
 const allTopics = pattern.data.topics ?? [];
 const artTopic = pickArtTopic(allTopics);
 
-// Resolve related[] references — currently limited to other patterns
-// (per src/content.config.ts schema). If the schema ever expands to
-// cross-collection references, extend this resolver.
 const relatedRefs = pattern.data.related ?? [];
 const relatedEntries = await Promise.all(
   relatedRefs.map((ref) => getEntry(ref))
 );
 const relatedItems = relatedEntries.filter((e): e is NonNullable<typeof e> => Boolean(e));
+
+const allNotesForBacklinks = await getCollection('notes');
+const allEssaysForBacklinks = await getCollection('essays');
+const backlinkSources = [
+  ...findBacklinks(pattern.id, 'patterns', allNotesForBacklinks),
+  ...findBacklinks(pattern.id, 'patterns', allEssaysForBacklinks),
+].filter(({ entry: source }) => source.id !== pattern.id);
 ---
 
 <Layout
   title={`${pattern.data.title} — phurix`}
   description={pattern.data.lede}
-  hideFrap
+  hideAnnouncement
 >
   <script
     type="application/ld+json"
@@ -71,11 +75,6 @@ const relatedItems = relatedEntries.filter((e): e is NonNullable<typeof e> => Bo
             day: 'numeric',
           }).format(new Date(pattern.data.date))}
         </time>
-        {allTopics.length > 0 && (
-          <ul class="pattern-topics">
-            {allTopics.map((t) => <li class="pattern-topic">{t}</li>)}
-          </ul>
-        )}
       </div>
     </header>
 
@@ -99,6 +98,21 @@ const relatedItems = relatedEntries.filter((e): e is NonNullable<typeof e> => Bo
       </aside>
     )}
 
+    {backlinkSources.length > 0 && (
+      <aside class="pattern-related container-phx">
+        <p class="pattern-related-label">Linked from:</p>
+        <ul class="pattern-related-list">
+          {backlinkSources.map(({ entry: source, collection: coll }, i) => (
+            <li>
+              <span class="pattern-related-collection">{coll}/</span>
+              <a href={`/${coll}/${source.id}`}>{source.data.title}</a>
+              {i < backlinkSources.length - 1 && <span class="pattern-related-sep"> · </span>}
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
+
     <footer class="pattern-footer container-phx">
       <a href="/patterns" class="back-link">← Back to all patterns</a>
     </footer>
@@ -107,21 +121,20 @@ const relatedItems = relatedEntries.filter((e): e is NonNullable<typeof e> => Bo
 
 <style>
   .pattern-article {
-    padding-block: var(--spacing-7);
+    padding-block: var(--spacing-15);
   }
 
   .pattern-header {
     max-width: 65ch;
-    margin-bottom: var(--spacing-7);
+    margin-bottom: var(--spacing-15);
     margin-inline: auto;
   }
 
   .pattern-art {
     aspect-ratio: 4 / 3;
-    border-radius: var(--radius-card);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: var(--shadow-card);
-    margin-bottom: var(--spacing-5);
+    margin-bottom: var(--spacing-8);
     max-width: 32rem;
   }
 
@@ -133,95 +146,79 @@ const relatedItems = relatedEntries.filter((e): e is NonNullable<typeof e> => Bo
   }
 
   .section-eyebrow {
-    font-size: var(--text-small);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    font-weight: 600;
-    margin-bottom: var(--spacing-3);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin-bottom: var(--spacing-5);
   }
 
   .back-link {
-    color: var(--color-green-accent);
-    font-weight: 600;
+    color: var(--color-action-blue);
+    font-weight: 500;
     text-decoration: none;
     transition: color var(--duration-button) ease;
   }
 
   .back-link:hover {
-    color: var(--color-starbucks-green);
+    color: var(--color-cohere-black);
   }
 
-  /* Title in Lora 600 — matches essay/notes detail (DESIGN.md §1) */
   .pattern-h1 {
-    font-family: var(--font-serif);
-    font-size: var(--text-h1);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
-    line-height: 1.2;
-    margin-bottom: var(--spacing-3);
+    font-family: var(--font-display);
+    font-size: var(--text-card-heading);
+    font-weight: 400;
+    color: var(--color-cohere-black);
+    line-height: 1.15;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
   }
 
   .pattern-lede {
     font-family: var(--font-serif);
     font-size: var(--text-body-lg);
-    line-height: 1.6;
-    color: var(--color-text-black-soft);
-    margin-bottom: var(--spacing-4);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
+    margin-bottom: var(--spacing-7);
   }
 
   .pattern-meta-row {
     display: flex;
     align-items: center;
-    gap: var(--spacing-3);
+    gap: var(--spacing-5);
     flex-wrap: wrap;
-    font-size: var(--text-small);
-    color: var(--color-text-black-soft);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
   }
 
   .pattern-date { font-weight: 500; }
-
-  .pattern-topics {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: var(--spacing-1);
-    flex-wrap: wrap;
-  }
-
-  .pattern-topic {
-    padding: 4px 10px;
-    background: var(--color-green-light);
-    color: var(--color-starbucks-green);
-    border-radius: var(--radius-button);
-    font-size: var(--text-micro);
-    font-weight: 600;
-    letter-spacing: var(--tracking-tight);
-  }
 
   .pattern-body {
     max-width: 65ch;
     margin-inline: auto;
   }
 
-  /* "Used in:" footer line — only renders when related[] is populated */
   .pattern-related {
     max-width: 65ch;
     margin-inline: auto;
-    margin-top: var(--spacing-6);
-    padding-top: var(--spacing-4);
+    margin-top: var(--spacing-12);
+    padding-top: var(--spacing-7);
     border-top: 1px solid var(--color-hairline);
   }
 
   .pattern-related-label {
-    font-family: var(--font-sans);
-    font-size: var(--text-micro);
-    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    margin-bottom: var(--spacing-4);
   }
 
   .pattern-related-list {
@@ -230,28 +227,36 @@ const relatedItems = relatedEntries.filter((e): e is NonNullable<typeof e> => Bo
     margin: 0;
     font-family: var(--font-serif);
     font-size: var(--text-body);
-    color: var(--color-text-black);
+    color: var(--color-ink);
   }
 
   .pattern-related-list a {
-    color: var(--color-green-accent);
+    color: var(--color-action-blue);
     text-decoration: underline;
     text-underline-offset: 2px;
     transition: color var(--duration-button) ease;
   }
 
   .pattern-related-list a:hover {
-    color: var(--color-starbucks-green);
+    color: var(--color-cohere-black);
   }
 
   .pattern-related-sep {
-    color: var(--color-text-black-soft);
+    color: var(--color-muted-slate);
     margin-inline-start: 0.3em;
   }
 
+  .pattern-related-collection {
+    color: var(--color-muted-slate);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    margin-inline-end: 0.2em;
+    letter-spacing: var(--tracking-mono);
+  }
+
   .pattern-footer {
-    margin-top: var(--spacing-7);
-    padding-top: var(--spacing-5);
+    margin-top: var(--spacing-15);
+    padding-top: var(--spacing-8);
     border-top: 1px solid var(--color-hairline);
     max-width: 65ch;
   }

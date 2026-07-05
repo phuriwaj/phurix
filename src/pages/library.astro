@@ -1,7 +1,7 @@
 ---
 /**
  * /library — A visual shelf of books that shaped thinking.
- * Cite as: DESIGN.md §4 (/library) — tiles, gold border for "currently reading".
+ * Cite as: DESIGN.md §4 (/library).
  */
 import Layout from '@/layouts/Layout.astro';
 import BookTile from '@/components/BookTile.astro';
@@ -14,6 +14,7 @@ const books = allBooks.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
 <Layout title="Library" description="Books that have shaped how I think about design, systems, and the web.">
   <section class="page-header-section">
     <div class="container-phx">
+      <p class="section-eyebrow">Shelf</p>
       <h1 class="page-title">Library</h1>
       <p class="page-lede">
         Books that have shaped how I think about design, systems, and the web.
@@ -40,31 +41,43 @@ const books = allBooks.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
 
 <style>
   .page-header-section {
-    padding-block: var(--spacing-7) var(--spacing-5);
-    background: var(--color-neutral-warm);
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-soft-stone);
     border-bottom: 1px solid var(--color-hairline);
   }
 
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
+  }
+
   .page-title {
-    font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-cohere-black);
     line-height: 1.1;
-    margin-bottom: var(--spacing-3);
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
   }
 
   .page-lede {
     font-family: var(--font-serif);
     font-size: var(--text-body-lg);
-    line-height: 1.6;
-    color: var(--color-text-black-soft);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
     max-width: 60ch;
   }
 
   .book-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-5);
+    gap: var(--spacing-8);
   }
 
   @media (min-width: 640px) {
@@ -80,10 +93,12 @@ const books = allBooks.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
   }
 
   .library-updated {
-    font-family: var(--font-sans);
+    font-family: var(--font-mono);
     font-size: var(--text-micro);
-    color: var(--color-text-black-soft);
+    color: var(--color-muted-slate);
     text-align: center;
-    margin-block-start: var(--spacing-6);
+    margin-block-start: var(--spacing-12);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
   }
 </style>

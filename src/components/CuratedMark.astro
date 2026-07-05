@@ -2,6 +2,7 @@
 /**
  * CuratedMark — single accent glyph for curated picks.
  * One glyph, one job: mark "currently featured" or "newly added."
+ * Color: coral.
  * Cite as: DESIGN.md §7 (interaction — accent glyph).
  */
 interface Props {
@@ -23,9 +24,9 @@ const sizeMap = { sm: '0.9em', md: '1.1em', lg: '1.4em' };
 <style>
   .curated-mark {
     display: inline-block;
-    color: var(--color-starbucks-green);
-    font-family: var(--font-sans);
-    font-weight: 500;
+    color: var(--color-coral);
+    font-family: var(--font-display);
+    font-weight: 400;
     line-height: 0;
     vertical-align: 0.05em;
     margin-inline-end: 0.4em;

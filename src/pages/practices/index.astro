@@ -1,0 +1,83 @@
+---
+/**
+ * /practices — Index page for the "Living Well" pillar.
+ * Same shape as /notes: eyebrow + title + lede header, then a grid of
+ * GardenCards sorted reverse-chronologically.
+ * Cite as: MANIFESTO.md (pillar 2 — Living Well).
+ */
+import Layout from '@/layouts/Layout.astro';
+import CollectionGrid from '@/components/CollectionGrid.astro';
+import GardenCard from '@/components/GardenCard.astro';
+import { getCollection } from 'astro:content';
+
+const practices = (await getCollection('practices')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+---
+
+<Layout title="Practices" description="Field reports on how I live and work better — focus, attention, money, the small daily disciplines.">
+  <section class="page-header-section">
+    <div class="container-phx">
+      <p class="section-eyebrow">Living Well</p>
+      <h1 class="page-title">Practices</h1>
+      <p class="page-lede">
+        Field reports on what I tried and what stuck. Concrete, daily, weekly,
+        or seasonal — the disciplines that keep the working life upright.
+        Not advice.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    <CollectionGrid cols={3} gap="md">
+      {practices.map((practice) => (
+        <GardenCard
+          title={practice.data.title}
+          type="note"
+          excerpt={practice.data.excerpt}
+          date={practice.data.date}
+          topics={practice.data.topics}
+          growthStage={practice.data.growthStage}
+          href={`/practices/${practice.id}`}
+          newSince={practice.data.date}
+        />
+      ))}
+    </CollectionGrid>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-pale-green-wash);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-cohere-black);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .page-lede {
+    font-family: var(--font-serif);
+    font-size: var(--text-body-lg);
+    line-height: 1.5;
+    color: var(--color-ink);
+    max-width: 60ch;
+  }
+</style>

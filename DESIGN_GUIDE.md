@@ -1,279 +1,251 @@
-# Phurix Design System — Developer Guide
+# Design Guide — Developer Token Reference
 
-> A warm, confident retail-flagship design language inspired by Starbucks.
-> Every token in this guide is defined in [`src/styles/theme.css`](./src/styles/theme.css)
-> and surfaces automatically as Tailwind 4 utilities.
+This file is the developer-facing companion to `DESIGN.md` (the "why" — design rationale, theory, history). It maps every token in `src/styles/theme.css` to its role, default value, and intended use. When you change a token, change it here and in `theme.css` together.
 
----
-
-## TL;DR
-
-| You want to… | Use this |
-|---|---|
-| Set the page background | `bg-neutral-warm` (default canvas — never pure white) |
-| Render a CTA | `<Button variant="primary">` |
-| Make a content card | `<Card>` |
-| Make a dark-green hero strip | `<FeatureBand>` |
-| Add the floating order button | `<Frap>` |
-| Show a rewards redeemable count | `<RewardsPill stars={200} />` |
-| Show a gift-card tile | `<GiftCardTile imageSrc=… title=… />` |
-| Show a size selector | `<SizeOptionRow sizes={[…]} />` |
-| Show a FAQ block | `<Accordion items={[…]} />` |
-
-> **Source of truth:** [`DESIGN.md`](./DESIGN.md) describes the system in plain
-> English. Treat it as authoritative; this guide is a mapping onto code.
+For rationale and history, see `DESIGN.md`.
 
 ---
 
-## 1. The Four Greens (load-bearing)
+## Font families
 
-Never pick "one brand green." Each tier has a role:
+| Token | Value | Use |
+|-------|-------|-----|
+| `--font-sans` | `"Inter Variable", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif` | UI chrome, card titles ≤ 32px, list rows, body copy. |
+| `--font-display` | `"Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif` | All h1/h2 headlines (≥ 48px), CuratedPicks links, h2 inside `.prose`. Weight 400. |
+| `--font-serif` | `"Lora", "Iowan Old Style", Georgia, serif` | Long-form prose ledes (about, colophon), on-this-day lines, lead text. |
+| `--font-mono` | `"JetBrains Mono", ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace` | Uppercase mono labels, eyebrows, metadata dates. |
 
-| Token | Hex | Role | Example |
-|---|---|---|---|
-| `starbucks-green` | `#006241` | Headings, dominant brand moment | `h1`, hero headlines |
-| `green-accent` | `#00754A` | Filled CTAs, active state, focus ring | `<Button variant="primary">`, `:focus-visible` |
-| `house-green` | `#1E3932` | Footer, feature bands, dark panels | `<FeatureBand>`, `<Footer>` |
-| `green-uplift` | `#2B5148` | Decorative mid-dark | Background washes |
-| `green-light` | `#D4E9E2` | Form-valid tints, light utility | Valid-field background |
+Weights: Sans 400/500/600, Display 300/400/500, Serif 400/500/600, Mono 400/500.
 
-```astro
-<h1 class="text-starbucks-green">Hello</h1>
-<div class="bg-house-green text-text-white">Feature band</div>
-<button class="bg-green-accent text-white">CTA</button>
-```
+## Brand & accent colors
 
----
+| Token | Value | Use |
+|-------|-------|-----|
+| `--color-cohere-black` | `#000000` | Highest-emphasis text. h1/h2 default color. Logo / wordmark. |
+| `--color-near-black` | `#17171c` | Primary CTA fill. Footer / dark feature bands. |
+| `--color-deep-green` | `#003c33` | Deep-green feature band tone. |
+| `--color-dark-navy` | `#071829` | Alternate feature band tone. |
+| `--color-action-blue` | `#1863dc` | Nav hover, inline links, CuratedPicks link color, mono eyebrows. |
+| `--color-coral` | `#ff7759` | Mono uppercase eyebrows, TopicChip outline, CuratedMark ✦, currently-reading pill border, GrowthBadge `growing` text. |
+| `--color-soft-coral` | `#ffad9b` | Hover state for on-dark buttons, hover state for active TopicChip. |
 
-## 2. Gold is Reserved
+## Surface & background
 
-`gold` / `gold-light` / `gold-lightest` exist **only** for Rewards-status
-ceremony. Never as a general accent.
+| Token | Value | Use |
+|-------|-------|-----|
+| `--color-canvas` | `#ffffff` | Default body background. |
+| `--color-soft-stone` | `#eeece7` | Library / about / page-header secondary surfaces. |
+| `--color-pale-green-wash` | `#edfce9` | Evergreen pillar surfaces (practices page). GrowthBadge `evergreen` background. |
+| `--color-pale-blue-wash` | `#f1f5ff` | Home hero background. GrowthBadge `seedling` background. |
+| `--color-card-border` | `#f2f2f2` | Reserved for future card borders. |
 
-```astro
-<!-- OK: rewards cost pill -->
-<RewardsPill stars={200} />
+## Text & rules
 
-<!-- NOT OK: generic button or heading -->
-<button class="bg-gold">Buy</button>  <!-- forbidden -->
-```
+| Token | Value | Use |
+|-------|-------|-----|
+| `--color-ink` | `#212121` | Default body text. |
+| `--color-muted-slate` | `#93939f` | Metadata dates, captions, footer links (light), secondary prose. |
+| `--color-slate` | `#75758a` | Reserved. |
+| `--color-hairline` | `#d9d9dd` | All 1px dividers, borders, focus ring default. |
+| `--color-border-light` | `#e5e7eb` | Hover border for bordered cards. |
 
----
+## Semantic
 
-## 3. The Warm Canvas
+| Token | Value | Use |
+|-------|-------|-----|
+| `--color-focus-blue` | `#4c6ee6` | Universal `:focus-visible` outline. |
+| `--color-form-violet` | `#9b60aa` | Form input focus state. |
+| `--color-error-red` | `#b30000` | Reserved for future error states. |
 
-The page background is **always** a warm cream. Never pure white.
+## On-dark surface text overrides
 
-```css
-/* body uses this automatically via global.css */
-background-color: var(--color-neutral-warm);  /* #f2f0eb */
-```
+| Token | Value | Use |
+|-------|-------|-----|
+| `--color-on-dark` | `#ffffff` | Headlines and body on dark surfaces. |
+| `--color-on-dark-muted` | `rgba(255, 255, 255, 0.72)` | Subhead and secondary copy on dark surfaces. |
 
-White is reserved for cards and modals layered on top of the canvas.
+## Spacing scale (rem, 1rem = 10px)
 
----
+| Token | Value | px |
+|-------|-------|----|
+| `--spacing-0` | `0` | 0 |
+| `--spacing-1` | `0.2rem` | 2 |
+| `--spacing-2` | `0.4rem` | 4 |
+| `--spacing-3` | `0.6rem` | 6 |
+| `--spacing-4` | `0.8rem` | 8 |
+| `--spacing-5` | `1rem` | 10 |
+| `--spacing-6` | `1.2rem` | 12 |
+| `--spacing-7` | `1.6rem` | 16 |
+| `--spacing-8` | `2rem` | 20 |
+| `--spacing-9` | `2.2rem` | 22 |
+| `--spacing-10` | `2.4rem` | 24 |
+| `--spacing-11` | `2.8rem` | 28 |
+| `--spacing-12` | `3.2rem` | 32 |
+| `--spacing-13` | `3.6rem` | 36 |
+| `--spacing-14` | `4rem` | 40 |
+| `--spacing-15` | `5.6rem` | 56 |
+| `--spacing-16` | `6rem` | 60 |
+| `--spacing-17` | `6.4rem` | 64 |
+| `--spacing-18` | `8rem` | 80 |
 
-## 4. Buttons — Universal Rules
+| Token | Value | Use |
+|-------|-------|-----|
+| `--spacing-gutter` | `1.6rem` | Outer container padding (mobile). |
+| `--spacing-gutter-md` | `2.4rem` | Outer container padding (≥ 768px). |
+| `--spacing-gutter-lg` | `4rem` | Outer container padding (≥ 1024px). |
 
-| Rule | Why |
-|---|---|
-| `border-radius: 50px` (full pill) | Universal across the system |
-| `transform: scale(0.95)` on `:active` | Signature micro-interaction |
-| `transition: 200ms ease` | Feel, not spectacle |
-| One font weight: 600 | Hierarchy comes from color/size, not weight |
+## Border radius
 
-```astro
-<Button variant="primary" href="/projects">View Work</Button>
-<Button variant="outline" href="/contact">Contact</Button>
-<Button variant="on-dark" href="/x">Learn more</Button>  <!-- on feature band -->
-<Button variant="sm" href="/x">Small</Button>
-```
+| Token | Value | Use |
+|-------|-------|-----|
+| `--radius-xs` | `0.4rem` | Form inputs, search inputs. |
+| `--radius-sm` | `0.8rem` | Smaller media (book covers, secondary tiles). |
+| `--radius-md` | `1.6rem` | Default cards. |
+| `--radius-lg` | `2.2rem` | Hero media (TopicPhoto, essay hero, section media). |
+| `--radius-xl` | `3rem` | Large chip (TopicChip `lg`). |
+| `--radius-pill` | `3.2rem` | All buttons, TopicChip `sm`/`md`, badges, form fields. |
+| `--radius-full` | `9999px` | Round icons, dots, anything circular. |
 
-See [`Button.astro`](./src/components/Button.astro) for all 7 variants.
+## Letter spacing
 
----
+| Token | Value | Use |
+|-------|-------|-----|
+| `--tracking-display-tight` | `-0.02em` | All h1/h2/h3 display headlines. |
+| `--tracking-tight` | `-0.01em` | Body text. |
+| `--tracking-mono` | `0.02em` | All uppercase mono labels (eyebrows, TopicChip, mono buttons). |
 
-## 5. Type System
+## Line height
 
-| Token | Size | Use |
-|---|---|---|
-| `text-display` | 5.0rem / 80px | Display (Rewards hero) |
-| `text-jumbo` | 3.6rem / 58px | Secondary hero |
-| `text-hero-large` | 2.8rem / 45px | Section headlines |
-| `text-h1` | 2.4rem / 24px | h1, h2 (weight + color separate them) |
-| `text-body-lg` | 1.9rem / 19px | Hero intro copy |
-| `text-body` | 1.6rem / 16px | Default body |
-| `text-small` | 1.4rem / 14px | Button label, metadata |
-| `text-micro` | 1.3rem / 13px | Caption micro-copy |
+| Token | Value | Use |
+|-------|-------|-----|
+| `--leading-body` | `1.5` | Body copy and lists. |
+| `--leading-display` | `1.2` | Display headlines. |
+| `--leading-feature` | `1.3` | Feature headings (h3). |
 
-Three typeface contexts:
+## Type scale (rem, 1rem = 10px)
 
-- **Sans (Inter Variable):** nearly everything
-- **Serif (Lora):** Rewards ceremony headlines only — use `.serif-headline`
-- **Script (Kalam):** Careers cup-name touches only — use `.script-mark`
+| Token | Value | px | Use |
+|-------|-------|----|-----|
+| `--text-hero-display` | `9.6rem` | 96 | Home hero (clamp 4rem → 9.6rem). 404 page. |
+| `--text-product-display` | `7.2rem` | 72 | Reserved for product pages. |
+| `--text-section-display` | `6rem` | 60 | Feature band headline (clamp 3.2rem → 6rem). |
+| `--text-section-heading` | `4.8rem` | 48 | Page h1 (clamp 3.2rem → 4.8rem). |
+| `--text-card-heading` | `3.2rem` | 32 | h2 in `.prose`, essay/note/pattern title. |
+| `--text-feature-heading` | `2.4rem` | 24 | Garden card title, project title, concept term. |
+| `--text-body-lg` | `1.8rem` | 18 | Page ledes, prose body, CuratedPicks links. |
+| `--text-body` | `1.6rem` | 16 | Default body. |
+| `--text-button` | `1.4rem` | 14 | Button labels. |
+| `--text-caption` | `1.4rem` | 14 | Captions, nav links, footer links, search results. |
+| `--text-mono-label` | `1.4rem` | 14 | Mono labels, eyebrows. |
+| `--text-micro` | `1.2rem` | 12 | Date stamps, superscript details, very small metadata. |
 
-> **Substitution:** SoDoSans → Inter; Lander Tall → Lora; both are open-source.
+## Elevation
 
-Tracking is tight by default: `letter-spacing: -0.01em` is applied to `body`
-globally. Don't override unless you mean it.
+| Token | Value | Use |
+|-------|-------|-----|
+| `--shadow-card` | `0 0 0.5px rgba(17,17,28,0.08), 0 1px 1px rgba(17,17,28,0.06)` | Default card lift. |
+| `--shadow-nav` | `0 1px 0 var(--color-hairline)` | Nav bottom hairline. |
+| `--shadow-focus-ring` | `0 0 0 2px var(--color-focus-blue)` | Search input focus, key interactive focus. |
+| `--shadow-form-focus` | `0 0 0 1px var(--color-form-violet)` | Form input focus. |
 
----
+## Motion
 
-## 6. Spacing
+| Token | Value | Use |
+|-------|-------|-----|
+| `--ease-out-soft` | `cubic-bezier(0.25, 0.46, 0.45, 0.94)` | All transitions. |
+| `--duration-button` | `0.2s` | Hover/active feedback. |
+| `--duration-image` | `0.3s` | Image fade-in. |
+| `--duration-expander` | `300ms` | Accordion chevron rotation. |
 
-Rem-based, anchored `1rem = 10px`:
+## Container widths
 
-```
---spacing-1   0.4rem  ( 4px)
---spacing-2   0.8rem  ( 8px)
---spacing-3   1.6rem  (16px)  ← universal default
---spacing-4   2.4rem  (24px)
---spacing-5   3.2rem  (32px)
---spacing-6   4.0rem  (40px)
---spacing-7   4.8rem  (48px)
---spacing-8   5.6rem  (56px)  ← Frap height
---spacing-9   6.4rem  (64px)
-```
+| Token | Value | Use |
+|-------|-------|-----|
+| `--container-sm` | `343px` | Narrow content (small forms). |
+| `--container-md` | `500px` | Medium. |
+| `--container-lg` | `720px` | Long-form prose. |
+| `--container-xl` | `1440px` | Default site container. |
 
-Use `<div class="p-{n}">` or `mt-{n}` etc. as Tailwind utilities.
+## Nav heights
 
-```astro
-<section class="p-7">…</section>          <!-- 48px padding -->
-<div class="gap-4">…</div>                <!-- 24px gap -->
-```
-
----
-
-## 7. Depth — Layered Whisper-Soft Shadows
-
-Never one heavy drop shadow. Layer 2–3 low-alpha shadows:
-
-| Level | Token | Use |
-|---|---|---|
-| Card | `--shadow-card` | Default content card |
-| Nav | `--shadow-nav` | Fixed top bar (3 layers) |
-| Frap base | `--shadow-frap-base` | Halo around Frap |
-| Frap ambient | `--shadow-frap-ambient` | Directional lift |
-| Gift card | `--shadow-gift-card` | Physical card feel |
-| SVC | `--shadow-svc` | Starbucks Card SVG drop shadow |
-
-```astro
-<article class="shadow-card rounded-card">…</article>
-```
-
----
-
-## 8. Color-Block Page Rhythm
-
-The home page bands work like espresso-dark bookends around bright body:
-
-```
-Cream hero (Neutral Warm)
-  → White content section
-    → Dark-green (House Green) feature band
-      → White content section
-        → Cream utility zone
-          → Dark-green (House Green) footer
-```
-
-```astro
-<Layout>
-  <section class="bg-neutral-warm">…</section>      <!-- cream hero -->
-  <section class="container-phx section">…</section> <!-- white body -->
-  <FeatureBand />                                    <!-- dark-green band -->
-  <Footer />                                         <!-- dark-green footer -->
-</Layout>
-```
-
----
-
-## 9. Frap — Persistent Floating CTA
-
-The 56px circular button is **the** signature elevation element. It floats
-bottom-right on every scrolled surface. Persist it via the layout's
-`frap` slot.
-
-```astro
-<Layout>
-  <slot />   <!-- your page content -->
-
-  <Frap slot="frap" href="/contact" label="Quick contact" />
-</Layout>
-```
-
-Set `hideFrap` on `<Layout>` for confirmation pages.
+| Token | Value | Use |
+|-------|-------|-----|
+| `--nav-h` | `7.2rem` | Desktop nav (≥ 768px). |
+| `--nav-h-mobile` | `5.6rem` | Mobile nav (< 768px). |
 
 ---
 
-## 10. Don'ts (from DESIGN.md §7)
+## Component token cheatsheet
 
-- ❌ Don't use pure white as page canvas — `bg-white` is for cards only.
-- ❌ Don't pick "one brand green" — use the four-tier system.
-- ❌ Don't use gold outside Rewards ceremony.
-- ❌ Don't square button corners — full pill is universal.
-- ❌ Don't use gradients — system is color-block.
-- ❌ Don't differentiate h1/h2 by size — same 24px, separate by weight + color.
-- ❌ Don't use `color: #000` for body — use `text-text-black` (`rgba(0,0,0,0.87)`).
-- ❌ Don't skip `scale(0.95)` on button active state.
-- ❌ Don't stack single heavy shadows — layer 2–3 low-alpha ones.
-- ❌ Don't introduce serif/script into the main shopping flow.
-
----
-
-## 11. File Map
-
-```
-src/
-├── styles/
-│   ├── theme.css       ← all design tokens (Tailwind 4 @theme)
-│   └── global.css      ← canvas, resets, focus, utilities
-├── layouts/
-│   └── Layout.astro    ← <html>, fonts, Nav, Footer, Frap slot
-├── components/
-│   ├── Layout chrome
-│   │   ├── Nav.astro          ← global top bar (progressive height)
-│   │   ├── Footer.astro       ← dark-green footer with social links
-│   │   └── Frap.astro         ← floating circular CTA
-│   ├── Content cards
-│   │   ├── Card.astro         ← content card (light / dark)
-│   │   ├── BookTile.astro     ← book cover tile with placeholder color
-│   │   ├── GardenCard.astro   ← garden entry card (note/essay/talk/pattern)
-│   │   ├── CollectionGrid.astro ← grid wrapper for collection items
-│   │   └── FeatureBand.astro  ← 60/40 dark-green hero strip
-│   ├── Display
-│   │   ├── Timeline.astro     ← chronological timeline view
-│   │   ├── TopicPhoto.astro   ← photo tied to a topic key
-│   │   └── GrowthBadge.astro  ← seedling/budding/evergreen badge
-│   ├── Layout helpers
-│   │   ├── NowPage.astro      ← /now page section wrapper
-│   │   ├── TopicChip.astro    ← topic pill for filters
-│   │   ├── Accordion.astro    ← FAQ list (no JS, details/summary)
-│   │   └── Button.astro       ← 7 variants × 3 sizes
-└── pages/
-    └── index.astro            ← landing page
-```
+| Component | Tokens used |
+|-----------|-------------|
+| **Button** | `--font-sans`, `--radius-pill`, `--duration-button`, `--ease-out-soft`, `--color-near-black`/`--color-cohere-black` (primary), `--color-on-dark` (on-dark). |
+| **Card** | `--radius-md`, `--color-canvas`, `--color-hairline`, `--color-border-light`, `--color-near-black`, `--color-on-dark`. |
+| **Footer** | `--color-near-black`, `--color-on-dark`, `--color-on-dark-muted`, `--color-coral`, `--color-soft-coral`, `--font-mono`. |
+| **Nav** | `--font-display`, `--font-sans`, `--color-canvas`, `--color-cohere-black`, `--color-hairline`, `--color-action-blue`, `--color-ink`. |
+| **FeatureBand** | `--color-deep-green` / `--color-dark-navy`, `--font-display`, `--color-on-dark`, `--color-on-dark-muted`, `--radius-lg`. |
+| **NewsletterBand** | `--color-near-black`, `--color-coral`, `--color-on-dark`, `--color-on-dark-muted`, `--font-display`, `--font-mono`. |
+| **GardenCard** | `--color-hairline`, `--color-soft-stone`, `--color-coral`, `--color-ink`, `--color-muted-slate`, `--font-display`, `--font-mono`. |
+| **BookTile** | `--radius-sm`, `--color-coral`, `--color-ink`, `--font-display`, `--font-mono`, `--color-on-dark`. |
+| **GrowthBadge** | `--font-mono`, `--tracking-mono`, `--color-action-blue`/`--color-pale-blue-wash` (seedling), `--color-coral` (growing), `--color-deep-green`/`--color-pale-green-wash` (evergreen). |
+| **Timeline** | `--color-hairline`, `--color-ink`, `--color-muted-slate`, `--font-display`, `--font-mono`. |
+| **TopicChip** | `--font-mono`, `--color-coral`, `--color-cohere-black`, `--radius-pill` (sm/md) / `--radius-xl` (lg), `--tracking-mono`. |
+| **TopicPhoto** | `--color-soft-stone`, `--color-on-dark`. |
+| **CuratedPicks** | `--color-coral`, `--color-action-blue`, `--color-hairline`, `--font-display` (italic). |
+| **CuratedMark** | `--color-coral`, `--font-display`. |
+| **Accordion** | `--color-hairline`, `--color-action-blue`, `--color-ink`, `--font-display`, `--duration-expander`. |
+| **CollectionGrid** | `--spacing-7` / `--spacing-10` / `--spacing-12` (gap scale), `--color-pale-green-wash` / `--color-pale-blue-wash` (tone). |
+| **AnnouncementBar** | `--color-cohere-black`, `--color-on-dark`, `--color-on-dark-muted`, `--color-soft-coral`, `--font-sans`, `--text-micro`. |
 
 ---
 
-## 12. Adding a New Token
+## Anti-patterns
 
-1. Open `src/styles/theme.css`.
-2. Add the `--your-token: value;` line in the right category block.
-3. Tailwind 4 auto-generates the utility class.
-4. Use it: `bg-your-token` / `text-your-token` / `p-your-token`.
-5. If it's a new color, add it to the **Color Palette & Roles** table in
-   `DESIGN.md` so the system stays documented.
+The following should never appear in new code:
+
+- `transform: scale(0.95)` on any interactive — color/background only.
+- Emoji as primary iconography in `GrowthBadge`.
+- Drop shadows with blur > 4px on cards.
+- `display: scale(0.95)` for press feedback.
+- `font-weight: 700` on any display headline.
+- Hard borders between footer / newsletter clusters.
+- Hero media radius below `--radius-sm` (8px).
+- A generic sans-serif for both display AND body — always pair display and body.
+- Saturated gradients as UI backgrounds.
 
 ---
 
-## 13. Substituted Fonts
+## Migration helpers (old → new)
 
-| Original (proprietary) | We use | Loaded from |
-|---|---|---|
-| SoDoSans | Inter Variable | `@fontsource-variable/inter` (installed) |
-| Lander Tall (Rewards serif) | Lora | Google Fonts |
-| Proxima Nova (legacy) | Inter | same as above |
-| Kalam (Careers script) | Kalam | Google Fonts |
-
-If a font needs the tight `-0.01em` tracking adjustment, override locally —
-some open-source faces need `-0.005em` instead.
+| Old token | New token |
+|-----------|-----------|
+| `--color-starbucks-green` | `--color-cohere-black` (text) / `--color-near-black` (CTA) |
+| `--color-green-accent` | `--color-action-blue` |
+| `--color-house-green` | `--color-near-black` |
+| `--color-green-light` | `--color-pale-green-wash` |
+| `--color-gold` | `--color-coral` (mono labels) |
+| `--color-neutral-warm` | `--color-soft-stone` (page-header) / `--color-canvas` (default) |
+| `--color-ceramic` | `--color-soft-stone` |
+| `--color-text-black` | `--color-ink` |
+| `--color-text-black-soft` | `--color-muted-slate` |
+| `--color-text-white` | `--color-on-dark` |
+| `--color-text-white-soft` | `--color-on-dark-muted` |
+| `--color-input-border` | `--color-hairline` |
+| `--font-script` | `--font-mono` (technical) or `--font-display` (display) |
+| `--radius-card` | `--radius-md` |
+| `--radius-button` | `--radius-pill` |
+| `--radius-input` | `--radius-xs` |
+| `--radius-circle` | `--radius-full` |
+| `--text-h1` | `--text-card-heading` (32) or `clamp(...)` for page h1 |
+| `--text-jumbo` | `clamp(3.2rem, 6vw, 4.8rem)` |
+| `--text-prose` | `--text-body-lg` |
+| `--text-small` | `--text-caption` |
+| `--text-hero-large` | `clamp(3.2rem, 6vw, 4.8rem)` (page h1) |
+| `--tracking-loose` / `--tracking-looser` | `--tracking-mono` (for mono eyebrows) |
+| `--tracking-display` | `--tracking-display-tight` |
+| `--tracking-pill` | `--tracking-mono` |
+| `--shadow-frap-*` | REMOVED — no replacement. Floating CTA is gone. |
+| `--shadow-gift-card` | `--shadow-card` |
+| `--shadow-svc` | REMOVED — no replacement. |
+| `--button-active-scale` | REMOVED — no `transform: scale()` press feedback. |
+| `--ease-spring` | `--ease-out-soft` |

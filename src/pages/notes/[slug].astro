@@ -8,8 +8,9 @@ import Layout from '@/layouts/Layout.astro';
 import TopicChip from '@/components/TopicChip.astro';
 import GrowthBadge from '@/components/GrowthBadge.astro';
 import TopicPhoto from '@/components/TopicPhoto.astro';
-import { getCollection, render } from 'astro:content';
+import { getCollection, render, getEntry } from 'astro:content';
 import { pickArtTopic } from '@/lib/topics';
+import { findBacklinks } from '@/lib/backlinks';
 
 export async function getStaticPaths() {
   const notes = await getCollection('notes');
@@ -38,9 +39,26 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 }).format(new Date(entry.data.date));
 
 const artTopic = pickArtTopic(entry.data.topics);
+
+const relatedRefs = entry.data.related ?? [];
+const relatedResolved = await Promise.all(
+  relatedRefs.map((ref) => getEntry(ref))
+);
+const relatedItems = relatedResolved.filter(
+  (e): e is NonNullable<typeof e> => Boolean(e)
+);
+
+const allNotesForBacklinks = await getCollection('notes');
+const allEssaysForBacklinks = await getCollection('essays');
+const allPatternsForBacklinks = await getCollection('patterns');
+const backlinkSources = [
+  ...findBacklinks(entry.id, 'notes', allNotesForBacklinks),
+  ...findBacklinks(entry.id, 'notes', allEssaysForBacklinks),
+  ...findBacklinks(entry.id, 'notes', allPatternsForBacklinks),
+].filter(({ entry: source }) => source.id !== entry.id);
 ---
 
-<Layout title={entry.data.title} description={entry.data.excerpt} hideFrap>
+<Layout title={entry.data.title} description={entry.data.excerpt} hideAnnouncement>
   <script
     type="application/ld+json"
     is:inline
@@ -82,7 +100,7 @@ const artTopic = pickArtTopic(entry.data.topics);
 
           {entry.data.topics && entry.data.topics.length > 0 && (
             <div class="note-topics">
-              {entry.data.topics.map((t) => <TopicChip label={t} href={`/garden?topic=${t}`} />)}
+              {entry.data.topics.map((t) => <TopicChip label={t} size="sm" href={`/garden?topic=${t}`} />)}
             </div>
           )}
         </header>
@@ -103,6 +121,43 @@ const artTopic = pickArtTopic(entry.data.topics);
             </a>
           )}
         </nav>
+
+        {(relatedItems.length > 0 || backlinkSources.length > 0) && (
+          <aside class="note-links">
+            {relatedItems.length > 0 && (
+              <section class="note-links-section">
+                <p class="note-links-label">Related</p>
+                <ul class="note-links-list">
+                  {relatedItems.map((rel, i) => (
+                    <li>
+                      <a href={`/notes/${rel.id}`}>{rel.data.title}</a>
+                      {i < relatedItems.length - 1 && <span class="note-links-sep"> · </span>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {relatedItems.length > 0 && backlinkSources.length > 0 && (
+              <hr class="note-links-divider" />
+            )}
+
+            {backlinkSources.length > 0 && (
+              <section class="note-links-section">
+                <p class="note-links-label">Linked from</p>
+                <ul class="note-links-list">
+                  {backlinkSources.map(({ entry: source, collection: coll }, i) => (
+                    <li>
+                      <span class="note-links-collection">{coll}/</span>
+                      <a href={`/${coll}/${source.id}`}>{source.data.title}</a>
+                      {i < backlinkSources.length - 1 && <span class="note-links-sep"> · </span>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </aside>
+        )}
       </article>
     </div>
   </section>
@@ -111,16 +166,17 @@ const artTopic = pickArtTopic(entry.data.topics);
 <style>
   .back-link {
     display: inline-block;
-    font-size: var(--text-small);
-    font-weight: 600;
-    color: var(--color-green-accent);
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--color-action-blue);
     text-decoration: none;
-    margin-bottom: var(--spacing-5);
+    margin-bottom: var(--spacing-8);
     transition: color var(--duration-button) ease;
   }
 
   .back-link:hover {
-    color: var(--color-starbucks-green);
+    color: var(--color-cohere-black);
   }
 
   .note-article {
@@ -129,17 +185,14 @@ const artTopic = pickArtTopic(entry.data.topics);
   }
 
   .note-header {
-    margin-bottom: var(--spacing-6);
+    margin-bottom: var(--spacing-12);
   }
 
-  /* Hero only for evergreen notes (DESIGN.md §6); max-width 32rem keeps
-     short notes visually tighter than essay hero. */
   .note-art {
     aspect-ratio: 4 / 3;
-    border-radius: var(--radius-card);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: var(--shadow-card);
-    margin-bottom: var(--spacing-5);
+    margin-bottom: var(--spacing-8);
     max-width: 32rem;
   }
 
@@ -150,24 +203,27 @@ const artTopic = pickArtTopic(entry.data.topics);
     display: block;
   }
 
-  /* Title in Lora 600 — matches essay detail (DESIGN.md §1) */
   .note-title {
-    font-family: var(--font-serif);
-    font-size: var(--text-h1);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
-    line-height: 1.2;
-    margin-bottom: var(--spacing-3);
+    font-family: var(--font-display);
+    font-size: var(--text-card-heading);
+    font-weight: 400;
+    color: var(--color-cohere-black);
+    line-height: 1.15;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
   }
 
   .note-meta {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--spacing-2);
-    margin-bottom: var(--spacing-3);
-    font-size: var(--text-small);
-    color: var(--color-text-black-soft);
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
   }
 
   .note-divider { opacity: 0.5; }
@@ -175,39 +231,104 @@ const artTopic = pickArtTopic(entry.data.topics);
   .note-topics {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-1);
+    gap: var(--spacing-2);
   }
 
   .note-nav {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: var(--spacing-3);
-    margin-top: var(--spacing-7);
-    padding-top: var(--spacing-5);
+    gap: var(--spacing-5);
+    margin-top: var(--spacing-15);
+    padding-top: var(--spacing-8);
     border-top: 1px solid var(--color-hairline);
   }
 
   .note-nav-link {
-    font-size: var(--text-small);
-    font-weight: 600;
-    color: var(--color-green-accent);
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--color-action-blue);
     text-decoration: none;
     transition: color var(--duration-button) ease;
   }
 
   .note-nav-link:hover {
-    color: var(--color-starbucks-green);
+    color: var(--color-cohere-black);
   }
 
   .note-nav-next {
     margin-left: auto;
   }
 
-  /* Notes are shorter — slightly tighter body line-height than the shared
-     `.prose` utility's 1.7. Scoped to .note-article so other prose pages
-     are unaffected. */
   .note-article .prose {
     line-height: 1.65;
+  }
+
+  .note-links {
+    margin-top: var(--spacing-15);
+    padding-top: var(--spacing-8);
+    border-top: 1px solid var(--color-hairline);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-7);
+  }
+
+  .note-links-section + .note-links-section {
+    padding-top: var(--spacing-7);
+  }
+
+  .note-links-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  .note-links-divider {
+    border: 0;
+    border-top: 1px solid var(--color-hairline);
+    margin: 0;
+  }
+
+  .note-links-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+  }
+
+  .note-links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    color: var(--color-ink);
+  }
+
+  .note-links-list a {
+    color: var(--color-action-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .note-links-list a:hover {
+    color: var(--color-cohere-black);
+  }
+
+  .note-links-collection {
+    color: var(--color-muted-slate);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    margin-inline-end: 0.2em;
+    letter-spacing: var(--tracking-mono);
+  }
+
+  .note-links-sep {
+    color: var(--color-muted-slate);
+    margin-inline-start: 0.3em;
   }
 </style>

@@ -15,24 +15,28 @@ const channels = [
 ---
 
 <Layout title="Contact — phurix" description="Get in touch with phurix">
-  <section class="container-phx section">
-    <p class="section-eyebrow">Contact</p>
-    <h1 class="page-title">Get in touch.</h1>
-    <p class="page-lede">
-      Three channels below — pick whichever fits. Email is best for anything
-      that needs a back-and-forth.
-    </p>
+  <section class="page-header-section">
+    <div class="container-phx">
+      <p class="section-eyebrow">Contact</p>
+      <h1 class="page-title">Get in touch.</h1>
+      <p class="page-lede">
+        Three channels below — pick whichever fits. Email is best for anything
+        that needs a back-and-forth.
+      </p>
+    </div>
+  </section>
 
-    <div class="contact-grid mt-7">
+  <section class="container-phx section">
+    <div class="contact-grid">
       {channels.map((c) => (
-        <Card>
-          <h2 class="channel-label">{c.label}</h2>
+        <Card emphasis="bordered">
+          <p class="channel-label">{c.label}</p>
           <a href={c.href} class="channel-value">{c.value}</a>
         </Card>
       ))}
     </div>
 
-    <div class="cta-row mt-7">
+    <div class="cta-row mt-15">
       <Button variant="primary" href="mailto:hello@phurix.dev">
         Email me directly
       </Button>
@@ -41,35 +45,44 @@ const channels = [
 </Layout>
 
 <style>
+  .page-header-section {
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
   .section-eyebrow {
-    font-size: var(--text-small);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    font-weight: 600;
-    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
   }
 
   .page-title {
-    font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-cohere-black);
     line-height: 1.1;
-    margin-bottom: var(--spacing-4);
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
   }
 
   .page-lede {
     font-family: var(--font-serif);
     font-size: var(--text-body-lg);
-    line-height: 1.6;
-    color: var(--color-text-black-soft);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
     max-width: 60ch;
   }
 
   .contact-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--spacing-3);
+    gap: var(--spacing-5);
   }
 
   @media (min-width: 768px) {
@@ -77,29 +90,32 @@ const channels = [
   }
 
   .channel-label {
-    font-size: var(--text-micro);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    font-weight: 700;
-    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin: 0 0 var(--spacing-4);
   }
 
   .channel-value {
-    font-family: var(--font-sans);
-    font-size: var(--text-body);
-    font-weight: 600;
-    color: var(--color-text-black);
+    font-family: var(--font-display);
+    font-size: var(--text-feature-heading);
+    font-weight: 400;
+    color: var(--color-ink);
     word-break: break-all;
+    text-decoration: none;
+    letter-spacing: var(--tracking-display-tight);
   }
 
-  .channel-value:hover { color: var(--color-green-accent); }
+  .channel-value:hover { color: var(--color-action-blue); }
 
   .cta-row {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-3);
+    gap: var(--spacing-5);
   }
 
-  .mt-7 { margin-top: var(--spacing-7); }
+  .mt-15 { margin-top: var(--spacing-15); }
 </style>

@@ -2,14 +2,15 @@
 /**
  * Essay detail — `/essays/[slug]` (DESIGN.md §4 — read the essay).
  * Lora 18px body via shared `.prose` utility (src/styles/global.css).
- * Title in Lora 600; back-link + meta row + topic chips as links.
+ * Title in display face, weight 400. back-link + meta row + topic chips.
  * Cite: DESIGN.md §4 (essays detail) + DESIGN.md §1 (typography stack).
  */
 import Layout from '@/layouts/Layout.astro';
 import TopicChip from '@/components/TopicChip.astro';
 import TopicPhoto from '@/components/TopicPhoto.astro';
-import { getCollection, render } from 'astro:content';
+import { getCollection, render, getEntry } from 'astro:content';
 import { pickArtTopic } from '@/lib/topics';
+import { findBacklinks } from '@/lib/backlinks';
 
 export async function getStaticPaths() {
   const essays = await getCollection('essays');
@@ -38,9 +39,26 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 }).format(new Date(entry.data.date));
 
 const artTopic = pickArtTopic(entry.data.topics);
+
+const relatedRefs = entry.data.related ?? [];
+const relatedResolved = await Promise.all(
+  relatedRefs.map((ref) => getEntry(ref))
+);
+const relatedItems = relatedResolved.filter(
+  (e): e is NonNullable<typeof e> => Boolean(e)
+);
+
+const allNotesForBacklinks = await getCollection('notes');
+const allEssaysForBacklinks = await getCollection('essays');
+const allPatternsForBacklinks = await getCollection('patterns');
+const backlinkSources = [
+  ...findBacklinks(entry.id, 'essays', allNotesForBacklinks),
+  ...findBacklinks(entry.id, 'essays', allEssaysForBacklinks),
+  ...findBacklinks(entry.id, 'essays', allPatternsForBacklinks),
+].filter(({ entry: source }) => source.id !== entry.id);
 ---
 
-<Layout title={`${entry.data.title} — phurix`} description={entry.data.lede} hideFrap>
+<Layout title={`${entry.data.title} — phurix`} description={entry.data.lede} hideAnnouncement>
   <script
     type="application/ld+json"
     is:inline
@@ -78,7 +96,7 @@ const artTopic = pickArtTopic(entry.data.topics);
 
           {entry.data.topics && entry.data.topics.length > 0 && (
             <div class="essay-topics">
-              {entry.data.topics.map((t) => <TopicChip label={t} href={`/garden?topic=${t}`} />)}
+              {entry.data.topics.map((t) => <TopicChip label={t} size="sm" href={`/garden?topic=${t}`} />)}
             </div>
           )}
         </header>
@@ -99,6 +117,43 @@ const artTopic = pickArtTopic(entry.data.topics);
             </a>
           )}
         </nav>
+
+        {(relatedItems.length > 0 || backlinkSources.length > 0) && (
+          <aside class="essay-links">
+            {relatedItems.length > 0 && (
+              <section class="essay-links-section">
+                <p class="essay-links-label">Related</p>
+                <ul class="essay-links-list">
+                  {relatedItems.map((rel, i) => (
+                    <li>
+                      <a href={`/essays/${rel.id}`}>{rel.data.title}</a>
+                      {i < relatedItems.length - 1 && <span class="essay-links-sep"> · </span>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {relatedItems.length > 0 && backlinkSources.length > 0 && (
+              <hr class="essay-links-divider" />
+            )}
+
+            {backlinkSources.length > 0 && (
+              <section class="essay-links-section">
+                <p class="essay-links-label">Linked from</p>
+                <ul class="essay-links-list">
+                  {backlinkSources.map(({ entry: source, collection: coll }, i) => (
+                    <li>
+                      <span class="essay-links-collection">{coll}/</span>
+                      <a href={`/${coll}/${source.id}`}>{source.data.title}</a>
+                      {i < backlinkSources.length - 1 && <span class="essay-links-sep"> · </span>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </aside>
+        )}
       </article>
     </div>
   </section>
@@ -107,16 +162,17 @@ const artTopic = pickArtTopic(entry.data.topics);
 <style>
   .back-link {
     display: inline-block;
-    font-size: var(--text-small);
-    font-weight: 600;
-    color: var(--color-green-accent);
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--color-action-blue);
     text-decoration: none;
-    margin-bottom: var(--spacing-5);
+    margin-bottom: var(--spacing-8);
     transition: color var(--duration-button) ease;
   }
 
   .back-link:hover {
-    color: var(--color-starbucks-green);
+    color: var(--color-cohere-black);
   }
 
   .essay-article {
@@ -125,16 +181,14 @@ const artTopic = pickArtTopic(entry.data.topics);
   }
 
   .essay-header {
-    margin-bottom: var(--spacing-6);
+    margin-bottom: var(--spacing-12);
   }
 
-  /* Hero fills the 65ch column (DESIGN.md §6) */
   .essay-art {
     aspect-ratio: 16 / 9;
-    border-radius: var(--radius-card);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: var(--shadow-card);
-    margin-bottom: var(--spacing-5);
+    margin-bottom: var(--spacing-8);
   }
 
   .essay-art :global(svg),
@@ -144,22 +198,22 @@ const artTopic = pickArtTopic(entry.data.topics);
     display: block;
   }
 
-  /* Title in Lora 600 — the prose-page h1 (DESIGN.md §1) */
   .essay-title {
-    font-family: var(--font-serif);
-    font-size: var(--text-h1);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
-    line-height: 1.2;
-    margin-bottom: var(--spacing-3);
+    font-family: var(--font-display);
+    font-size: var(--text-card-heading);
+    font-weight: 400;
+    color: var(--color-cohere-black);
+    line-height: 1.15;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
   }
 
   .essay-lede {
     font-family: var(--font-serif);
     font-size: var(--text-body-lg);
-    color: var(--color-text-black-soft);
-    line-height: 1.65;
-    margin-bottom: var(--spacing-4);
+    color: var(--color-muted-slate);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-7);
     font-style: italic;
   }
 
@@ -167,10 +221,13 @@ const artTopic = pickArtTopic(entry.data.topics);
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--spacing-2);
-    margin-bottom: var(--spacing-3);
-    font-size: var(--text-small);
-    color: var(--color-text-black-soft);
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
   }
 
   .essay-divider { opacity: 0.5; }
@@ -178,34 +235,96 @@ const artTopic = pickArtTopic(entry.data.topics);
   .essay-topics {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-1);
+    gap: var(--spacing-2);
   }
 
   .essay-nav {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: var(--spacing-3);
-    margin-top: var(--spacing-7);
-    padding-top: var(--spacing-5);
+    gap: var(--spacing-5);
+    margin-top: var(--spacing-15);
+    padding-top: var(--spacing-8);
     border-top: 1px solid var(--color-hairline);
   }
 
   .essay-nav-link {
-    font-size: var(--text-small);
-    font-weight: 600;
-    color: var(--color-green-accent);
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--color-action-blue);
     text-decoration: none;
     transition: color var(--duration-button) ease;
   }
 
   .essay-nav-link:hover {
-    color: var(--color-starbucks-green);
+    color: var(--color-cohere-black);
   }
 
   .essay-nav-next {
     margin-left: auto;
   }
 
-  /* .prose shared utility lives in src/styles/global.css (DESIGN.md §1). */
+  .essay-links {
+    margin-top: var(--spacing-15);
+    padding-top: var(--spacing-8);
+    border-top: 1px solid var(--color-hairline);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-7);
+  }
+
+  .essay-links-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  .essay-links-divider {
+    border: 0;
+    border-top: 1px solid var(--color-hairline);
+    margin: 0;
+  }
+
+  .essay-links-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+  }
+
+  .essay-links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    color: var(--color-ink);
+  }
+
+  .essay-links-list a {
+    color: var(--color-action-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .essay-links-list a:hover {
+    color: var(--color-cohere-black);
+  }
+
+  .essay-links-collection {
+    color: var(--color-muted-slate);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    margin-inline-end: 0.2em;
+    letter-spacing: var(--tracking-mono);
+  }
+
+  .essay-links-sep {
+    color: var(--color-muted-slate);
+    margin-inline-start: 0.3em;
+  }
 </style>

@@ -2,12 +2,6 @@
 /**
  * /colophon — single-page design statement.
  * Cite as: DESIGN.md §1 (typography stack), §3 (containers).
- *
- * Per Sloan §1 the colophon is a design statement as a page, not a footer
- * link. ~10 Lora paragraphs documenting stack, fonts, host, RSS, privacy,
- * and how to cite. Inline JSX (no MDX collection — keep it cheap).
- *
- * TODO: author can revise each paragraph.
  */
 import Layout from '@/layouts/Layout.astro';
 
@@ -48,28 +42,23 @@ const newsletterAnchor = '#newsletter';
       </p>
 
       <p>
-        <strong>Fonts.</strong> Two faces do almost all the work: Lora
-        (serif, for long-form prose) and Inter (sans, for chrome — the
-        nav, the footer, the chips, the buttons). A third, Kalam, is
-        loaded as a script face for future use; nothing on the site uses
-        it yet.
+        <strong>Fonts.</strong> Space Grotesk for display, Inter for UI,
+        Lora for long-form prose, JetBrains Mono for technical labels.
+        All four are self-hosted via the Astro Fonts API and declared as
+        CSS variables in <code>theme.css</code>.
       </p>
 
       <p>
         <strong>Type.</strong> All type is hand-set. The body face is Lora
         at 18px on a 1.7 line-height on long-form pages, capped at 65
-        characters per line. The chrome runs Inter at 14–16px. There is
-        one display size for page h1s (jumbo, fluid) and one for
-        section headings.
+        characters per line. The chrome runs Inter at 14–16px. Display
+        headlines use Space Grotesk at 400 weight — never 700.
       </p>
 
       <p>
-        <strong>Palette.</strong> A warm cream canvas
-        (<code>#f2f0eb</code>), house green for dark bands
-        (<code>#1e3932</code>), and a single accent — Starbucks green
-        (<code>#006241</code>) — for headings, inline links, and the
-        primary call to action. One accent. One job: signal where the
-        author is talking.
+        <strong>Palette.</strong> White canvas with a near-black primary
+        CTA, deep green for product bands, coral for editorial taxonomy,
+        and a focus-blue for interactive states. One accent job per color.
       </p>
 
       <p>
@@ -90,8 +79,8 @@ const newsletterAnchor = '#newsletter';
         <strong>Privacy.</strong> No third-party analytics. No tracking.
         No cookies. The only network requests beyond this domain are the
         font files (Google Fonts via Astro Fonts) and the optional
-        Unsplash photo CDN. If a feature ever needs analytics, it will
-        be added deliberately and documented here.
+        Unsplash photo CDN. If a feature ever needs analytics, it will be
+        added deliberately and documented here.
       </p>
 
       <p>
@@ -129,72 +118,66 @@ const newsletterAnchor = '#newsletter';
 
 <style>
   .page-header-section {
-    padding-block: var(--spacing-7) var(--spacing-5);
-    background: var(--color-neutral-warm);
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-canvas);
     border-bottom: 1px solid var(--color-hairline);
   }
 
   .section-eyebrow {
-    font-size: var(--text-small);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    font-weight: 600;
-    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
   }
 
   .page-title {
-    font-family: var(--font-sans);
-    font-size: var(--text-jumbo);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-cohere-black);
     line-height: 1.1;
-    margin-bottom: var(--spacing-3);
-  }
-
-  @media (min-width: 1024px) {
-    .page-title {
-      font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
-    }
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
   }
 
   .page-lede {
     font-family: var(--font-serif);
     font-size: var(--text-body-lg);
-    line-height: 1.6;
-    color: var(--color-text-black-soft);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
     max-width: 60ch;
   }
 
   .colophon-section {
-    padding-block: var(--spacing-6);
+    padding-block: var(--spacing-12);
   }
 
   @media (min-width: 1024px) {
     .colophon-section {
-      padding-block: var(--spacing-7);
+      padding-block: var(--spacing-15);
     }
   }
 
-  /* Subscribe line — sits at the bottom of the prose, hairline-divided,
-     three inline links, Lora body. */
   .colophon-subscribe {
-    margin-block-start: var(--spacing-6);
-    padding-block-start: var(--spacing-5);
+    margin-block-start: var(--spacing-12);
+    padding-block-start: var(--spacing-8);
     border-top: 1px solid var(--color-hairline);
     font-family: var(--font-serif);
     font-size: var(--text-body);
-    color: var(--color-text-black-soft);
+    color: var(--color-muted-slate);
   }
 
   .colophon-subscribe a {
-    color: var(--color-starbucks-green);
+    color: var(--color-action-blue);
     text-decoration: underline;
     text-underline-offset: 2px;
     transition: color var(--duration-button) ease;
   }
 
   .colophon-subscribe a:hover {
-    color: var(--color-green-accent);
+    color: var(--color-cohere-black);
   }
 </style>

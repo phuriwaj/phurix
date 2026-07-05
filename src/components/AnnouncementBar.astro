@@ -1,0 +1,108 @@
+---
+/**
+ * AnnouncementBar — full-width black strip above the Nav.
+ * Cite as: DESIGN.md §8 (announcement bar — pre-nav strip with close control).
+ */
+interface Props {
+  /** The visible copy. Default: a low-key newsletter prompt. */
+  message?: string;
+  /** Optional link target for an inline "Learn more" link. */
+  linkHref?: string;
+  /** Label for the inline link. */
+  linkLabel?: string;
+  class?: string;
+}
+
+const {
+  message = 'Subscribe — letters from a working library, no marketing.',
+  linkHref = '/#newsletter',
+  linkLabel = 'Learn more',
+  class: className = '',
+} = Astro.props;
+---
+
+<aside class:list={['announce', className]} data-announce>
+  <p class="announce-copy">
+    {message}
+    {' '}
+    <a href={linkHref} class="announce-link">{linkLabel}</a>
+  </p>
+  <button
+    type="button"
+    class="announce-close"
+    aria-label="Dismiss announcement"
+    data-announce-close
+  >×</button>
+</aside>
+
+<style>
+  .announce {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-4);
+    background: var(--color-cohere-black);
+    color: var(--color-on-dark);
+    padding: 0 var(--spacing-5);
+    height: var(--spacing-13);
+    font-family: var(--font-sans);
+    font-size: var(--text-micro);
+    text-align: center;
+    position: relative;
+  }
+
+  .announce-copy {
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .announce-link {
+    color: var(--color-on-dark);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    margin-inline-start: 0.4em;
+  }
+
+  .announce-link:hover {
+    color: var(--color-soft-coral);
+  }
+
+  .announce-close {
+    position: absolute;
+    inset-inline-end: var(--spacing-4);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-on-dark-muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    width: 1.6rem;
+    height: 1.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--duration-button) ease;
+  }
+
+  .announce-close:hover {
+    color: var(--color-on-dark);
+  }
+</style>
+
+<script>
+  function initAnnouncement() {
+    const bar = document.querySelector<HTMLElement>('[data-announce]');
+    const close = document.querySelector<HTMLButtonElement>('[data-announce-close]');
+    if (!bar || !close) return;
+    if (sessionStorage.getItem('announce-dismissed') === '1') {
+      bar.style.display = 'none';
+      return;
+    }
+    close.addEventListener('click', () => {
+      bar.style.display = 'none';
+      sessionStorage.setItem('announce-dismissed', '1');
+    });
+  }
+
+  initAnnouncement();
+  document.addEventListener('astro:after-swap', initAnnouncement);
+</script>

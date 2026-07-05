@@ -1,8 +1,8 @@
 ---
 /**
- * Feature Band — full-width House Green hero strip.
- * 40/60 split on desktop, stacked on mobile.
- * White text throughout; secondary copy in Text White Soft.
+ * Feature Band — full-width dark hero strip.
+ * 60/40 split on desktop, stacked on mobile.
+ * On-dark text throughout; secondary copy in --color-on-dark-muted.
  */
 import Button from '@/components/Button.astro';
 
@@ -15,8 +15,8 @@ interface Props {
   /** CTA pairing: primary (white fill) + secondary (white outline). */
   primaryCta?: { href: string; label: string };
   secondaryCta?: { href: string; label: string };
-  /** Use serif headline (Rewards ceremony-style). */
-  serif?: boolean;
+  /** Dark surface tone. 'deep-green' (default) or 'dark-navy'. */
+  tone?: 'deep-green' | 'dark-navy';
 }
 
 const {
@@ -26,26 +26,24 @@ const {
   imageAlt = '',
   primaryCta,
   secondaryCta,
-  serif = false,
+  tone = 'deep-green',
 } = Astro.props;
 ---
 
-<section class="band-phx">
+<section class:list={['band-phx', `band-${tone}`]}>
   <div class="band-inner">
     <div class="band-content">
-      <h2 class:list={['band-headline', serif && 'serif-headline']}>
-        {headline}
-      </h2>
+      <h2 class="band-headline">{headline}</h2>
       {subhead && <p class="band-subhead">{subhead}</p>}
       {(primaryCta || secondaryCta) && (
         <div class="band-actions">
           {primaryCta && (
-            <Button variant="on-green" href={primaryCta.href}>
+            <Button variant="on-dark" href={primaryCta.href}>
               {primaryCta.label}
             </Button>
           )}
           {secondaryCta && (
-            <Button variant="on-dark" href={secondaryCta.href}>
+            <Button variant="on-dark-outline" href={secondaryCta.href}>
               {secondaryCta.label}
             </Button>
           )}
@@ -62,16 +60,23 @@ const {
 
 <style>
   .band-phx {
-    background: var(--color-house-green);
-    color: var(--color-text-white);
+    color: var(--color-on-dark);
+  }
+
+  .band-deep-green {
+    background: var(--color-deep-green);
+  }
+
+  .band-dark-navy {
+    background: var(--color-dark-navy);
   }
 
   .band-inner {
     max-width: var(--container-xl);
     margin-inline: auto;
-    padding: var(--spacing-7) var(--spacing-gutter);
+    padding: var(--spacing-15) var(--spacing-gutter);
     display: grid;
-    gap: var(--spacing-6);
+    gap: var(--spacing-12);
     grid-template-columns: 1fr;
     align-items: center;
   }
@@ -79,40 +84,41 @@ const {
   @media (min-width: 1024px) {
     .band-inner {
       grid-template-columns: 60% 40%;
-      /* content | media; per DESIGN.md §4 / Feature Band 60/40 column proportion */
-      padding: var(--spacing-8) var(--spacing-gutter-lg);
+      padding: var(--spacing-17) var(--spacing-gutter-lg);
     }
   }
 
-  @media (min-width: 768px) {
-    .band-headline { font-size: var(--text-hero-large); }
-  }
-
-  .serif-headline {
-    font-family: var(--font-serif);
-    font-weight: 500;
-    letter-spacing: 0;
+  .band-headline {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 6rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: var(--tracking-display-tight);
+    color: var(--color-on-dark);
+    margin: 0 0 var(--spacing-7);
+    max-width: 18ch;
   }
 
   .band-subhead {
+    font-family: var(--font-sans);
     font-size: var(--text-body);
-    line-height: 1.6;
-    color: var(--color-text-white-soft);
-    margin-bottom: var(--spacing-5);
+    line-height: 1.5;
+    color: var(--color-on-dark-muted);
+    margin-bottom: var(--spacing-8);
     max-width: 50ch;
   }
 
   .band-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-3);
+    gap: var(--spacing-5);
   }
 
   .band-media {
     aspect-ratio: 4 / 5;
-    border-radius: var(--radius-card);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    background: var(--color-green-uplift);
+    background: rgba(255, 255, 255, 0.04);
   }
 
   .band-media img {

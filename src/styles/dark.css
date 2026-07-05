@@ -1,0 +1,35 @@
+/* =========================================================================
+   Dark mode token overrides — Cohere-inspired (DESIGN.md §3 / §4)
+   Selector: :root[data-theme="dark"]
+   Strategy: override ONLY surface + text tokens. Brand colors (Cohere Black,
+   Deep Green, Action Blue, Coral) read fine on a dark canvas and are kept
+   intact so brand identity stays consistent across themes.
+   ========================================================================= */
+
+:root[data-theme="dark"] {
+  /* Surfaces */
+  --color-canvas:          #0e0e10;
+  --color-soft-stone:      #1a1a1d;
+  --color-pale-green-wash: #0f1f1a;   /* dark green tint */
+  --color-pale-blue-wash:  #0e1828;   /* dark blue tint */
+  --color-card-border:     #2a2a30;
+
+  /* Text & rules */
+  --color-ink:          #e5e5e5;
+  --color-muted-slate:  #75758a;      /* unchanged, still works on dark */
+  --color-slate:        #93939f;
+  --color-hairline:     #2a2a30;
+  --color-border-light: #2a2a30;
+}
+
+/* Smooth theme flip — disabled when the user prefers reduced motion. */
+html {
+  transition: background-color 200ms ease, color 200ms ease,
+    border-color 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    transition: none;
+  }
+}

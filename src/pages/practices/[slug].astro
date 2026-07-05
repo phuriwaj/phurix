@@ -1,0 +1,307 @@
+---
+/**
+ * Practice detail — `/practices/[slug]`.
+ * Mirrors /notes/[slug]: article header, prose body, growth badge, topics,
+ * related. Adds a small `cadence` detail line in the header so readers can
+ * tell at a glance whether this is daily, weekly, seasonal, or durable.
+ * Cite as: MANIFESTO.md (pillar 2 — Living Well).
+ */
+import Layout from '@/layouts/Layout.astro';
+import TopicChip from '@/components/TopicChip.astro';
+import GrowthBadge from '@/components/GrowthBadge.astro';
+import TopicPhoto from '@/components/TopicPhoto.astro';
+import { getCollection, render, getEntry } from 'astro:content';
+import { pickArtTopic } from '@/lib/topics';
+
+export async function getStaticPaths() {
+  const practices = await getCollection('practices');
+  return practices.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const allPractices = await getCollection('practices');
+const sortedPractices = allPractices.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const currentIndex = sortedPractices.findIndex((p) => p.id === entry.id);
+const prevPractice = currentIndex < sortedPractices.length - 1 ? sortedPractices[currentIndex + 1] : null;
+const nextPractice = currentIndex > 0 ? sortedPractices[currentIndex - 1] : null;
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(new Date(entry.data.date));
+
+const artTopic = pickArtTopic(entry.data.topics);
+
+const relatedRefs = entry.data.related ?? [];
+const relatedEntries = await Promise.all(
+  relatedRefs.map((ref) => getEntry(ref))
+);
+const relatedItems = relatedEntries.filter((e): e is NonNullable<typeof e> => Boolean(e));
+---
+
+<Layout title={entry.data.title} description={entry.data.excerpt} hideAnnouncement>
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: entry.data.title,
+      datePublished: entry.data.date.toISOString(),
+      description: entry.data.excerpt ?? '',
+      keywords: (entry.data.topics ?? []).join(', '),
+      mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+    })}
+  />
+  <section class="section">
+    <div class="container-phx">
+      <a href="/practices" class="back-link">← Practices</a>
+
+      <article class="practice-article">
+        <header class="practice-header">
+          {entry.data.growthStage === 'evergreen' && (
+            <div class="practice-art">
+              <TopicPhoto topic={artTopic} scale="md" showCredit={true} />
+            </div>
+          )}
+
+          <h1 class="practice-title">{entry.data.title}</h1>
+
+          <div class="practice-meta">
+            <time class="practice-date" datetime={entry.data.date.toISOString()}>
+              {formattedDate}
+            </time>
+            <span class="practice-divider">·</span>
+            {entry.data.growthStage && (
+              <GrowthBadge stage={entry.data.growthStage} size="md" />
+            )}
+            <span class="practice-divider">·</span>
+            <span class="practice-read-time">{Math.max(1, Math.round((entry.body ?? '').split(/\s+/).length / 220))} min read</span>
+          </div>
+
+          {entry.data.cadence && (
+            <p class="practice-cadence">
+              <span class="practice-cadence-label">Cadence:</span>
+              <span class="practice-cadence-value">{entry.data.cadence}</span>
+            </p>
+          )}
+
+          {entry.data.topics && entry.data.topics.length > 0 && (
+            <div class="practice-topics">
+              {entry.data.topics.map((t) => <TopicChip label={t} size="sm" href={`/garden?topic=${t}`} />)}
+            </div>
+          )}
+        </header>
+
+        <div class="prose">
+          <Content />
+        </div>
+
+        {relatedItems.length > 0 && (
+          <aside class="practice-related">
+            <p class="practice-related-label">Related:</p>
+            <ul class="practice-related-list">
+              {relatedItems.map((rel, i) => (
+                <li>
+                  <a href={`/practices/${rel.id}`}>{rel.data.title}</a>
+                  {i < relatedItems.length - 1 && <span class="practice-related-sep"> · </span>}
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )}
+
+        <nav class="practice-nav">
+          {prevPractice && (
+            <a href={`/practices/${prevPractice.id}`} class="practice-nav-link practice-nav-prev">
+              ← {prevPractice.data.title}
+            </a>
+          )}
+          {nextPractice && (
+            <a href={`/practices/${nextPractice.id}`} class="practice-nav-link practice-nav-next">
+              {nextPractice.data.title} →
+            </a>
+          )}
+        </nav>
+      </article>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .back-link {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--color-action-blue);
+    text-decoration: none;
+    margin-bottom: var(--spacing-8);
+    transition: color var(--duration-button) ease;
+  }
+
+  .back-link:hover {
+    color: var(--color-cohere-black);
+  }
+
+  .practice-article {
+    max-width: 65ch;
+    margin-inline: auto;
+  }
+
+  .practice-header {
+    margin-bottom: var(--spacing-12);
+  }
+
+  .practice-art {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: var(--spacing-8);
+    max-width: 32rem;
+  }
+
+  .practice-art :global(svg),
+  .practice-art :global(img) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .practice-title {
+    font-family: var(--font-display);
+    font-size: var(--text-card-heading);
+    font-weight: 400;
+    color: var(--color-cohere-black);
+    line-height: 1.15;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .practice-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+  }
+
+  .practice-divider { opacity: 0.5; }
+
+  .practice-cadence {
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    color: var(--color-muted-slate);
+    margin: 0 0 var(--spacing-5);
+    display: flex;
+    gap: var(--spacing-4);
+    align-items: baseline;
+  }
+
+  .practice-cadence-label {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    font-size: var(--text-micro);
+    color: var(--color-coral);
+  }
+
+  .practice-cadence-value {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--color-ink);
+  }
+
+  .practice-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+
+  .practice-related {
+    margin-top: var(--spacing-12);
+    padding-top: var(--spacing-7);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .practice-related-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    margin-bottom: var(--spacing-4);
+  }
+
+  .practice-related-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    color: var(--color-ink);
+  }
+
+  .practice-related-list a {
+    color: var(--color-action-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .practice-related-list a:hover {
+    color: var(--color-cohere-black);
+  }
+
+  .practice-related-sep {
+    color: var(--color-muted-slate);
+    margin-inline-start: 0.3em;
+  }
+
+  .practice-nav {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-5);
+    margin-top: var(--spacing-15);
+    padding-top: var(--spacing-8);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .practice-nav-link {
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--color-action-blue);
+    text-decoration: none;
+    transition: color var(--duration-button) ease;
+  }
+
+  .practice-nav-link:hover {
+    color: var(--color-cohere-black);
+  }
+
+  .practice-nav-next {
+    margin-left: auto;
+  }
+
+  .practice-article .prose {
+    line-height: 1.65;
+  }
+</style>

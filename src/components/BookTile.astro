@@ -2,14 +2,14 @@
 /**
  * BookTile — library book cover tile.
  * Placeholder cover with title+author typography on color.
- * Cite as: DESIGN.md §4 (/library) — gold border reserved for "currently reading" tile.
+ * Currently-reading marker is a small coral pill (no gold).
  */
 interface Props {
   title: string;
   author: string;
   coverColor: string;
   year?: number;
-  /** Reward-ceremony border (gold) and "Reading" chip overlay. */
+  /** Add a small coral "Reading" pill in the top-right. */
   currentlyReading?: boolean;
   class?: string;
 }
@@ -29,16 +29,11 @@ const {
   style={`--book-color: ${coverColor}`}
 >
   {currentlyReading && <span class="book-reading-chip">Reading</span>}
-  <div class="book-spine" aria-hidden="true" />
   <div class="book-cover">
     <div class="book-inner">
       <p class="book-title">{title}</p>
       <p class="book-author">{author}</p>
       {year && <p class="book-year">{year}</p>}
-    </div>
-    {/* Subtle decorative lines */}
-    <div class="book-decoration" aria-hidden="true">
-      <span></span><span></span><span></span>
     </div>
   </div>
 </div>
@@ -49,46 +44,25 @@ const {
     width: 100%;
     aspect-ratio: 2 / 3;
     display: flex;
-    filter: drop-shadow(var(--shadow-card));
-    transition: transform var(--duration-button) ease;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid transparent;
+    transition: border-color var(--duration-button) ease;
   }
 
   .book-tile:hover {
-    transform: translateY(-4px) rotate(-1deg);
-  }
-
-  /* Spine illusion — left edge of book */
-  .book-spine {
-    width: 8%;
-    background: color-mix(in srgb, var(--book-color) 70%, black 30%);
-    border-radius: 2px 0 0 2px;
-    flex-shrink: 0;
+    border-color: var(--color-border-light);
   }
 
   .book-cover {
     flex: 1;
     background: var(--book-color);
-    border-radius: 0 4px 4px 0;
-    padding: var(--spacing-4);
+    padding: var(--spacing-7);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
     overflow: hidden;
     position: relative;
-  }
-
-  /* Subtle gradient overlay for depth */
-  .book-cover::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.08) 0%,
-      transparent 50%,
-      rgba(0, 0, 0, 0.1) 100%
-    );
-    pointer-events: none;
   }
 
   .book-inner {
@@ -96,77 +70,53 @@ const {
     z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-1);
-    height: 100%;
-    justify-content: flex-end;
+    gap: var(--spacing-2);
   }
 
   .book-title {
-    font-size: var(--text-h1);
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.95);
-    line-height: 1.2;
-    letter-spacing: var(--tracking-tight);
+    font-family: var(--font-display);
+    font-size: var(--text-card-heading);
+    font-weight: 400;
+    color: var(--color-on-dark);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-tight);
     margin: 0;
   }
 
   .book-author {
-    font-size: var(--text-small);
-    color: rgba(255, 255, 255, 0.75);
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    color: var(--color-on-dark);
+    opacity: 0.78;
     font-weight: 400;
     margin: 0;
   }
 
   .book-year {
+    font-family: var(--font-mono);
     font-size: var(--text-micro);
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--color-on-dark);
+    opacity: 0.55;
     margin: 0;
-    margin-top: var(--spacing-1);
+    margin-top: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
   }
 
-  /* Decorative horizontal lines */
-  .book-decoration {
-    position: absolute;
-    top: 20%;
-    left: var(--spacing-4);
-    right: var(--spacing-4);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    opacity: 0.15;
-  }
-
-  .book-decoration span {
-    display: block;
-    height: 2px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 1px;
-  }
-
-  .book-decoration span:nth-child(2) { width: 80%; }
-  .book-decoration span:nth-child(3) { width: 60%; }
-
-  /* Currently-reading reward-ceremony treatment (DESIGN.md §6 — gold only here) */
-  .book-tile-current {
-    border: 2px solid var(--color-gold);
-    border-radius: 0 4px 4px 0;
-    padding: 2px;
-  }
-
+  /* Currently-reading coral pill in the top-right (DESIGN.md §6 — no gold). */
   .book-reading-chip {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: var(--spacing-3);
+    right: var(--spacing-3);
     z-index: 2;
-    font-family: var(--font-sans);
+    font-family: var(--font-mono);
     font-size: var(--text-micro);
-    font-weight: 600;
-    color: var(--color-text-black);
-    background: var(--color-gold);
+    font-weight: 500;
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-coral);
     padding: 4px 10px;
-    border-radius: 0 var(--radius-button) 0 var(--radius-button);
-    letter-spacing: var(--tracking-loose);
+    border-radius: var(--radius-pill);
+    letter-spacing: var(--tracking-mono);
     text-transform: uppercase;
-    box-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
   }
 </style>

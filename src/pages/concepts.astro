@@ -2,12 +2,6 @@
 /**
  * /concepts — author-curated glossary of recurring terms used across essays.
  * Cite as: DESIGN.md §1 (typography stack), §3 (containers), §4 (spacing).
- *
- * 7 seed entries — alphabetical by term. Definitions are inline JSX; the page
- * is intentionally NOT a content collection (per brief: "lives in markdown,
- * not a collection — keep it cheap").
- *
- * TODO: author can add or revise definitions over time.
  */
 import Layout from '@/layouts/Layout.astro';
 
@@ -54,7 +48,6 @@ const concepts: Concept[] = [
   },
 ];
 
-// Sort alphabetically (case-insensitive) — matches the proposal's order.
 concepts.sort((a, b) => a.term.toLowerCase().localeCompare(b.term.toLowerCase()));
 ---
 
@@ -87,50 +80,46 @@ concepts.sort((a, b) => a.term.toLowerCase().localeCompare(b.term.toLowerCase())
 
 <style>
   .page-header-section {
-    padding-block: var(--spacing-7) var(--spacing-5);
-    background: var(--color-neutral-warm);
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-canvas);
     border-bottom: 1px solid var(--color-hairline);
   }
 
   .section-eyebrow {
-    font-size: var(--text-small);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    font-weight: 600;
-    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
   }
 
   .page-title {
-    font-family: var(--font-sans);
-    font-size: var(--text-jumbo);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-cohere-black);
     line-height: 1.1;
-    margin-bottom: var(--spacing-3);
-  }
-
-  @media (min-width: 1024px) {
-    .page-title {
-      font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
-    }
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
   }
 
   .page-lede {
     font-family: var(--font-serif);
     font-size: var(--text-body-lg);
-    line-height: 1.6;
-    color: var(--color-text-black-soft);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
     max-width: 60ch;
   }
 
   .concept-section {
-    padding-block: var(--spacing-6);
+    padding-block: var(--spacing-12);
   }
 
   @media (min-width: 1024px) {
     .concept-section {
-      padding-block: var(--spacing-7);
+      padding-block: var(--spacing-15);
     }
   }
 
@@ -142,7 +131,7 @@ concepts.sort((a, b) => a.term.toLowerCase().localeCompare(b.term.toLowerCase())
   }
 
   .concept-item {
-    padding-block: var(--spacing-5);
+    padding-block: var(--spacing-8);
     border-bottom: 1px solid var(--color-hairline);
   }
 
@@ -151,19 +140,20 @@ concepts.sort((a, b) => a.term.toLowerCase().localeCompare(b.term.toLowerCase())
   }
 
   .concept-term {
-    font-family: var(--font-sans);
-    font-size: var(--text-h1);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
+    font-family: var(--font-display);
+    font-size: var(--text-feature-heading);
+    font-weight: 400;
+    color: var(--color-ink);
     line-height: 1.2;
-    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-4);
   }
 
   .concept-definition {
-    font-family: var(--font-serif);
-    font-size: var(--text-prose);
-    line-height: 1.65;
-    color: var(--color-text-black);
+    font-family: var(--font-sans);
+    font-size: var(--text-body-lg);
+    line-height: 1.5;
+    color: var(--color-ink);
     max-width: 65ch;
     margin: 0;
   }

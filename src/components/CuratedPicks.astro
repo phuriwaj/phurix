@@ -1,6 +1,6 @@
 ---
 /**
- * CuratedPicks — three-line Lora-italic curated picks block.
+ * CuratedPicks — curated picks block.
  * Renders an <ol> where each item is "✦ <a href=...>{title}</a>"
  * separated by hairline <hr>s. Used on / and /essays.
  * Cite as: DESIGN.md §7 (interaction — curated picks).
@@ -36,13 +36,13 @@ const { items, heading, class: className = '' } = Astro.props;
   }
 
   .curated-picks-heading {
-    font-family: var(--font-sans);
-    font-size: var(--text-small);
-    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    margin-bottom: var(--spacing-3);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    margin-bottom: var(--spacing-5);
   }
 
   .curated-picks-list {
@@ -55,7 +55,7 @@ const { items, heading, class: className = '' } = Astro.props;
   .curated-picks-item {
     display: flex;
     align-items: baseline;
-    padding-block: var(--spacing-3);
+    padding-block: var(--spacing-5);
     border-top: 1px solid var(--color-hairline);
   }
 
@@ -64,17 +64,20 @@ const { items, heading, class: className = '' } = Astro.props;
   }
 
   .curated-picks-link {
-    font-family: var(--font-serif);
+    font-family: var(--font-display);
     font-style: italic;
     font-size: var(--text-body-lg);
-    color: var(--color-green-accent);
+    font-weight: 400;
+    color: var(--color-action-blue);
     text-decoration: none;
+    letter-spacing: var(--tracking-display-tight);
     transition: color var(--duration-button) ease;
   }
 
   .curated-picks-link:hover {
-    color: var(--color-starbucks-green);
+    color: var(--color-cohere-black);
     text-decoration: underline;
     text-underline-offset: 2px;
+    text-decoration-thickness: 2px;
   }
 </style>

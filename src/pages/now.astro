@@ -1,8 +1,8 @@
 ---
 /**
  * /now — What the author is up to this month.
- * Cite as: DESIGN.md §4 (/now) — single ordered list, hairline dividers, Lora values.
- * Frap suppressed via `hideFrap` per the deep-focus surface rule.
+ * Cite as: DESIGN.md §4 (/now) — single ordered list, hairline dividers.
+ * No announcement bar (deep-focus surface).
  */
 import Layout from '@/layouts/Layout.astro';
 import { nowItems, lastUpdated } from '@/data/now';
@@ -15,17 +15,19 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 }).format(lastUpdatedDate);
 ---
 
-<Layout title="Now — phurix" description="What Phuriwaj is up to right now." hideFrap>
-  <section class="container-phx section">
-    <p class="section-eyebrow">Now</p>
-    <h1 class="page-title">What I'm up to</h1>
-    <p class="page-lede">
-      A snapshot of life right now — location, work, reading, and thoughts in
-      progress. Updated occasionally, not on a schedule.
-    </p>
-    <p class="now-last-updated">
-      Last updated <time datetime={lastUpdatedDate.toISOString()}>{formattedDate}</time>
-    </p>
+<Layout title="Now — phurix" description="What Phuriwaj is up to right now." hideAnnouncement>
+  <section class="page-header-section">
+    <div class="container-phx">
+      <p class="section-eyebrow">Now</p>
+      <h1 class="page-title">What I'm up to</h1>
+      <p class="page-lede">
+        A snapshot of life right now — location, work, reading, and thoughts in
+        progress. Updated occasionally, not on a schedule.
+      </p>
+      <p class="now-last-updated">
+        Updated <time datetime={lastUpdatedDate.toISOString()}>{formattedDate}</time>
+      </p>
+    </div>
   </section>
 
   <section class="container-phx section now-sections">
@@ -51,40 +53,51 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 </Layout>
 
 <style>
+  .page-header-section {
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
   .section-eyebrow {
-    font-size: var(--text-small);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    font-weight: 600;
-    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
   }
 
   .page-title {
-    font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-cohere-black);
     line-height: 1.1;
-    margin-bottom: var(--spacing-4);
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
   }
 
   .page-lede {
     font-family: var(--font-serif);
     font-size: var(--text-body-lg);
-    line-height: 1.6;
-    color: var(--color-text-black-soft);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
     max-width: 60ch;
   }
 
   .now-last-updated {
-    font-family: var(--font-sans);
+    font-family: var(--font-mono);
     font-size: var(--text-micro);
-    color: var(--color-text-black-soft);
-    margin-block-start: var(--spacing-2);
+    color: var(--color-muted-slate);
+    margin-block-start: var(--spacing-4);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
   }
 
   .now-sections {
-    padding-block: var(--spacing-6);
+    padding-block: var(--spacing-12);
   }
 
   .now-list {
@@ -97,8 +110,8 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   .now-item {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
-    padding-block: var(--spacing-5);
+    gap: var(--spacing-4);
+    padding-block: var(--spacing-8);
     border-bottom: 1px solid var(--color-hairline);
   }
 
@@ -107,12 +120,12 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   }
 
   .now-label {
-    font-family: var(--font-sans);
-    font-size: var(--text-small);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    color: var(--color-coral);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
+    letter-spacing: var(--tracking-mono);
     margin: 0;
   }
 
@@ -121,10 +134,10 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   }
 
   .now-value p {
-    font-family: var(--font-serif);
-    font-size: var(--text-prose);
-    line-height: 1.65;
-    color: var(--color-text-black);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.5;
+    color: var(--color-ink);
     margin: 0;
   }
 
@@ -134,18 +147,18 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-1);
+    gap: var(--spacing-2);
   }
 
   .reading-list li {
-    font-family: var(--font-serif);
-    font-size: var(--text-prose);
-    color: var(--color-text-black);
-    line-height: 1.65;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    color: var(--color-ink);
+    line-height: 1.5;
   }
 
   .reading-list li::before {
     content: '— ';
-    color: var(--color-text-black-soft);
+    color: var(--color-muted-slate);
   }
 </style>
