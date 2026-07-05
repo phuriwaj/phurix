@@ -9,7 +9,7 @@ const notes = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     topics: z.array(z.enum(RECOGNIZED_TOPICS_TUPLE)).default([]),
-    growthStage: z.enum(['seedling', 'budding', 'evergreen']).default('seedling'),
+    growthStage: z.enum(['seedling', 'growing', 'evergreen']).default('seedling'),
     excerpt: z.string().optional(),
     related: z.array(reference('notes')).optional(),
   }),
@@ -70,4 +70,17 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { notes, essays, talks, books, patterns, projects };
+const practices = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/practices' }),
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    topics: z.array(z.enum(RECOGNIZED_TOPICS_TUPLE)).default([]),
+    growthStage: z.enum(['seedling', 'growing', 'evergreen']).default('growing'),
+    excerpt: z.string().optional(),
+    cadence: z.enum(['daily', 'weekly', 'seasonal', 'durable']).optional(),
+    related: z.array(reference('practices')).optional(),
+  }),
+});
+
+export const collections = { notes, essays, talks, books, patterns, projects, practices };
