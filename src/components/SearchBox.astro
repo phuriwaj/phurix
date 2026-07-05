@@ -1,0 +1,501 @@
+---
+/**
+ * SearchBox — nav-mounted site search.
+ *
+ * Embeds a build-time MiniSearch index of all content entries and renders a
+ * dropdown of up to 8 results on input. Selection navigates to the entry.
+ *
+ * Keyboard:
+ *   /         → focus the input (skip if user is already typing)
+ *   Esc       → clear input + blur + close dropdown
+ *   Arrow keys → move selection in dropdown (omitted — Enter navigates first result)
+ *   Enter     → navigate to highlighted (or first) result
+ *
+ * Cite as: DESIGN.md §8 (nav) — search affordance between primary links and CTA.
+ */
+import { getSearchableEntries, type SearchableEntry } from '@/lib/search-index';
+
+const entries: SearchableEntry[] = await getSearchableEntries();
+const entriesJson = JSON.stringify(entries);
+
+// Precompute a serialized MiniSearch instance. Astro hoists this <script>
+// and the bundler will keep MiniSearch in a single module — we ship the
+// document list as JSON via define:vars (Astro inlines server-side data into
+// the script at build time).
+---
+
+<form
+  class="searchbox"
+  role="search"
+  data-searchbox
+  autocomplete="off"
+  onsubmit="return false;"
+>
+  <label class="sr-only" for="searchbox-input">Search</label>
+  <span class="searchbox-icon" aria-hidden="true">
+    <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="7" cy="7" r="5"></circle>
+      <line x1="11" y1="11" x2="14" y2="14" stroke-linecap="round"></line>
+    </svg>
+  </span>
+  <input
+    id="searchbox-input"
+    class="searchbox-input"
+    type="search"
+    placeholder="Search…"
+    aria-label="Search"
+    aria-autocomplete="list"
+    aria-controls="searchbox-results"
+    aria-expanded="false"
+    data-searchbox-input
+  />
+  <kbd class="searchbox-kbd" aria-hidden="true">/</kbd>
+
+  <div
+    class="searchbox-dropdown"
+    role="listbox"
+    id="searchbox-results"
+    data-searchbox-dropdown
+    hidden
+  >
+    <ul class="searchbox-list" data-searchbox-list></ul>
+    <a
+      class="searchbox-footer"
+      href="/search/"
+      data-searchbox-see-all
+    >See all results</a>
+  </div>
+</form>
+
+<style>
+  .searchbox {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    background: var(--color-soft-stone);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-xs);
+    padding: 0 var(--spacing-4);
+    height: 36px;
+    min-width: 180px;
+    transition: border-color var(--duration-button) ease,
+      box-shadow var(--duration-button) ease;
+  }
+
+  .searchbox:focus-within {
+    border-color: var(--color-focus-blue);
+    box-shadow: var(--shadow-focus-ring);
+    background: var(--color-canvas);
+  }
+
+  .searchbox-icon {
+    display: inline-flex;
+    color: var(--color-muted-slate);
+    flex-shrink: 0;
+  }
+
+  .searchbox-input {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    color: var(--color-ink);
+    outline: none;
+    min-width: 0;
+  }
+
+  .searchbox-input::placeholder {
+    color: var(--color-muted-slate);
+  }
+
+  /* Hide the native search clear "X" in webkit — we provide our own (Esc) */
+  .searchbox-input::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+  .searchbox-kbd {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: 4px;
+    padding: 0 5px;
+    line-height: 1.4;
+    flex-shrink: 0;
+  }
+
+  .searchbox:focus-within .searchbox-kbd { opacity: 0; }
+
+  .searchbox-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    left: 0;
+    min-width: 320px;
+    max-width: 480px;
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    z-index: 50;
+    overflow: hidden;
+  }
+
+  .searchbox-dropdown[hidden] { display: none; }
+
+  .searchbox-list {
+    list-style: none;
+    margin: 0;
+    padding: var(--spacing-2) 0;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .searchbox-result {
+    display: block;
+    padding: var(--spacing-4) var(--spacing-5);
+    text-decoration: none;
+    color: inherit;
+    border-left: 2px solid transparent;
+  }
+
+  .searchbox-result:hover,
+  .searchbox-result[data-active="true"] {
+    background: var(--color-soft-stone);
+    border-left-color: var(--color-focus-blue);
+  }
+
+  .searchbox-result-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    margin-bottom: 2px;
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+  }
+
+  .searchbox-result-type {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    font-weight: 500;
+    color: var(--color-coral);
+  }
+
+  .searchbox-result-title {
+    font-family: var(--font-display);
+    font-size: var(--text-body);
+    font-weight: 400;
+    color: var(--color-ink);
+    line-height: var(--leading-body);
+    letter-spacing: var(--tracking-display-tight);
+    margin: 0 0 2px 0;
+  }
+
+  .searchbox-result-excerpt {
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    color: var(--color-muted-slate);
+    line-height: var(--leading-body);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .searchbox-footer {
+    display: block;
+    padding: var(--spacing-4) var(--spacing-5);
+    border-top: 1px solid var(--color-hairline);
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    color: var(--color-action-blue);
+    text-decoration: none;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .searchbox-footer:hover { background: var(--color-soft-stone); }
+
+  .searchbox-empty {
+    padding: var(--spacing-5);
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    color: var(--color-muted-slate);
+    text-align: center;
+  }
+
+  /* Hide on small screens — nav has its own mobile menu */
+  @media (max-width: 767px) {
+    .searchbox { display: none; }
+  }
+</style>
+
+<script is:inline define:vars={{ entriesJson }}>
+  // SearchBox — client-side runtime.
+  // Bundled by Astro as a hoisted module via the outer <script> block; this
+  // inner inline block carries the build-time index payload. The outer
+  // hoisted <script> imports MiniSearch and binds to this data on astro:page-load.
+  window.__SEARCHBOX_DATA__ = entriesJson;
+</script>
+
+<script>
+  // Hoisted module — bundled by Astro. Re-runs on every view-transition nav
+  // because it listens to astro:page-load (not DOMContentLoaded).
+  import MiniSearch from 'minisearch';
+
+  type SearchableEntry = {
+    collection: string;
+    slug: string;
+    title: string;
+    excerpt: string;
+    topics: string[];
+    date: string;
+    href: string;
+  };
+
+  declare global {
+    interface Window {
+      __SEARCHBOX_DATA__?: string;
+    }
+  }
+
+  const TYPE_LABELS: Record<string, string> = {
+    note: 'Note',
+    essay: 'Essay',
+    talk: 'Talk',
+    book: 'Book',
+    pattern: 'Pattern',
+    project: 'Project',
+    practice: 'Practice',
+  };
+
+  const DATE_FMT = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+
+  function formatDate(iso: string): string {
+    if (!iso || iso.startsWith('1970-01-01T00:00:00') || iso.startsWith('0000-')) {
+      return '';
+    }
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '';
+    return DATE_FMT.format(d);
+  }
+
+  function buildIndex(entries: SearchableEntry[]): MiniSearch<SearchableEntry> {
+    const ms = new MiniSearch<SearchableEntry>({
+      fields: ['title', 'excerpt', 'topics'],
+      storeFields: ['collection', 'slug', 'title', 'excerpt', 'topics', 'date', 'href'],
+      searchOptions: {
+        boost: { title: 3, topics: 2, excerpt: 1 },
+        prefix: true,
+        fuzzy: 0.2,
+        combineWith: 'AND',
+      },
+    });
+    ms.addAll(entries);
+    return ms;
+  }
+
+  function isTypingTarget(el: EventTarget | null): boolean {
+    if (!(el instanceof HTMLElement)) return false;
+    const tag = el.tagName;
+    return (
+      tag === 'INPUT' ||
+      tag === 'TEXTAREA' ||
+      tag === 'SELECT' ||
+      el.isContentEditable
+    );
+  }
+
+  function renderResults(
+    list: HTMLElement,
+    dropdown: HTMLElement,
+    entries: SearchableEntry[],
+  ): void {
+    if (entries.length === 0) {
+      list.innerHTML = '<li class="searchbox-empty">No matches</li>';
+      dropdown.removeAttribute('hidden');
+      return;
+    }
+
+    list.innerHTML = entries
+      .map((e, i) => {
+        const dateLabel = formatDate(e.date);
+        const typeLabel = TYPE_LABELS[e.collection] ?? e.collection;
+        return `
+          <li>
+            <a
+              class="searchbox-result"
+              href="${e.href}"
+              role="option"
+              data-active="${i === 0 ? 'true' : 'false'}"
+              data-searchbox-result
+            >
+              <div class="searchbox-result-meta">
+                <span class="searchbox-result-type">${typeLabel}</span>
+                ${dateLabel ? `<time datetime="${e.date}">${dateLabel}</time>` : ''}
+              </div>
+              <p class="searchbox-result-title">${escapeHtml(e.title)}</p>
+              ${e.excerpt ? `<p class="searchbox-result-excerpt">${escapeHtml(e.excerpt)}</p>` : ''}
+            </a>
+          </li>
+        `;
+      })
+      .join('');
+
+    dropdown.removeAttribute('hidden');
+  }
+
+  function escapeHtml(s: string): string {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function setActiveResult(list: HTMLElement, index: number): void {
+    const results = list.querySelectorAll<HTMLElement>('[data-searchbox-result]');
+    results.forEach((r, i) => r.setAttribute('data-active', i === index ? 'true' : 'false'));
+  }
+
+  function setupSearchBox(root: HTMLElement): void {
+    const input = root.querySelector<HTMLInputElement>('[data-searchbox-input]');
+    const dropdown = root.querySelector<HTMLElement>('[data-searchbox-dropdown]');
+    const list = root.querySelector<HTMLElement>('[data-searchbox-list]');
+    if (!input || !dropdown || !list) return;
+
+    let mini: MiniSearch<SearchableEntry> | null = null;
+    let activeIndex = 0;
+
+    const dataJson = window.__SEARCHBOX_DATA__;
+    if (!dataJson) return;
+    let entries: SearchableEntry[];
+    try {
+      entries = JSON.parse(dataJson) as SearchableEntry[];
+    } catch {
+      return;
+    }
+
+    const open = () => {
+      dropdown.removeAttribute('hidden');
+      input.setAttribute('aria-expanded', 'true');
+    };
+
+    const close = () => {
+      dropdown.setAttribute('hidden', '');
+      input.setAttribute('aria-expanded', 'false');
+      activeIndex = 0;
+    };
+
+    const performSearch = (raw: string) => {
+      const q = raw.trim();
+      if (!q) {
+        close();
+        return;
+      }
+      if (!mini) mini = buildIndex(entries);
+      const hits = mini.search(q).slice(0, 8) as unknown as SearchableEntry[];
+      renderResults(list, dropdown, hits);
+      activeIndex = 0;
+      open();
+    };
+
+    input.addEventListener('input', () => performSearch(input.value));
+    input.addEventListener('focus', () => {
+      if (input.value.trim()) performSearch(input.value);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      const results = list.querySelectorAll<HTMLAnchorElement>('[data-searchbox-result]');
+
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        input.value = '';
+        close();
+        input.blur();
+        return;
+      }
+
+      if (e.key === 'Enter') {
+        if (results.length === 0) {
+          // No live results → go to /search/?q=...
+          window.location.href = `/search/?q=${encodeURIComponent(input.value.trim())}`;
+          return;
+        }
+        const target = results[activeIndex] ?? results[0];
+        e.preventDefault();
+        window.location.href = target.href;
+        return;
+      }
+
+      if (e.key === 'ArrowDown') {
+        if (results.length === 0) return;
+        e.preventDefault();
+        activeIndex = (activeIndex + 1) % results.length;
+        setActiveResult(list, activeIndex);
+        results[activeIndex].scrollIntoView({ block: 'nearest' });
+        return;
+      }
+
+      if (e.key === 'ArrowUp') {
+        if (results.length === 0) return;
+        e.preventDefault();
+        activeIndex = (activeIndex - 1 + results.length) % results.length;
+        setActiveResult(list, activeIndex);
+        results[activeIndex].scrollIntoView({ block: 'nearest' });
+        return;
+      }
+    });
+
+    // Hover sets active highlight
+    list.addEventListener('mouseover', (e) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest<HTMLAnchorElement>('[data-searchbox-result]');
+      if (!anchor) return;
+      const results = Array.from(
+        list.querySelectorAll<HTMLAnchorElement>('[data-searchbox-result]'),
+      );
+      const idx = results.indexOf(anchor);
+      if (idx >= 0) {
+        activeIndex = idx;
+        setActiveResult(list, idx);
+      }
+    });
+
+    // Click-outside closes the dropdown
+    document.addEventListener('click', (e) => {
+      if (!root.contains(e.target as Node)) close();
+    });
+
+    // Global "/" focuses input — skip when typing elsewhere
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== '/') return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (isTypingTarget(e.target)) return;
+      e.preventDefault();
+      input.focus();
+      input.select();
+    });
+  }
+
+  function init(): void {
+    document
+      .querySelectorAll<HTMLElement>('[data-searchbox]')
+      .forEach(setupSearchBox);
+  }
+
+  // Astro's ClientRouter re-fires astro:page-load on every soft navigation
+  // and on bfcache restore, so the search box re-binds correctly.
+  document.addEventListener('astro:page-load', init);
+</script>

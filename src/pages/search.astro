@@ -1,0 +1,342 @@
+---
+/**
+ * /search — full-page search results view.
+ *
+ * URL parameter `?q=` carries the query. Results render via the same
+ * client-side MiniSearch index used by the nav SearchBox dropdown. If `?q`
+ * is empty/missing, render the empty state.
+ *
+ * Cite as: DESIGN.md §8 (search) — single-column results list with back-link
+ * and empty state.
+ */
+import Layout from '@/layouts/Layout.astro';
+import { getSearchableEntries, type SearchableEntry } from '@/lib/search-index';
+
+const url = Astro.url;
+const q = (url.searchParams.get('q') ?? '').trim();
+
+const entries: SearchableEntry[] = await getSearchableEntries();
+const entriesJson = JSON.stringify(entries);
+---
+
+<Layout
+  title={q ? `Search: ${q}` : 'Search'}
+  description="Search notes, essays, patterns, books, talks, projects, and practices."
+>
+  <section class="page-header-section">
+    <div class="container-phx">
+      <a href="/" class="search-back">← Back home</a>
+      <h1 class="page-title">Search</h1>
+      <p class="page-lede">
+        Notes, essays, patterns, books, talks, projects, and practices.
+      </p>
+      <form class="search-page-form" role="search" data-search-page-form>
+        <label class="sr-only" for="search-page-input">Search query</label>
+        <input
+          id="search-page-input"
+          class="search-page-input"
+          type="search"
+          name="q"
+          value={q}
+          placeholder="Search…"
+          aria-label="Search"
+          data-search-page-input
+        />
+      </form>
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    {q ? (
+      <div data-search-page-results></div>
+    ) : (
+      <div class="search-empty" data-search-page-empty>
+        <p>Type a query above to search across the site.</p>
+      </div>
+    )}
+    <div class="search-empty" data-search-page-no-results hidden>
+      <p>No results for that query.</p>
+      <p>
+        Try a different word, or <a href="/garden/">browse the garden</a>.
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .search-back {
+    display: inline-block;
+    color: var(--color-muted-slate);
+    font-size: var(--text-caption);
+    text-decoration: none;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .search-back:hover { color: var(--color-cohere-black); }
+
+  .search-page-form {
+    margin-top: var(--spacing-7);
+  }
+
+  .search-page-input {
+    width: 100%;
+    max-width: 600px;
+    height: 48px;
+    padding: 0 var(--spacing-5);
+    font-family: var(--font-sans);
+    font-size: var(--text-body-lg);
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-xs);
+    outline: none;
+    transition: border-color var(--duration-button) ease,
+      box-shadow var(--duration-button) ease;
+  }
+
+  .search-page-input:focus {
+    border-color: var(--color-focus-blue);
+    box-shadow: var(--shadow-focus-ring);
+  }
+
+  .search-empty {
+    padding: var(--spacing-8) 0;
+    color: var(--color-muted-slate);
+    font-size: var(--text-body);
+  }
+
+  .search-empty a {
+    color: var(--color-action-blue);
+    text-decoration: none;
+  }
+  .search-empty a:hover { text-decoration: underline; }
+
+  .result-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+  }
+
+  .result-item {
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    background: var(--color-canvas);
+    padding: var(--spacing-5) var(--spacing-7);
+    transition: box-shadow var(--duration-button) ease,
+      border-color var(--duration-button) ease;
+  }
+
+  .result-item:hover {
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-border-light);
+  }
+
+  .result-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .result-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+  }
+
+  .result-type {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    font-weight: 500;
+    color: var(--color-coral);
+  }
+
+  .result-title {
+    font-family: var(--font-display);
+    font-size: var(--text-body-lg);
+    font-weight: 400;
+    color: var(--color-ink);
+    line-height: var(--leading-body);
+    letter-spacing: var(--tracking-display-tight);
+    margin: 0 0 var(--spacing-2) 0;
+  }
+
+  .result-excerpt {
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    color: var(--color-muted-slate);
+    line-height: var(--leading-body);
+    margin: 0;
+  }
+</style>
+
+<script is:inline define:vars={{ entriesJson, initialQuery: q }}>
+  window.__SEARCHPAGE_DATA__ = entriesJson;
+  window.__SEARCHPAGE_QUERY__ = initialQuery;
+</script>
+
+<script>
+  // /search — client-side search runtime.
+  // Reads the build-time index, runs MiniSearch against `?q=` and renders
+  // results into [data-search-page-results]. Submits reload with ?q=... so
+  // the URL is shareable.
+
+  import MiniSearch from 'minisearch';
+
+  type SearchableEntry = {
+    collection: string;
+    slug: string;
+    title: string;
+    excerpt: string;
+    topics: string[];
+    date: string;
+    href: string;
+  };
+
+  declare global {
+    interface Window {
+      __SEARCHPAGE_DATA__?: string;
+      __SEARCHPAGE_QUERY__?: string;
+    }
+  }
+
+  const TYPE_LABELS: Record<string, string> = {
+    note: 'Note',
+    essay: 'Essay',
+    talk: 'Talk',
+    book: 'Book',
+    pattern: 'Pattern',
+    project: 'Project',
+    practice: 'Practice',
+  };
+
+  const DATE_FMT = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+
+  function formatDate(iso: string): string {
+    if (!iso || iso.startsWith('1970-01-01T00:00:00') || iso.startsWith('0000-')) {
+      return '';
+    }
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '';
+    return DATE_FMT.format(d);
+  }
+
+  function escapeHtml(s: string): string {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function buildIndex(entries: SearchableEntry[]): MiniSearch<SearchableEntry> {
+    const ms = new MiniSearch<SearchableEntry>({
+      fields: ['title', 'excerpt', 'topics'],
+      storeFields: ['collection', 'slug', 'title', 'excerpt', 'topics', 'date', 'href'],
+      searchOptions: {
+        boost: { title: 3, topics: 2, excerpt: 1 },
+        prefix: true,
+        fuzzy: 0.2,
+        combineWith: 'AND',
+      },
+    });
+    ms.addAll(entries);
+    return ms;
+  }
+
+  function render(
+    container: HTMLElement,
+    emptyEl: HTMLElement,
+    hits: SearchableEntry[],
+  ): void {
+    if (hits.length === 0) {
+      container.innerHTML = '';
+      emptyEl.removeAttribute('hidden');
+      return;
+    }
+
+    emptyEl.setAttribute('hidden', '');
+
+    container.innerHTML = `
+      <ul class="result-list">
+        ${hits
+          .map((e) => {
+            const dateLabel = formatDate(e.date);
+            const typeLabel = TYPE_LABELS[e.collection] ?? e.collection;
+            return `
+              <li class="result-item">
+                <a class="result-link" href="${e.href}">
+                  <div class="result-meta">
+                    <span class="result-type">${typeLabel}</span>
+                    ${dateLabel ? `<time datetime="${e.date}">${dateLabel}</time>` : ''}
+                  </div>
+                  <h2 class="result-title">${escapeHtml(e.title)}</h2>
+                  ${e.excerpt ? `<p class="result-excerpt">${escapeHtml(e.excerpt)}</p>` : ''}
+                </a>
+              </li>
+            `;
+          })
+          .join('')}
+      </ul>
+    `;
+  }
+
+  function init(): void {
+    const form = document.querySelector<HTMLFormElement>('[data-search-page-form]');
+    const input = document.querySelector<HTMLInputElement>('[data-search-page-input]');
+    const results = document.querySelector<HTMLElement>('[data-search-page-results]');
+    const empty = document.querySelector<HTMLElement>('[data-search-page-no-results]');
+    const initialEmpty = document.querySelector<HTMLElement>('[data-search-page-empty]');
+    if (!input || !results || !empty) return;
+
+    const dataJson = window.__SEARCHPAGE_DATA__;
+    if (!dataJson) return;
+    let entries: SearchableEntry[];
+    try {
+      entries = JSON.parse(dataJson) as SearchableEntry[];
+    } catch {
+      return;
+    }
+
+    const mini = buildIndex(entries);
+
+    const run = (q: string) => {
+      const trimmed = q.trim();
+      if (!trimmed) {
+        results.innerHTML = '';
+        empty.setAttribute('hidden', '');
+        initialEmpty?.removeAttribute('hidden');
+        return;
+      }
+      initialEmpty?.setAttribute('hidden', '');
+      const hits = mini.search(trimmed) as unknown as SearchableEntry[];
+      render(results, empty, hits);
+    };
+
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = input.value.trim();
+      const url = new URL(window.location.href);
+      if (q) url.searchParams.set('q', q);
+      else url.searchParams.delete('q');
+      window.location.href = url.toString();
+    });
+
+    run(input.value);
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>
