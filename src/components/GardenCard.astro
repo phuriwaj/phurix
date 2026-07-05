@@ -19,7 +19,7 @@ interface Props {
   lede?: string;
   date: Date;
   topics?: string[];
-  growthStage?: 'seedling' | 'budding' | 'evergreen';
+  growthStage?: 'seedling' | 'growing' | 'evergreen';
   href: string;
   imageSrc?: string;
   class?: string;
@@ -51,14 +51,12 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 
 const typeLabels = { note: 'Note', essay: 'Essay', talk: 'Talk', pattern: 'Pattern' };
 
-// "Newly added" badge: mark the entry when its newSince date is within 30 days
-// of the build's "now" (precomputed at request time so the comparison is stable).
 const NOW_MS = Date.now();
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 const isNew = newSince instanceof Date && (NOW_MS - newSince.getTime()) <= THIRTY_DAYS_MS;
 ---
 
-<Card emphasis="lifted" class:list={['garden-card', className]}>
+<Card emphasis="bordered" class:list={['garden-card', className]}>
   <a href={href} class="garden-card-link">
     <div class="garden-card-art">
       {imageSrc ? (
@@ -105,8 +103,8 @@ const isNew = newSince instanceof Date && (NOW_MS - newSince.getTime()) <= THIRT
   .garden-card-art {
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    background: var(--color-ceramic);
-    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    background: var(--color-soft-stone);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
   }
 
   .garden-card-art img,
@@ -118,15 +116,15 @@ const isNew = newSince instanceof Date && (NOW_MS - newSince.getTime()) <= THIRT
   }
 
   .garden-card-body {
-    padding: var(--spacing-4);
+    padding: var(--spacing-7);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
+    gap: var(--spacing-4);
   }
 
   @media (min-width: 768px) {
     .garden-card-body {
-      padding: var(--spacing-5);
+      padding: var(--spacing-8);
     }
   }
 
@@ -134,37 +132,42 @@ const isNew = newSince instanceof Date && (NOW_MS - newSince.getTime()) <= THIRT
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--spacing-2);
+    gap: var(--spacing-4);
   }
 
   .garden-type-label {
+    font-family: var(--font-mono);
     font-size: var(--text-micro);
-    font-weight: 600;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
   }
 
   .garden-date {
+    font-family: var(--font-mono);
     font-size: var(--text-micro);
-    color: var(--color-text-black-soft);
+    color: var(--color-muted-slate);
     margin-left: auto;
+    letter-spacing: var(--tracking-mono);
   }
 
   .garden-card-title {
-    font-size: var(--text-h1);
-    font-weight: 600;
-    color: var(--color-text-black);
+    font-family: var(--font-display);
+    font-size: var(--text-feature-heading);
+    font-weight: 400;
+    color: var(--color-ink);
     line-height: 1.25;
+    letter-spacing: var(--tracking-display-tight);
     margin: 0;
   }
 
   .garden-card-excerpt {
-    font-size: var(--text-small);
-    color: var(--color-text-black-soft);
-    line-height: 1.6;
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    color: var(--color-muted-slate);
+    line-height: 1.5;
     margin: 0;
-    /* Clamp to 3 lines */
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -174,7 +177,7 @@ const isNew = newSince instanceof Date && (NOW_MS - newSince.getTime()) <= THIRT
   .garden-card-topics {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-1);
-    margin-top: var(--spacing-1);
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-2);
   }
 </style>

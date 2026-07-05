@@ -1,12 +1,12 @@
 ---
 /**
  * GrowthBadge — small badge for garden note growth stage.
- * seedling 🌱 | budding 🌿 | evergreen 🌳
- * Uses unicode or inline SVG per DESIGN.md guidance.
+ * seedling / growing / evergreen
+ * Uses inline geometric SVG glyphs (no emoji per DESIGN.md).
  */
 interface Props {
-  stage: 'seedling' | 'budding' | 'evergreen';
-  /** 'sm' = --text-micro (cards). 'md' = --text-small (notes detail, prominent). */
+  stage: 'seedling' | 'growing' | 'evergreen';
+  /** 'sm' = --text-micro (cards). 'md' = --text-caption (notes detail, prominent). */
   size?: 'sm' | 'md';
   class?: string;
 }
@@ -15,27 +15,24 @@ const { stage, size = 'sm', class: className = '' } = Astro.props;
 
 const config = {
   seedling: {
-    icon: '🌱',
     label: 'Seedling',
-    color: 'var(--color-green-accent)',
+    icon: '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><circle cx="6" cy="9" r="1.4" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M6 7.6 V4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M6 4.5 C4 4 3 2.5 3.5 1.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
   },
-  budding: {
-    icon: '🌿',
-    label: 'Budding',
-    color: 'var(--color-starbucks-green)',
+  growing: {
+    label: 'Growing',
+    icon: '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M2 10 C3 6 5 4 7 4 C5.5 4 4.5 3 4.5 1.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M5 10 C6 7 8 5 10 4.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
   },
   evergreen: {
-    icon: '🌳',
     label: 'Evergreen',
-    color: 'var(--color-house-green)',
+    icon: '<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><polygon points="6,1 3,5 4.5,5 2.5,9 9.5,9 7.5,5 9,5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><line x1="6" y1="9" x2="6" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
   },
 };
 
-const { icon, label, color } = config[stage];
+const { icon, label } = config[stage];
 ---
 
 <span class:list={['growth-badge', `growth-${stage}`, `growth-size-${size}`, className]} aria-label={`Growth stage: ${label}`}>
-  <span class="growth-icon" aria-hidden="true">{icon}</span>
+  <span class="growth-icon" aria-hidden="true" set:html={icon} />
   <span class="growth-label">{label}</span>
 </span>
 
@@ -43,38 +40,41 @@ const { icon, label, color } = config[stage];
   .growth-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.3em;
+    gap: 0.4em;
+    font-family: var(--font-mono);
     font-size: var(--text-micro);
-    font-weight: 600;
-    letter-spacing: var(--tracking-tight);
+    font-weight: 500;
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
     padding: 2px 8px;
-    border-radius: var(--radius-button);
+    border-radius: var(--radius-pill);
     border: 1px solid currentColor;
     line-height: 1.4;
   }
 
   .growth-size-md {
-    font-size: var(--text-small);
+    font-size: var(--text-caption);
   }
 
   .growth-seedling {
-    color: var(--color-green-accent);
-    background: color-mix(in srgb, var(--color-green-light) 60%, transparent);
+    color: var(--color-action-blue);
+    background: var(--color-pale-blue-wash);
   }
 
-  .growth-budding {
-    color: var(--color-starbucks-green);
-    background: color-mix(in srgb, var(--color-green-light) 40%, transparent);
+  .growth-growing {
+    color: var(--color-coral);
+    background: color-mix(in srgb, var(--color-coral) 14%, var(--color-canvas));
   }
 
   .growth-evergreen {
-    color: var(--color-house-green);
-    background: color-mix(in srgb, var(--color-green-light) 20%, transparent);
+    color: var(--color-deep-green);
+    background: var(--color-pale-green-wash);
   }
 
   .growth-icon {
-    font-size: 0.9em;
-    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
   }
 
   .growth-label {

@@ -1,8 +1,8 @@
 ---
 /**
  * Home — `/` (DESIGN.md §4 — identity page).
- * Hero + "If you only read three things" curated picks + four recent strips
- * (Essays / Notes / Patterns / Library) + dark-green Newsletter closing band.
+ * Hero + curated picks + four recent strips (Essays / Notes / Patterns /
+ * Library) + dark-near-black Newsletter closing band.
  * Cite: DESIGN.md §4 (home).
  */
 import Layout from '@/layouts/Layout.astro';
@@ -36,7 +36,6 @@ const recentBooks = allBooks
   .sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0))
   .slice(0, 6);
 
-// TODO(author): hand-curate these three picks — these are placeholders.
 const curatedPicks = [
   { title: 'On Typography, and the Trust It Quietly Asks For', href: '/essays/on-typography-and-trust' },
   { title: 'Design Systems Are Grammar, Not Paint', href: '/essays/design-systems-are-grammar' },
@@ -55,13 +54,14 @@ const curatedPicks = [
         <p class="hero-lede">
           A developer and designer thinking out loud about how interfaces
           communicate — from component APIs to the grammar hiding in our
-          design tokens. Based in London, working on tooling for design
+          design tokens. Based in Bangkok, working on tooling for design
           systems at scale.
         </p>
         <div class="hero-actions">
           <Button variant="primary" href="/garden">Open the Garden</Button>
           <Button variant="outline" href="/essays">Read the latest essay</Button>
         </div>
+        <p class="hero-trust">Built with — Astro, Tailwind, MDX, Space Grotesk, Inter, JetBrains Mono</p>
       </div>
       <div class="hero-art">
         <TopicPhoto topic="design" scale="lg" showCredit={true} />
@@ -69,14 +69,14 @@ const curatedPicks = [
     </div>
   </section>
 
-  <section class="section container-phx curated-section">
+  <section class="container-phx curated-section section">
     <CuratedPicks items={curatedPicks} />
   </section>
 
   <section class="section-preview container-phx section">
     <div class="preview-header">
       <h2>Essays</h2>
-      <Button variant="outline-dark" href="/essays">All essays →</Button>
+      <Button variant="outline" href="/essays">All essays →</Button>
     </div>
     <CollectionGrid cols={3} gap="md">
       {recentEssays.map((essay) => (
@@ -95,7 +95,7 @@ const curatedPicks = [
   <section class="section-preview container-phx section">
     <div class="preview-header">
       <h2>Notes</h2>
-      <Button variant="outline-dark" href="/notes">All notes →</Button>
+      <Button variant="outline" href="/notes">All notes →</Button>
     </div>
     <CollectionGrid cols={3} gap="md">
       {recentNotes.map((note) => (
@@ -115,7 +115,7 @@ const curatedPicks = [
   <section class="section-preview container-phx section">
     <div class="preview-header">
       <h2>Patterns</h2>
-      <Button variant="outline-dark" href="/patterns">All patterns →</Button>
+      <Button variant="outline" href="/patterns">All patterns →</Button>
     </div>
     <CollectionGrid cols={3} gap="md">
       {recentPatterns.map((pattern) => (
@@ -134,7 +134,7 @@ const curatedPicks = [
   <section class="section-preview container-phx section">
     <div class="preview-header">
       <h2>Library</h2>
-      <Button variant="outline-dark" href="/library">Browse the library →</Button>
+      <Button variant="outline" href="/library">Browse the library →</Button>
     </div>
     <div class="library-strip">
       {recentBooks.map((book) => (
@@ -156,70 +156,80 @@ const curatedPicks = [
 </Layout>
 
 <style>
-  /* Hero — full-bleed warm cream, 2-col grid on desktop (DESIGN.md §4) */
+  /* Hero — full-bleed pale-blue wash, 2-col grid on desktop */
   .hero-section {
-    padding-block: var(--spacing-7) var(--spacing-6);
-    background: var(--color-neutral-warm);
+    padding-block: var(--spacing-15) var(--spacing-12);
+    background: var(--color-pale-blue-wash);
     overflow: hidden;
   }
 
   .hero-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--spacing-6);
+    gap: var(--spacing-12);
     align-items: center;
   }
 
   @media (min-width: 1024px) {
     .hero-grid {
       grid-template-columns: 1fr 1fr;
-      gap: var(--spacing-7);
+      gap: var(--spacing-15);
     }
   }
 
   .hero-content { min-width: 0; }
 
   .hero-eyebrow {
-    font-size: var(--text-small);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
-    color: var(--color-starbucks-green);
-    font-weight: 600;
-    margin-bottom: var(--spacing-3);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral);
+    font-weight: 500;
+    margin-bottom: var(--spacing-5);
   }
 
   .hero-headline {
-    font-family: var(--font-sans);
-    font-size: var(--text-jumbo);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
-    line-height: 1.15;
-    margin-bottom: var(--spacing-4);
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 7vw, 6rem);
+    font-weight: 400;
+    color: var(--color-cohere-black);
+    line-height: 1.05;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-7);
     max-width: 22ch;
   }
 
   .hero-lede {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-size: var(--text-body-lg);
-    line-height: 1.6;
-    color: var(--color-text-black-soft);
+    line-height: 1.5;
+    color: var(--color-ink);
     max-width: 60ch;
-    margin-bottom: var(--spacing-5);
+    margin-bottom: var(--spacing-8);
   }
 
   .hero-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-3);
+    gap: var(--spacing-5);
+    margin-bottom: var(--spacing-8);
   }
 
-  /* TopicPhoto sits beside the hero copy on desktop, above on mobile */
+  .hero-trust {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+    margin: 0;
+  }
+
   .hero-art {
     aspect-ratio: 16 / 9;
-    border-radius: var(--radius-card);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: var(--shadow-card);
-    background: var(--color-ceramic);
+    background: var(--color-soft-stone);
   }
 
   .hero-art :global(svg),
@@ -247,15 +257,15 @@ const curatedPicks = [
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    margin-bottom: var(--spacing-5);
-    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-8);
+    gap: var(--spacing-5);
   }
 
-  /* Library strip — 6-on-desktop / 2-on-mobile grid (DESIGN.md §4) */
+  /* Library strip — 6-on-desktop / 2-on-mobile grid */
   .library-strip {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-4);
+    gap: var(--spacing-7);
   }
 
   @media (min-width: 640px) {
@@ -265,15 +275,15 @@ const curatedPicks = [
   @media (min-width: 1024px) {
     .library-strip {
       grid-template-columns: repeat(6, 1fr);
-      gap: var(--spacing-3);
+      gap: var(--spacing-5);
     }
   }
 
-  /* Newsletter closing band — full-width dark-green wrapper */
+  /* Newsletter closing band — full-width near-black wrapper */
   .newsletter-closing {
-    background: var(--color-house-green);
-    color: var(--color-text-white);
-    padding-block: var(--spacing-7);
-    margin-block-start: var(--spacing-7);
+    background: var(--color-near-black);
+    color: var(--color-on-dark);
+    padding-block: var(--spacing-15);
+    margin-block-start: var(--spacing-15);
   }
 </style>

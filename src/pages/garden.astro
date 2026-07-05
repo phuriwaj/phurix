@@ -2,6 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import GardenCard from '@/components/GardenCard.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
+import TopicChip from '@/components/TopicChip.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { findOnThisDay } from '@/lib/onThisDay';
 
@@ -16,7 +17,6 @@ const allNotes = await getCollection('notes');
 const allTalks = await getCollection('talks');
 const allPatterns = await getCollection('patterns');
 
-// Merge all entries and sort by date descending
 const allEntries: MergedEntry[] = [
   ...allEssays.map((e) => ({
     ...e,
@@ -40,7 +40,6 @@ const allEntries: MergedEntry[] = [
   })),
 ].sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
 
-// Extract unique topics from all entries (talks may carry loose frontmatter topics; default to [] otherwise)
 const topicsForEntry = (entry: MergedEntry): string[] => {
   if (entry.entryType === 'talk') {
     const t = (entry.data as unknown as { topics?: string[] }).topics;
@@ -51,8 +50,6 @@ const topicsForEntry = (entry: MergedEntry): string[] => {
 
 const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
 
-// "On this day" — surface one entry whose MM-DD matches today, from any prior year.
-// Helper returns matches sorted by date desc; we take the most recent (first).
 const today = new Date();
 const onThisDayMatches = findOnThisDay(allEntries, today);
 const onThisDay = onThisDayMatches[0] ?? null;
@@ -94,20 +91,20 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
       <div class="filter-group">
         <span class="filter-label">Type</span>
         <div class="filter-chips" id="type-filters">
-          <button class="topic-chip topic-chip-active" data-filter-type="all" aria-pressed="true">All</button>
-          <button class="topic-chip" data-filter-type="note" aria-pressed="false">Note</button>
-          <button class="topic-chip" data-filter-type="essay" aria-pressed="false">Essay</button>
-          <button class="topic-chip" data-filter-type="talk" aria-pressed="false">Talk</button>
-          <button class="topic-chip" data-filter-type="pattern" aria-pressed="false">Pattern</button>
+          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-type="all" aria-pressed="true">All</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="note" aria-pressed="false">Note</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="essay" aria-pressed="false">Essay</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="talk" aria-pressed="false">Talk</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="pattern" aria-pressed="false">Pattern</button>
         </div>
       </div>
 
       <div class="filter-group">
         <span class="filter-label">Topic</span>
         <div class="filter-chips" id="topic-filters">
-          <button class="topic-chip topic-chip-active" data-filter-topic="all" aria-pressed="true">All</button>
+          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-topic="all" aria-pressed="true">All</button>
           {allTopics.map((topic) => (
-            <button class="topic-chip" data-filter-topic={topic} aria-pressed="false">{topic}</button>
+            <button class="topic-chip topic-chip-md" data-filter-topic={topic} aria-pressed="false">{topic}</button>
           ))}
         </div>
       </div>
@@ -115,10 +112,10 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
       <div class="filter-group">
         <span class="filter-label">Growth</span>
         <div class="filter-chips" id="growth-filters">
-          <button class="topic-chip topic-chip-active" data-filter-growth="all" aria-pressed="true">All</button>
-          <button class="topic-chip" data-filter-growth="seedling" aria-pressed="false">Seedling</button>
-          <button class="topic-chip" data-filter-growth="budding" aria-pressed="false">Budding</button>
-          <button class="topic-chip" data-filter-growth="evergreen" aria-pressed="false">Evergreen</button>
+          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-growth="all" aria-pressed="true">All</button>
+          <button class="topic-chip topic-chip-md" data-filter-growth="seedling" aria-pressed="false">Seedling</button>
+          <button class="topic-chip topic-chip-md" data-filter-growth="growing" aria-pressed="false">Growing</button>
+          <button class="topic-chip topic-chip-md" data-filter-growth="evergreen" aria-pressed="false">Evergreen</button>
         </div>
       </div>
     </div>
@@ -177,81 +174,71 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
 
 <style>
   .page-header-section {
-    padding-block: var(--spacing-7) var(--spacing-5);
-    background: var(--color-neutral-warm);
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-canvas);
     border-bottom: 1px solid var(--color-hairline);
   }
 
   .page-title {
-    font-size: var(--text-jumbo);
-    font-weight: 600;
-    color: var(--color-starbucks-green);
-    line-height: 1.15;
-    margin-bottom: var(--spacing-3);
-  }
-
-  @media (min-width: 1024px) {
-    .page-title {
-      font-size: clamp(3.6rem, 6vw + 1rem, 4.5rem);
-    }
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-cohere-black);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
   }
 
   .page-lede {
+    font-family: var(--font-sans);
     font-size: var(--text-body-lg);
-    line-height: 1.6;
-    color: var(--color-text-black-soft);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
     max-width: 60ch;
   }
 
-  /* On this day — single quiet Lora-italic line above the filter bar. */
   .on-this-day {
-    padding-block: var(--spacing-4) var(--spacing-2);
-    background: var(--color-neutral-warm);
+    padding-block: var(--spacing-7) var(--spacing-4);
+    background: var(--color-soft-stone);
   }
 
   .on-this-day-line {
     font-family: var(--font-serif);
     font-style: italic;
     font-size: var(--text-body);
-    color: var(--color-text-black);
+    color: var(--color-ink);
     margin: 0;
   }
 
   .on-this-day-line a {
-    color: var(--color-green-accent);
+    color: var(--color-action-blue);
     text-decoration: underline;
     text-underline-offset: 2px;
     transition: color var(--duration-button) ease;
   }
 
   .on-this-day-line a:hover {
-    color: var(--color-starbucks-green);
+    color: var(--color-cohere-black);
   }
 
   .filter-section {
-    padding-block: var(--spacing-4);
-    background: var(--color-white);
+    padding-block: var(--spacing-7);
+    background: var(--color-canvas);
     border-bottom: 1px solid var(--color-hairline);
     position: sticky;
-    top: var(--nav-h-xs);
+    top: var(--nav-h-mobile);
     z-index: 10;
   }
 
-  @media (min-width: 480px) {
-    .filter-section { top: var(--nav-h-sm); }
-  }
   @media (min-width: 768px) {
-    .filter-section { top: var(--nav-h-md); }
-  }
-  @media (min-width: 1024px) {
-    .filter-section { top: var(--nav-h-lg); }
+    .filter-section { top: var(--nav-h); }
   }
 
   .filter-group {
     display: flex;
     align-items: center;
-    gap: var(--spacing-3);
-    margin-bottom: var(--spacing-3);
+    gap: var(--spacing-5);
+    margin-bottom: var(--spacing-5);
     flex-wrap: wrap;
   }
 
@@ -260,18 +247,19 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
   }
 
   .filter-label {
-    font-size: var(--text-small);
-    font-weight: 600;
-    color: var(--color-text-black-soft);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    color: var(--color-coral);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-loose);
+    letter-spacing: var(--tracking-mono);
     min-width: 4rem;
   }
 
   .filter-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-1);
+    gap: var(--spacing-2);
   }
 
   .entry-card-wrapper {
@@ -286,9 +274,9 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
     font-family: var(--font-serif);
     font-style: italic;
     font-size: var(--text-body);
-    color: var(--color-text-black-soft);
+    color: var(--color-muted-slate);
     text-align: center;
-    padding-block: var(--spacing-7);
+    padding-block: var(--spacing-15);
     margin: 0;
   }
 
@@ -296,20 +284,20 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
     font-family: var(--font-serif);
     font-style: italic;
     font-size: var(--text-body);
-    color: var(--color-text-black-soft);
+    color: var(--color-muted-slate);
     text-align: center;
-    margin-block-start: var(--spacing-6);
+    margin-block-start: var(--spacing-12);
   }
 
   .garden-random-link a {
-    color: var(--color-green-accent);
+    color: var(--color-action-blue);
     text-decoration: underline;
     text-underline-offset: 2px;
     transition: color var(--duration-button) ease;
   }
 
   .garden-random-link a:hover {
-    color: var(--color-starbucks-green);
+    color: var(--color-cohere-black);
   }
 </style>
 
@@ -387,8 +375,6 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
     topicFilters?.addEventListener('click', handleChipClick);
     growthFilters?.addEventListener('click', handleChipClick);
 
-    // Hydrate filters from URL params on load.
-    // Unknown values fall back silently to 'all' (no crash).
     const params = new URLSearchParams(window.location.search);
 
     const typeParam = params.get('type');
@@ -410,7 +396,7 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
     }
 
     const growthParam = params.get('growth');
-    if (growthParam && ['seedling', 'budding', 'evergreen'].includes(growthParam)) {
+    if (growthParam && ['seedling', 'growing', 'evergreen'].includes(growthParam)) {
       activeGrowth = growthParam;
       const btn = growthFilters?.querySelector(`[data-filter-growth="${growthParam}"]`) as HTMLElement | null;
       if (btn) {

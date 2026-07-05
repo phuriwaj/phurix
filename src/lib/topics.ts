@@ -13,6 +13,9 @@ export const RECOGNIZED_TOPICS_TUPLE = [
   'web-development',
   'anthropology',
   'ai',
+  'attention',
+  'focus',
+  'money',
 ] as const;
 
 export type TopicKey = (typeof RECOGNIZED_TOPICS_TUPLE)[number];
