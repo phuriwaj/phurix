@@ -29,9 +29,7 @@ export default defineConfig({
     },
   },
   integrations: [
-    mdx({
-      remarkPlugins: [remarkWikilink],
-    }),
+    mdx(),
     sitemap({
       filter: (page) => !/\/random\/?$/.test(page),
     }),

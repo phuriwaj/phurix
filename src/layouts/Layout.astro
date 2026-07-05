@@ -46,19 +46,16 @@ const fullTitle = title === 'phurix' ? title : `${title} — phurix`;
           document.documentElement.dataset.theme = resolved;
 
           // React to OS-level preference changes — only when the user hasn't
-          // explicitly chosen. Uses addEventListener where available,
-          // addListener as a Safari < 14 fallback.
+          // explicitly chosen. Safari < 14 (Sept 2020) had a deprecated
+          // addListener API; we now require addEventListener, which is
+          // universal in 2026.
           var mq = window.matchMedia('(prefers-color-scheme: dark)');
           var onChange = function (e) {
             var s = localStorage.getItem('phurix-theme');
             if (s === 'light' || s === 'dark') return;
             document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
           };
-          if (mq.addEventListener) {
-            mq.addEventListener('change', onChange);
-          } else if (mq.addListener) {
-            mq.addListener(onChange);
-          }
+          mq.addEventListener('change', onChange);
         } catch (err) {
           document.documentElement.dataset.theme = 'light';
         }

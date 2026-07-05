@@ -1,4 +1,4 @@
-## Overview
+## 1. Overview
 
 Cohere's current web presence feels like a sober enterprise AI command center with editorial restraint. The home page opens on a huge typographic declaration over a white canvas, then uses photography, dark product mockups, trust logos, and generous empty space to make AI infrastructure feel controlled rather than speculative. Product pages invert the tone into deep green-black or dark navy bands, while blog and research pages move toward publishing-system clarity: large filters, thin rules, dense lists, and pale technical backgrounds.
 
@@ -13,7 +13,7 @@ What makes the system distinctive is the mix of austere black-and-white UI with 
 - Agent-console mockups using dark panels, small status chips, and product integration badges.
 - Blog and research surfaces with prominent taxonomy chips, long rule-separated lists, and search fields.
 
-## Colors
+## 2. Colors
 
 ### Brand & Accent
 
@@ -51,7 +51,7 @@ What makes the system distinctive is the mix of austere black-and-white UI with 
 
 Cohere does not use gradients as a generic UI fill. Gradients and color fields are media-led: abstract 3D hero imagery, deep blue open-science particle fields, red-orange product video posters, and dark green-to-black product environments. Keep UI surfaces flat; reserve gradient richness for large media panels and CTA image bands.
 
-## Typography
+## 3. Typography
 
 ### Font Family
 
@@ -85,7 +85,7 @@ Cohere does not use gradients as a generic UI fill. Gradients and color fields a
 - Use uppercase mono labels for category and system markers, especially on product and research pages.
 - Editorial pages can use coral chips and blue links, but the base typography remains black and measured.
 
-## Layout
+## 4. Layout
 
 ### Spacing System
 
@@ -106,7 +106,7 @@ Large sections rely on dramatic vertical breathing room. The home page places a 
 
 Cohere uses whitespace as a trust signal. Large empty intervals separate the brand claim, customer proof, product proof, and CTA. Dense content appears only where it serves the information architecture: research paper rows, blog card grids, and contact form fields.
 
-## Elevation & Depth
+## 5. Elevation & Depth
 
 Cohere is mostly flat. Depth comes from surface alternation, media contrast, rounded corners, and thin borders rather than drop shadows.
 
@@ -117,7 +117,7 @@ Cohere is mostly flat. Depth comes from surface alternation, media contrast, rou
 | Media Lift | Rounded image or video over contrasting section color | Hero photo cards, product videos, CTA imagery |
 | Dark Product Field | Deep green or navy full-width band | Command, North, financial services, security sections |
 
-## Shapes
+## 6. Shapes
 
 ### Radius Scale
 
@@ -135,7 +135,7 @@ Cohere is mostly flat. Depth comes from surface alternation, media contrast, rou
 
 Images are not decorative backdrops for text except in CTA bands. Most imagery sits as rounded cards with visible corners: product videos, enterprise photography, article thumbnails, and abstract 3D renders. The dominant radii are 8px and 22px.
 
-## Components
+## 7. Components
 
 ### **`button-primary`**
 
@@ -193,7 +193,7 @@ Rounded white form panel set against dark green or warm stone sections. Inputs a
 
 Dark footer subscription block with coral "AI moves fast" label, white headline, muted legal microcopy, a single-line email field, and arrow submit marker. Footer columns use white section labels and muted links.
 
-## Do's and Don'ts
+## 8. Do's and Don'ts
 
 ### Do
 
@@ -215,7 +215,7 @@ Dark footer subscription block with coral "AI moves fast" label, white headline,
 - Do not render undocumented interaction variants in documentation or previews.
 - Do not use saturated gradients as normal UI backgrounds; keep gradients media-led.
 
-## Responsive Behavior
+## 9. Responsive Behavior
 
 ### Breakpoints
 
@@ -240,7 +240,7 @@ Primary CTAs and pills meet comfortable touch sizing through 12px-24px padding a
 - Form fields collapse from paired rows to a single column.
 - Research rows preserve their rule-separated structure but stack metadata below titles on smaller widths.
 
-## Iteration Guide
+## 10. Iteration Guide
 
 1. Start from a white canvas or a full-width dark green/navy band; avoid mid-tone page backgrounds unless the screenshot shows a specific CTA/form section.
 2. Use `button-primary` for the single highest-priority action and `button-secondary` for the companion action.
@@ -248,7 +248,7 @@ Primary CTAs and pills meet comfortable touch sizing through 12px-24px padding a
 4. For editorial pages, combine `blog-filter-chip`, `button-pill-outline`, and `research-table` instead of generic marketing cards.
 5. Keep component examples structurally honest: placeholder product frames are better than invented product content.
 
-## Known Gaps
+## 11. Known Gaps
 
 - Exact proprietary font files are not bundled; use the documented fallbacks when implementing externally.
 - Mobile screenshots were not regenerated in this public update, so mobile behavior is documented from the desktop system and existing responsive patterns.

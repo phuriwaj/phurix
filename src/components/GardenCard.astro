@@ -14,7 +14,7 @@ import { pickArtTopic } from '@/lib/topics';
 
 interface Props {
   title: string;
-  type: 'note' | 'essay' | 'talk' | 'pattern';
+  type: 'note' | 'essay' | 'talk' | 'pattern' | 'practice';
   excerpt?: string;
   lede?: string;
   date: Date;
@@ -49,7 +49,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
 }).format(date);
 
-const typeLabels = { note: 'Note', essay: 'Essay', talk: 'Talk', pattern: 'Pattern' };
+const typeLabels = { note: 'Note', essay: 'Essay', talk: 'Talk', pattern: 'Pattern', practice: 'Practice' };
 
 const NOW_MS = Date.now();
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;

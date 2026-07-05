@@ -33,7 +33,7 @@ const talks = defineCollection({
     event: z.string(),
     date: z.coerce.date(),
     description: z.string(),
-    link: z.string().url().optional(),
+    link: z.url().optional(),
   }),
 });
 
@@ -66,7 +66,7 @@ const projects = defineCollection({
     desc: z.string(),
     tags: z.array(z.string()).default([]),
     year: z.number().int().optional(),
-    url: z.string().url().optional(),
+    url: z.url().optional(),
   }),
 });
 

@@ -2,7 +2,6 @@
 import Layout from '@/layouts/Layout.astro';
 import GardenCard from '@/components/GardenCard.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
-import TopicChip from '@/components/TopicChip.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { findOnThisDay } from '@/lib/onThisDay';
 
@@ -10,12 +9,14 @@ type MergedEntry =
   | (CollectionEntry<'essays'> & { entryType: 'essay'; displayDate: Date })
   | (CollectionEntry<'notes'> & { entryType: 'note'; displayDate: Date })
   | (CollectionEntry<'talks'> & { entryType: 'talk'; displayDate: Date })
-  | (CollectionEntry<'patterns'> & { entryType: 'pattern'; displayDate: Date });
+  | (CollectionEntry<'patterns'> & { entryType: 'pattern'; displayDate: Date })
+  | (CollectionEntry<'practices'> & { entryType: 'practice'; displayDate: Date });
 
 const allEssays = await getCollection('essays');
 const allNotes = await getCollection('notes');
 const allTalks = await getCollection('talks');
 const allPatterns = await getCollection('patterns');
+const allPractices = await getCollection('practices');
 
 const allEntries: MergedEntry[] = [
   ...allEssays.map((e) => ({
@@ -37,6 +38,11 @@ const allEntries: MergedEntry[] = [
     ...p,
     entryType: 'pattern' as const,
     displayDate: p.data.date,
+  })),
+  ...allPractices.map((pr) => ({
+    ...pr,
+    entryType: 'practice' as const,
+    displayDate: pr.data.date,
   })),
 ].sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
 
@@ -60,6 +66,8 @@ const onThisDayHref = onThisDay
     ? `/notes/${onThisDay.id}`
     : onThisDay.entryType === 'pattern'
     ? `/patterns/${onThisDay.id}`
+    : onThisDay.entryType === 'practice'
+    ? `/practices/${onThisDay.id}`
     : onThisDay.data.link ?? '#'
   : '#';
 const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.getFullYear();
@@ -96,6 +104,7 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
           <button class="topic-chip topic-chip-md" data-filter-type="essay" aria-pressed="false">Essay</button>
           <button class="topic-chip topic-chip-md" data-filter-type="talk" aria-pressed="false">Talk</button>
           <button class="topic-chip topic-chip-md" data-filter-type="pattern" aria-pressed="false">Pattern</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="practice" aria-pressed="false">Practice</button>
         </div>
       </div>
 
@@ -131,6 +140,8 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
           ? `/notes/${entry.id}`
           : entry.entryType === 'pattern'
           ? `/patterns/${entry.id}`
+          : entry.entryType === 'practice'
+          ? `/practices/${entry.id}`
           : entry.data.link ?? '#';
 
         const entryTopics = topicsForEntry(entry);
@@ -138,7 +149,7 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
         const excerpt =
           entry.entryType === 'essay' || entry.entryType === 'pattern'
             ? entry.data.lede
-            : entry.entryType === 'note'
+            : entry.entryType === 'note' || entry.entryType === 'practice'
             ? entry.data.excerpt
             : entry.data.description;
 
@@ -147,7 +158,7 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
             class="entry-card-wrapper"
             data-type={entry.entryType}
             data-topics={JSON.stringify(entryTopics)}
-            data-growth={entry.entryType === 'note' ? entry.data.growthStage : ''}
+            data-growth={(entry.entryType === 'note' || entry.entryType === 'practice') ? entry.data.growthStage : ''}
           >
             <GardenCard
               title={entry.data.title}
@@ -155,7 +166,7 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
               excerpt={excerpt}
               date={entry.displayDate}
               topics={entryTopics}
-              growthStage={entry.entryType === 'note' ? entry.data.growthStage : undefined}
+              growthStage={(entry.entryType === 'note' || entry.entryType === 'practice') ? entry.data.growthStage : undefined}
               href={href}
               newSince={entry.displayDate}
             />
@@ -378,7 +389,7 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
     const params = new URLSearchParams(window.location.search);
 
     const typeParam = params.get('type');
-    if (typeParam && ['note', 'essay', 'talk', 'pattern'].includes(typeParam)) {
+    if (typeParam && ['note', 'essay', 'talk', 'pattern', 'practice'].includes(typeParam)) {
       activeType = typeParam;
       const btn = typeFilters?.querySelector(`[data-filter-type="${typeParam}"]`) as HTMLElement | null;
       if (btn) {

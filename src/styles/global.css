@@ -112,7 +112,7 @@ video {
   height: auto;
 }
 
-/* --- Image fade-in (DESIGN.md §4) ------------------------------------ */
+/* --- Image fade-in (DESIGN.md §7 — image treatment) ------------------ */
 img {
   opacity: 0;
   transition: opacity var(--duration-image) ease-in;
@@ -190,7 +190,7 @@ button {
 }
 
 /* =========================================================================
-   Long-form prose utility — DESIGN.md §1 (typography stack)
+   Long-form prose utility — DESIGN.md §3 (Typography)
    Lora 18px / 1.7 / 65ch, with per-element rules consolidated from
    essays/[slug].astro, notes/[slug].astro, and patterns/[slug].astro.
    Per-page styles only override when a page truly differs.
@@ -204,7 +204,7 @@ button {
   margin-inline: auto;
 }
 
-.prose :global(h2) {
+.prose h2 {
   font-family: var(--font-display);
   font-size: var(--text-card-heading);
   font-weight: 400;
@@ -214,7 +214,7 @@ button {
   line-height: 1.2;
 }
 
-.prose :global(h3) {
+.prose h3 {
   font-family: var(--font-display);
   font-size: var(--text-feature-heading);
   font-weight: 400;
@@ -224,25 +224,25 @@ button {
   line-height: 1.25;
 }
 
-.prose :global(p) {
+.prose p {
   color: var(--color-ink);
   line-height: 1.75;
   margin-bottom: var(--spacing-7);
 }
 
-.prose :global(ul),
-.prose :global(ol) {
+.prose ul,
+.prose ol {
   padding-left: var(--spacing-7);
   margin-bottom: var(--spacing-7);
 }
 
-.prose :global(li) {
+.prose li {
   color: var(--color-ink);
   margin-bottom: var(--spacing-4);
   line-height: 1.7;
 }
 
-.prose :global(blockquote) {
+.prose blockquote {
   border-left: 3px solid var(--color-coral);
   padding-left: var(--spacing-7);
   margin-left: 0;
@@ -251,7 +251,7 @@ button {
   margin-block: var(--spacing-7);
 }
 
-.prose :global(code) {
+.prose code {
   background: var(--color-soft-stone);
   padding: 2px 6px;
   border-radius: 4px;
@@ -259,7 +259,7 @@ button {
   font-family: var(--font-mono);
 }
 
-.prose :global(pre) {
+.prose pre {
   background: var(--color-near-black);
   color: var(--color-on-dark);
   padding: var(--spacing-7);
@@ -270,29 +270,29 @@ button {
   line-height: 1.6;
 }
 
-.prose :global(pre code) {
+.prose pre code {
   background: none;
   padding: 0;
   color: inherit;
   font-size: inherit;
 }
 
-.prose :global(a) {
+.prose a {
   color: var(--color-action-blue);
   text-decoration: underline;
   text-underline-offset: 2px;
   transition: color var(--duration-button) ease;
 }
 
-.prose :global(a:hover) {
+.prose a:hover {
   color: var(--color-cohere-black);
 }
 
-.prose :global(strong) {
+.prose strong {
   font-weight: 600;
   color: var(--color-ink);
 }
 
-.prose :global(em) {
+.prose em {
   font-style: italic;
 }

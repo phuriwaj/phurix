@@ -1,7 +1,7 @@
 /**
  * Blogroll — 20 hand-picked sites the author reads.
  * Rendered inside the footer as a <details> collapse.
- * Cite as: DESIGN.md §8 (footer — blogroll).
+ * Cite as: DESIGN.md §4 (Layout — footer blogroll data).
  * TODO: author curates further post-build.
  */
 

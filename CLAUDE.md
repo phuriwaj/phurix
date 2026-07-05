@@ -14,7 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Path alias**: `@/*` → `src/*` (declared in both `tsconfig.json` and `astro.config.mjs` vite.alias)
 - **5 content collections** defined in `src/content.config.ts`: `books`, `essays`, `notes`, `patterns`, `talks` (all MDX, glob-loaded from `src/content/<name>/`). Each has a Zod schema; field shapes vary per collection (e.g. `notes` has `growthStage`, `books` has `coverColor`).
 - **Page model**: every page in `src/pages/` imports `@/layouts/Layout.astro` (the universal chrome — nav/footer/global styles). Pages render content via components in `src/components/`.
-- **Topic system**: `src/lib/topics.ts` is the single source of truth for recognized topics. The `RECOGNIZED_TOPICS` list there is the contract for `topics: z.array(z.string())` in content schemas — adding a topic means updating this file *and* adding a corresponding photo in `public/photos/`.
+- **Topic system**: `src/lib/topics.ts` is the single source of truth for recognized topics. The `RECOGNIZED_TOPICS` list there is the contract for `topics: z.array(z.string())` in content schemas — adding a topic means updating this file *and* adding a corresponding photo in `src/assets/photos/` (imported via `astro:assets`; build-time WebP, hashed, responsive).
 
 ## Design system coupling
 - **Two source-of-truth docs**:

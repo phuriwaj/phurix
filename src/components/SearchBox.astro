@@ -11,23 +11,24 @@
  *   Arrow keys → move selection in dropdown (omitted — Enter navigates first result)
  *   Enter     → navigate to highlighted (or first) result
  *
- * Cite as: DESIGN.md §8 (nav) — search affordance between primary links and CTA.
+ * Cite as: DESIGN.md §4 (Layout — nav-mounted search affordance between primary links and CTA).
  */
 import { getSearchableEntries, type SearchableEntry } from '@/lib/search-index';
 
 const entries: SearchableEntry[] = await getSearchableEntries();
 const entriesJson = JSON.stringify(entries);
 
-// Precompute a serialized MiniSearch instance. Astro hoists this <script>
-// and the bundler will keep MiniSearch in a single module — we ship the
-// document list as JSON via define:vars (Astro inlines server-side data into
-// the script at build time).
+// Build-time index payload is carried to the client via a data-* attribute
+// on the form. The hoisted <script> reads it on astro:page-load and feeds
+// the entries into MiniSearch. This avoids a separate inline <script> for
+// data handoff and keeps the markup self-contained.
 ---
 
 <form
   class="searchbox"
   role="search"
   data-searchbox
+  data-searchbox-entries={entriesJson}
   autocomplete="off"
   onsubmit="return false;"
 >
@@ -236,14 +237,6 @@ const entriesJson = JSON.stringify(entries);
   }
 </style>
 
-<script is:inline define:vars={{ entriesJson }}>
-  // SearchBox — client-side runtime.
-  // Bundled by Astro as a hoisted module via the outer <script> block; this
-  // inner inline block carries the build-time index payload. The outer
-  // hoisted <script> imports MiniSearch and binds to this data on astro:page-load.
-  window.__SEARCHBOX_DATA__ = entriesJson;
-</script>
-
 <script>
   // Hoisted module — bundled by Astro. Re-runs on every view-transition nav
   // because it listens to astro:page-load (not DOMContentLoaded).
@@ -258,12 +251,6 @@ const entriesJson = JSON.stringify(entries);
     date: string;
     href: string;
   };
-
-  declare global {
-    interface Window {
-      __SEARCHBOX_DATA__?: string;
-    }
-  }
 
   const TYPE_LABELS: Record<string, string> = {
     note: 'Note',
@@ -378,7 +365,10 @@ const entriesJson = JSON.stringify(entries);
     let mini: MiniSearch<SearchableEntry> | null = null;
     let activeIndex = 0;
 
-    const dataJson = window.__SEARCHBOX_DATA__;
+    // Read the build-time index payload from the data-* attribute Astro
+    // sets on the form. JSON.stringify in the frontmatter guarantees a
+    // string; HTML attribute encoding handles the rest.
+    const dataJson = root.getAttribute('data-searchbox-entries');
     if (!dataJson) return;
     let entries: SearchableEntry[];
     try {

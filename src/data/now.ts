@@ -1,6 +1,6 @@
 /**
  * Now page data — a snapshot of life right now.
- * Cite as: DESIGN.md §9 (subscribe surface) and the /now page brief.
+ * Cite as: DESIGN.md §4 (Layout — /now page structure).
  *
  * `value` items render as a single Lora paragraph; `list` items render as a
  * dash-prefixed `<ul>` (used for the Reading section, matching the prior
