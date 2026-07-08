@@ -86,7 +86,7 @@ const data = await buildGraphData();
     font-size: var(--text-mono-label);
     text-transform: uppercase;
     letter-spacing: var(--tracking-mono);
-    color: var(--color-coral);
+    color: var(--color-coral-text);
     font-weight: 500;
     margin-bottom: var(--spacing-4);
   }
@@ -95,7 +95,7 @@ const data = await buildGraphData();
     font-family: var(--font-display);
     font-size: clamp(3.2rem, 6vw, 4.8rem);
     font-weight: 400;
-    color: var(--color-cohere-black);
+    color: var(--color-heading);
     line-height: 1.1;
     letter-spacing: var(--tracking-display-tight);
     margin-bottom: var(--spacing-5);
@@ -212,13 +212,13 @@ const data = await buildGraphData();
   }
 
   .graph-canvas :global(circle.gn-entry) {
-    fill: var(--color-cohere-black);
+    fill: var(--color-heading);
   }
 
   .graph-canvas :global(circle.gn-dim) { opacity: 0.18; }
 
   .graph-canvas :global(circle.gn-pinned) {
-    stroke: var(--color-cohere-black);
+    stroke: var(--color-heading);
     stroke-width: 2;
   }
 
@@ -278,7 +278,7 @@ const data = await buildGraphData();
   }
 
   .legend-topic { background: var(--color-muted-slate); }
-  .legend-entry { background: var(--color-cohere-black); }
+  .legend-entry { background: var(--color-heading); }
 
   .legend-hint {
     margin-inline-start: var(--spacing-5);

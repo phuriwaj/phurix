@@ -173,7 +173,7 @@ const year = new Date().getFullYear();
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: var(--tracking-mono);
-    color: var(--color-coral);
+    color: var(--color-coral); /* fixed near-black surface — bright coral (6.83:1); coral-text would fail here */
     margin: 0 0 var(--spacing-5);
   }
 
@@ -195,6 +195,16 @@ const year = new Date().getFullYear();
     border-radius: var(--radius-pill);
     padding: 4px 4px 4px var(--spacing-7);
     max-width: 360px;
+    transition: border-color var(--duration-button) ease,
+      box-shadow var(--duration-button) ease;
+  }
+
+  /* Focus indicator lives on the pill wrapper (input has outline: none
+     below) — same :focus-within pattern as SearchBox.astro. Fixes a
+     keyboard-focus gap: this input previously had no visible focus state. */
+  .footer-subscribe-form:focus-within {
+    border-color: var(--color-focus-blue);
+    box-shadow: var(--shadow-focus-ring);
   }
 
   .footer-subscribe-input {

@@ -1,9 +1,16 @@
 /* =========================================================================
    Dark mode token overrides — Cohere-inspired (DESIGN.md §3 / §4)
    Selector: :root[data-theme="dark"]
-   Strategy: override ONLY surface + text tokens. Brand colors (Cohere Black,
-   Deep Green, Action Blue, Coral) read fine on a dark canvas and are kept
-   intact so brand identity stays consistent across themes.
+   Strategy: override surface + text tokens. Brand FILL colors that are
+   pinned to a specific dark surface (Deep Green / Dark Navy feature bands,
+   Near-Black CTAs, Coral chip fills) read fine on a dark canvas and are
+   kept intact so brand identity stays consistent across themes.
+
+   Text-on-tinted-wash and coral-as-text AA gaps were resolved in the July
+   2026 accessibility audit: coral text reverts to base coral here (passes on
+   the dark canvas), action-blue is lightened for dark-canvas text, and
+   evergreen text gets a lightened green. All computed ≥4.5:1 — see the
+   contrast table in DESIGN_GUIDE.md § Accessibility.
    ========================================================================= */
 
 :root[data-theme="dark"] {
@@ -15,11 +22,17 @@
   --color-card-border:     #2a2a30;
 
   /* Text & rules */
+  --color-heading:      #ffffff;      /* was pinned #000000 — invisible on dark canvas, see theme.css */
   --color-ink:          #e5e5e5;
-  --color-muted-slate:  #75758a;      /* unchanged, still works on dark */
+  --color-muted-slate:  #9a9aa8;      /* lightened: old #75758a was 4.29:1 canvas / 3.86:1 soft-stone (failed AA) */
   --color-slate:        #93939f;
   --color-hairline:     #2a2a30;
   --color-border-light: #2a2a30;
+
+  /* Brand text colors, lightened for the dark canvas (all ≥4.5:1) */
+  --color-action-blue:    #6b9bf5;    /* was #1863dc = 3.54:1 on dark canvas (failed); also fixes GrowthBadge `seedling` text on the dark blue wash */
+  --color-coral-text:     #ff7759;    /* base coral: 7.38:1 on dark canvas — no darkening needed here */
+  --color-evergreen-text: #5fd0a8;    /* was #003c33 = 1.38:1 on dark green wash (failed) */
 }
 
 /* Smooth theme flip — disabled when the user prefers reduced motion. */

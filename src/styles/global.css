@@ -75,7 +75,7 @@ h6 {
   letter-spacing: var(--tracking-display-tight); /* -0.02em */
   font-family: var(--font-display);
   font-weight: 400;
-  color: var(--color-cohere-black);
+  color: var(--color-heading);
 }
 
 /* h1 = 48px via clamp (DESIGN.md §3), weight 400, display face */
@@ -208,7 +208,7 @@ button {
   font-family: var(--font-display);
   font-size: var(--text-card-heading);
   font-weight: 400;
-  color: var(--color-cohere-black);
+  color: var(--color-heading);
   margin-top: var(--spacing-10);
   margin-bottom: var(--spacing-5);
   line-height: 1.2;
@@ -218,7 +218,7 @@ button {
   font-family: var(--font-display);
   font-size: var(--text-feature-heading);
   font-weight: 400;
-  color: var(--color-cohere-black);
+  color: var(--color-heading);
   margin-top: var(--spacing-7);
   margin-bottom: var(--spacing-4);
   line-height: 1.25;
@@ -285,7 +285,7 @@ button {
 }
 
 .prose a:hover {
-  color: var(--color-cohere-black);
+  color: var(--color-heading);
 }
 
 .prose strong {

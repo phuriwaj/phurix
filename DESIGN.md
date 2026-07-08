@@ -17,12 +17,14 @@ What makes the system distinctive is the mix of austere black-and-white UI with 
 
 ### Brand & Accent
 
-- **Cohere Black** (`#000000`): Announcement bar, highest-contrast text, and the global brand anchor.
+- **Cohere Black** (`#000000`): Announcement bar background, primary-button hover deepen, active-chip text on a coral fill, and the global brand anchor. A fixed dark fill — does not flip in dark mode. Theme-adaptive headline/foreground text now uses the **Heading** token (below), not Cohere Black directly.
 - **Near-Black Primary** (`#17171c`): Primary CTA buttons, dark footer, and deep UI cards.
 - **Deep Enterprise Green** (`#003c33`): Product hero bands for North and Command-style dark sections.
 - **Dark Navy** (`#071829`): Financial-services and security-oriented solution bands.
-- **Action Blue** (`#1863dc`): Editorial links, pagination, and secondary action emphasis.
-- **Coral** (`#ff7759`): Blog category chips, taxonomy outlines, and warm product markers.
+- **Action Blue** (`#1863dc` light / `#6b9bf5` dark): Editorial links, pagination, and secondary action emphasis. Lightened in dark mode — the light value is only 3.54:1 on the dark canvas (fails AA for normal text); the dark value clears 4.5:1 everywhere it renders as text (dark canvas 7.01:1, dark blue wash 6.47:1). This single dark override also fixes GrowthBadge `seedling` text, which is drawn in Action Blue on the dark green/blue wash.
+- **Coral** (`#ff7759`): Blog category chips, taxonomy outlines, active-chip fills, and warm product markers. Remains the bright fill/border accent in both themes.
+- **Coral Text** (`#b83a15` light / `#ff7759` dark): Coral used as *text* (TopicChip default label, GrowthBadge `growing`, page mono eyebrows, garden/search type labels). Base coral is 2.61:1 on Canvas White — a fail for 12–14px text — so a darkened burnt-coral is used for text-on-canvas in light mode (5.75:1 on white). In dark mode it reverts to base coral, which already passes on the dark canvas (7.38:1). Coral used on the *fixed* near-black footer/newsletter surfaces keeps bright Coral (6.83:1); the dark text value would fail there.
+- **Evergreen Text** (`#003c33` light / `#5fd0a8` dark): Deep Enterprise Green used as *text* in the GrowthBadge `evergreen` state. Deep Green cannot be theme-flipped globally (it is also a feature-band background fill), so evergreen text carries its own token; the dark value is a lightened mint that clears 8.99:1 on the dark green wash (the base value was 1.38:1 — effectively invisible).
 - **Soft Coral** (`#ffad9b`): Pale chip borders and segmented article-label details.
 
 ### Surface & Background
@@ -36,10 +38,11 @@ What makes the system distinctive is the mix of austere black-and-white UI with 
 ### Text & Rules
 
 - **Ink** (`#212121`): Default body text and most link text on light backgrounds.
-- **Muted Slate** (`#93939f`): Footer links, dates, metadata, and de-emphasized labels.
+- **Muted Slate** (`#68687a` light / `#9a9aa8` dark): Footer links, dates, metadata, and de-emphasized labels. The extracted Cohere value (`#93939f`) computed at 3.04:1 against Canvas White — below the 4.5:1 AA minimum for the 12–14px text this token is used for — so it was darkened in light mode (5.45:1 on white, 4.62:1 on Soft Stone) and lightened in dark mode (the old `#75758a` dark value was itself 4.29:1 on the dark canvas / 3.86:1 on dark Soft Stone, also failing). Resolved in the July 2026 accessibility audit.
 - **Slate** (`#75758a`): Research separators and tertiary text.
-- **Hairline** (`#d9d9dd`): Standard list rules and section dividers.
+- **Hairline** (`#d9d9dd`): Standard list rules and section dividers. Decorative only — not sized for use as an interactive-control border (1.4:1, below the 3:1 non-text minimum).
 - **Border Light** (`#e5e7eb`): Secondary divider and utility rule.
+- **Heading** (`#000000` light / `#ffffff` dark): Theme-adaptive foreground token for h1–h6, nav wordmark/active-link, and other text/icons drawn directly on Canvas White / dark canvas. Added in the July 2026 accessibility audit to replace direct use of Cohere Black for this role, which produced 1.09:1 contrast (functionally invisible) once dark mode shipped. Cohere Black itself is now reserved for fixed dark fills (announcement bar, button hover-deepen, active-chip text on a coral fill) that don't need to flip with the theme.
 
 ### Semantic
 

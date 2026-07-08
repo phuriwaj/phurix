@@ -24,6 +24,16 @@
   --color-action-blue:  #1863dc;
   --color-coral:        #ff7759;
   --color-soft-coral:   #ffad9b;
+  /* Coral as TEXT (not fill/border). Darkened in light mode to clear AA
+     4.5:1 on Canvas White at 12-14px; dark.css reverts it to base coral,
+     which already passes on the dark canvas. --color-coral itself stays the
+     bright fill/border accent everywhere. See DESIGN_GUIDE.md § Accessibility. */
+  --color-coral-text:   #b83a15;
+  /* Deep-green as TEXT (GrowthBadge `evergreen`). Deep-green can't be
+     theme-flipped globally — it is also a FeatureBand background fill — so
+     evergreen text carries its own token. dark.css lightens it for the
+     dark wash. */
+  --color-evergreen-text: #003c33;
 
   /* --- Surface & background ------------------------------------------- */
   --color-canvas:          #ffffff;
@@ -33,8 +43,19 @@
   --color-card-border:     #f2f2f2;
 
   /* --- Text & rules ---------------------------------------------------- */
+  /* --color-heading: theme-adaptive foreground for headline/emphasis text
+     and canvas-drawn icons (h1-h6, active nav, wordmark, prose emphasis).
+     Distinct from --color-cohere-black, which is a FIXED near-total-black
+     fill used for surfaces that stay dark regardless of theme (announcement
+     bar, primary-button hover deepen, active-chip text on a coral fill).
+     Light value matches --color-cohere-black; dark.css overrides it to
+     --color-on-dark so headings stay legible on the dark canvas. */
+  --color-heading:      #000000;
   --color-ink:          #212121;
-  --color-muted-slate:  #93939f;
+  /* Darkened from the extracted Cohere #93939f (3.04:1, failed AA) to clear
+     4.5:1 on Canvas White for small metadata text (dates, captions, footer
+     links). Resolved July 2026 accessibility audit. */
+  --color-muted-slate:  #68687a;
   --color-slate:        #75758a;
   --color-hairline:     #d9d9dd;
   --color-border-light: #e5e7eb;

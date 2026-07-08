@@ -25,8 +25,10 @@ Weights: Sans 400/500/600, Display 300/400/500, Serif 400/500/600, Mono 400/500.
 | `--color-near-black` | `#17171c` | Primary CTA fill. Footer / dark feature bands. |
 | `--color-deep-green` | `#003c33` | Deep-green feature band tone. |
 | `--color-dark-navy` | `#071829` | Alternate feature band tone. |
-| `--color-action-blue` | `#1863dc` | Nav hover, inline links, CuratedPicks link color, mono eyebrows. |
-| `--color-coral` | `#ff7759` | Mono uppercase eyebrows, TopicChip outline, CuratedMark ✦, currently-reading pill border, GrowthBadge `growing` text. |
+| `--color-action-blue` | `#1863dc` light / `#6b9bf5` dark | Nav hover, inline links, CuratedPicks link color, Accordion chevron, GrowthBadge `seedling` text. Text/icon-only — never a fill — so it is safely lightened in dark mode (light value is 3.54:1 on the dark canvas, fails AA). |
+| `--color-coral` | `#ff7759` | Bright fill/border accent: TopicChip outline + active fill, currently-reading pill border, CuratedMark ✦, and mono eyebrows on the **fixed near-black** footer/newsletter surfaces. Do **not** use for text on the canvas — use `--color-coral-text`. |
+| `--color-coral-text` | `#b83a15` light / `#ff7759` dark | Coral used as **text** on the canvas: TopicChip default label, GrowthBadge `growing`, page mono eyebrows, garden/search type labels, curated-picks heading. Darkened in light mode to clear 4.5:1 (5.75:1 on white); reverts to base coral in dark mode (7.38:1). |
+| `--color-evergreen-text` | `#003c33` light / `#5fd0a8` dark | Deep-green used as **text** in GrowthBadge `evergreen`. Separate from `--color-deep-green` (a band fill that can't theme-flip); dark value clears 8.99:1 on the dark green wash. |
 | `--color-soft-coral` | `#ffad9b` | Hover state for on-dark buttons, hover state for active TopicChip. |
 
 ## Surface & background
@@ -41,13 +43,22 @@ Weights: Sans 400/500/600, Display 300/400/500, Serif 400/500/600, Mono 400/500.
 
 ## Text & rules
 
-| Token | Value | Use |
-|-------|-------|-----|
-| `--color-ink` | `#212121` | Default body text. |
-| `--color-muted-slate` | `#93939f` | Metadata dates, captions, footer links (light), secondary prose. |
-| `--color-slate` | `#75758a` | Reserved. |
-| `--color-hairline` | `#d9d9dd` | All 1px dividers, borders, focus ring default. |
-| `--color-border-light` | `#e5e7eb` | Hover border for bordered cards. |
+| Token | Value (light) | Value (dark) | Use |
+|-------|-------|-------|-----|
+| `--color-heading` | `#000000` | `#ffffff` | h1–h6, nav wordmark/active-link, hamburger icon bars, `.prose a:hover`, back-link hovers, graph node fill/stroke. Theme-adaptive — flips to white in dark mode so headings stay legible on `--color-canvas`. **Added in the July 2026 accessibility audit**: previously all of this text used `--color-cohere-black` directly, which is not theme-adaptive and rendered at 1.09:1 contrast (fail) on the dark canvas. Use this token for any new foreground text/icon drawn directly on `--color-canvas`. |
+| `--color-ink` | `#212121` | `#e5e5e5` | Default body text. |
+| `--color-muted-slate` | `#68687a` | `#9a9aa8` | Metadata dates, captions, footer links (light), secondary prose. Darkened (light) / lightened (dark) in the July 2026 audit from the extracted `#93939f`/`#75758a` pair, which failed AA (3.04:1 light, 4.29:1 dark) for the small text this token carries. Now 5.45:1 on white, 4.62:1 on Soft Stone (light); 6.94:1 on canvas, 6.25:1 on dark Soft Stone (dark). |
+| `--color-slate` | `#75758a` | `#93939f` | Reserved. |
+| `--color-hairline` | `#d9d9dd` | `#2a2a30` | All 1px dividers, borders, focus ring default. Decorative divider use only — do not use as an input/interactive-control border (1.4:1, fails the 3:1 non-text UI minimum). |
+| `--color-border-light` | `#e5e7eb` | `#2a2a30` | Hover border for bordered cards. |
+
+### `--color-heading` vs `--color-cohere-black`
+
+Two different roles that look identical in light mode but must not be
+merged:
+
+- **`--color-heading`** — foreground text/icon color drawn on `--color-canvas`. Theme-adaptive (black in light mode, white in dark mode).
+- **`--color-cohere-black`** — a fixed, non-adaptive near-total-black **fill**, used only where the surface itself is meant to stay dark regardless of theme: `AnnouncementBar` background, `Button` `.btn-primary:hover`/`.btn-announcement` backgrounds, `TopicChip` `.topic-chip-active` text (sits on a coral fill, not canvas). Do not add new theme-flipping behavior to this token — introduce a new semantic token instead if a similar canvas-text case appears.
 
 ## Semantic
 
@@ -185,14 +196,14 @@ Weights: Sans 400/500/600, Display 300/400/500, Serif 400/500/600, Mono 400/500.
 | **Nav** | `--font-display`, `--font-sans`, `--color-canvas`, `--color-cohere-black`, `--color-hairline`, `--color-action-blue`, `--color-ink`. |
 | **FeatureBand** | `--color-deep-green` / `--color-dark-navy`, `--font-display`, `--color-on-dark`, `--color-on-dark-muted`, `--radius-lg`. |
 | **NewsletterBand** | `--color-near-black`, `--color-coral`, `--color-on-dark`, `--color-on-dark-muted`, `--font-display`, `--font-mono`. |
-| **GardenCard** | `--color-hairline`, `--color-soft-stone`, `--color-coral`, `--color-ink`, `--color-muted-slate`, `--font-display`, `--font-mono`. |
+| **GardenCard** | `--color-hairline`, `--color-soft-stone`, `--color-coral-text` (type label), `--color-ink`, `--color-muted-slate`, `--font-display`, `--font-mono`. |
 | **BookTile** | `--radius-sm`, `--color-coral`, `--color-ink`, `--font-display`, `--font-mono`, `--color-on-dark`. |
-| **GrowthBadge** | `--font-mono`, `--tracking-mono`, `--color-action-blue`/`--color-pale-blue-wash` (seedling), `--color-coral` (growing), `--color-deep-green`/`--color-pale-green-wash` (evergreen). |
+| **GrowthBadge** | `--font-mono`, `--tracking-mono`, `--color-action-blue`/`--color-pale-blue-wash` (seedling), `--color-coral-text` (growing), `--color-evergreen-text`/`--color-pale-green-wash` (evergreen). |
 | **Timeline** | `--color-hairline`, `--color-ink`, `--color-muted-slate`, `--font-display`, `--font-mono`. |
-| **TopicChip** | `--font-mono`, `--color-coral`, `--color-cohere-black`, `--radius-pill` (sm/md) / `--radius-xl` (lg), `--tracking-mono`. |
+| **TopicChip** | `--font-mono`, `--color-coral-text` (default label), `--color-coral` (border + active fill), `--color-cohere-black` (active label), `--radius-pill` (sm/md) / `--radius-xl` (lg), `--tracking-mono`. |
 | **TopicPhoto** | `--color-soft-stone`, `--color-on-dark`. |
-| **CuratedPicks** | `--color-coral`, `--color-action-blue`, `--color-hairline`, `--font-display` (italic). |
-| **CuratedMark** | `--color-coral`, `--font-display`. |
+| **CuratedPicks** | `--color-coral-text` (heading), `--color-action-blue`, `--color-hairline`, `--font-display` (italic). |
+| **CuratedMark** | `--color-coral-text`, `--font-display`. |
 | **Accordion** | `--color-hairline`, `--color-action-blue`, `--color-ink`, `--font-display`, `--duration-expander`. |
 | **CollectionGrid** | `--spacing-7` / `--spacing-10` / `--spacing-12` (gap scale), `--color-pale-green-wash` / `--color-pale-blue-wash` (tone). |
 | **AnnouncementBar** | `--color-cohere-black`, `--color-on-dark`, `--color-on-dark-muted`, `--color-soft-coral`, `--font-sans`, `--text-micro`. |
@@ -249,3 +260,53 @@ The following should never appear in new code:
 | `--shadow-svc` | REMOVED — no replacement. |
 | `--button-active-scale` | REMOVED — no `transform: scale()` press feedback. |
 | `--ease-spring` | `--ease-out-soft` |
+
+---
+
+## Accessibility — computed contrast (July 2026 audit)
+
+WCAG 2.2 AA minimums: 4.5:1 normal text, 3:1 large text (≥24px, or ≥18.66px
+bold) and non-text UI (borders, focus rings). Ratios below are computed via
+the WCAG relative-luminance formula, not eyeballed.
+
+All values below are post-fix (July 2026 audit). Every declared text pair
+now clears its AA minimum in both schemes.
+
+| Pair | Light | Dark | Status |
+|---|---:|---:|---|
+| `--color-heading` text on `--color-canvas` | 21.00:1 | 19.28:1 | Pass |
+| `--color-ink` text on `--color-canvas` | 16.10:1 | 15.31:1 | Pass |
+| `--color-muted-slate` on `--color-canvas` (12–14px) | 5.45:1 | 6.94:1 | Pass (was 3.04 / 4.29 — fixed) |
+| `--color-muted-slate` on `--color-soft-stone` | 4.62:1 | 6.25:1 | Pass |
+| `--color-action-blue` text on `--color-canvas` | 5.44:1 | 7.01:1 | Pass (dark was 3.54 — fixed) |
+| `--color-coral-text` (TopicChip default, GrowthBadge `growing`, eyebrows) on `--color-canvas` | 5.75:1 | 7.38:1 | Pass (light was 2.61 — fixed) |
+| `--color-coral-text` on GrowthBadge `growing` wash (coral 14% mix) | 5.04:1 | 6.10:1 | Pass |
+| `--color-coral` eyebrow on fixed `--color-near-black` (footer/newsletter) | 6.83:1 | 6.83:1 | Pass (kept bright coral) |
+| `--color-form-violet` focus border on `--color-canvas` | 4.52:1 | 4.27:1 | Pass (3:1 non-text minimum) |
+| `--color-focus-blue` focus ring on `--color-canvas` | 4.49:1 | 4.30:1 | Pass |
+| GrowthBadge `seedling` text (`--color-action-blue`) on `--color-pale-blue-wash` | 4.99:1 | 6.47:1 | Pass (dark was 3.27 — fixed via action-blue dark override) |
+| GrowthBadge `evergreen` text (`--color-evergreen-text`) on `--color-pale-green-wash` | 11.63:1 | 8.99:1 | Pass (dark was 1.38 — fixed via dedicated token) |
+| `--color-hairline` divider on `--color-canvas` | 1.41:1 | 1.35:1 | N/A — decorative divider only, never use as an interactive-control border |
+| `--color-on-dark` text on `--color-near-black` / `--color-deep-green` / `--color-dark-navy` | 17.86:1 / 12.40:1 / 17.92:1 | same (fixed fills) | Pass |
+
+### Resolved accessibility decisions (July 2026 audit)
+
+The three open questions previously logged here are now **DECIDED and
+implemented**. Recorded for audit trail:
+
+- **DECIDED — coral as text.** Chose option (a): added `--color-coral-text`
+  (`#b83a15` light / `#ff7759` dark). Coral stays the bright fill/border
+  accent (`--color-coral`); text-on-canvas coral roles now use the darkened
+  text token. Coral on the fixed near-black footer/newsletter keeps bright
+  coral (the dark text value is only 3.11:1 there). TopicChip's coral
+  *border* (2.61:1) is retained as a decorative reinforcement — the chip is
+  identified by its now-AA-passing text label, not the border alone.
+- **DECIDED — GrowthBadge dark-mode text.** `evergreen` gets a dedicated
+  `--color-evergreen-text` token (deep-green can't theme-flip globally — it's
+  also a band fill); `seedling` is fixed by lightening `--color-action-blue`
+  in dark mode (it is text/icon-only everywhere, so one override fixes
+  seedling and all editorial links/eyebrows at once).
+- **DECIDED — muted-slate.** Darkened the light value to `#68687a` and
+  lightened the dark value to `#9a9aa8` rather than restricting usage
+  (least-disruptive: the token is used sitewide for small text). Both schemes
+  now clear 4.5:1 on canvas and Soft Stone.

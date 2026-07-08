@@ -2,6 +2,7 @@
 /**
  * TopicChip — pill chip for topic tags and filters.
  * Mono uppercase outline, coral color, active inverts to coral fill.
+ * Cite as: DESIGN.md §7 (blog-filter-chip).
  */
 interface Props {
   label: string;
@@ -31,7 +32,7 @@ const Tag = href ? 'a' : 'span';
     font-weight: 400;
     text-transform: uppercase;
     background: transparent;
-    color: var(--color-coral);
+    color: var(--color-coral-text);
     border: 1px solid var(--color-coral);
     text-decoration: none;
     cursor: pointer;
