@@ -2,15 +2,9 @@
 import Layout from '@/layouts/Layout.astro';
 import GardenCard from '@/components/GardenCard.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
-import { getCollection, type CollectionEntry } from 'astro:content';
-import { findOnThisDay } from '@/lib/onThisDay';
-
-type MergedEntry =
-  | (CollectionEntry<'essays'> & { entryType: 'essay'; displayDate: Date })
-  | (CollectionEntry<'notes'> & { entryType: 'note'; displayDate: Date })
-  | (CollectionEntry<'talks'> & { entryType: 'talk'; displayDate: Date })
-  | (CollectionEntry<'patterns'> & { entryType: 'pattern'; displayDate: Date })
-  | (CollectionEntry<'practices'> & { entryType: 'practice'; displayDate: Date });
+import { getCollection } from 'astro:content';
+import { findOnThisDay, type MergedEntry } from '@/lib/onThisDay';
+import { normalize, hrefFor } from '@/lib/entries';
 
 const allEssays = await getCollection('essays');
 const allNotes = await getCollection('notes');
@@ -46,30 +40,14 @@ const allEntries: MergedEntry[] = [
   })),
 ].sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
 
-const topicsForEntry = (entry: MergedEntry): string[] => {
-  if (entry.entryType === 'talk') {
-    const t = (entry.data as unknown as { topics?: string[] }).topics;
-    return t ?? [];
-  }
-  return entry.data.topics;
-};
-
-const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
+const allTopics = [
+  ...new Set(allEntries.flatMap((e) => normalize(e).topics)),
+].sort();
 
 const today = new Date();
 const onThisDayMatches = findOnThisDay(allEntries, today);
 const onThisDay = onThisDayMatches[0] ?? null;
-const onThisDayHref = onThisDay
-  ? onThisDay.entryType === 'essay'
-    ? `/essays/${onThisDay.id}`
-    : onThisDay.entryType === 'note'
-    ? `/notes/${onThisDay.id}`
-    : onThisDay.entryType === 'pattern'
-    ? `/patterns/${onThisDay.id}`
-    : onThisDay.entryType === 'practice'
-    ? `/practices/${onThisDay.id}`
-    : onThisDay.data.link ?? '#'
-  : '#';
+const onThisDayHref = onThisDay ? hrefFor(onThisDay) : '#';
 const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.getFullYear();
 ---
 
@@ -134,41 +112,23 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
     <div id="entries-grid">
       <CollectionGrid cols={3} gap="md">
       {allEntries.map((entry) => {
-        const href = entry.entryType === 'essay'
-          ? `/essays/${entry.id}`
-          : entry.entryType === 'note'
-          ? `/notes/${entry.id}`
-          : entry.entryType === 'pattern'
-          ? `/patterns/${entry.id}`
-          : entry.entryType === 'practice'
-          ? `/practices/${entry.id}`
-          : entry.data.link ?? '#';
-
-        const entryTopics = topicsForEntry(entry);
-
-        const excerpt =
-          entry.entryType === 'essay' || entry.entryType === 'pattern'
-            ? entry.data.lede
-            : entry.entryType === 'note' || entry.entryType === 'practice'
-            ? entry.data.excerpt
-            : entry.data.description;
-
+        const n = normalize(entry);
         return (
           <div
             class="entry-card-wrapper"
-            data-type={entry.entryType}
-            data-topics={JSON.stringify(entryTopics)}
-            data-growth={(entry.entryType === 'note' || entry.entryType === 'practice') ? entry.data.growthStage : ''}
+            data-type={n.type}
+            data-topics={JSON.stringify(n.topics)}
+            data-growth={n.growthStage ?? ''}
           >
             <GardenCard
-              title={entry.data.title}
-              type={entry.entryType}
-              excerpt={excerpt}
-              date={entry.displayDate}
-              topics={entryTopics}
-              growthStage={(entry.entryType === 'note' || entry.entryType === 'practice') ? entry.data.growthStage : undefined}
-              href={href}
-              newSince={entry.displayDate}
+              title={n.title}
+              type={n.type}
+              excerpt={n.excerpt}
+              date={n.date}
+              topics={n.topics}
+              growthStage={n.growthStage}
+              href={n.href}
+              newSince={n.date}
             />
           </div>
         );
