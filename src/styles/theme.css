@@ -1,0 +1,152 @@
+/* =========================================================================
+   Phurix Design System — Cohere-inspired theme tokens
+   Tailwind 4 `@theme` block: every token becomes a utility automatically.
+   Reference: DESIGN.md (read this file before changing tokens).
+   ========================================================================= */
+
+@import "tailwindcss";
+
+/* Root scale: 1rem = 10px (matches DESIGN.md rem math) */
+@theme {
+  /* --- Font Families ---------------------------------------------------- */
+  --font-sans: "Inter Variable", "Inter", "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
+  --font-serif: "Lora", "Iowan Old Style", Georgia, serif;
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", "Menlo",
+    "Consolas", monospace;
+
+  /* --- Brand & accent colors ------------------------------------------- */
+  --color-cohere-black: #000000;
+  --color-near-black:   #17171c;
+  --color-deep-green:   #003c33;
+  --color-dark-navy:    #071829;
+  --color-action-blue:  #1863dc;
+  --color-coral:        #ff7759;
+  --color-soft-coral:   #ffad9b;
+  /* Coral as TEXT (not fill/border). Darkened in light mode to clear AA
+     4.5:1 on Canvas White at 12-14px; dark.css reverts it to base coral,
+     which already passes on the dark canvas. --color-coral itself stays the
+     bright fill/border accent everywhere. See DESIGN_GUIDE.md § Accessibility. */
+  --color-coral-text:   #b83a15;
+  /* Deep-green as TEXT (GrowthBadge `evergreen`). Deep-green can't be
+     theme-flipped globally — it is also a FeatureBand background fill — so
+     evergreen text carries its own token. dark.css lightens it for the
+     dark wash. */
+  --color-evergreen-text: #003c33;
+
+  /* --- Surface & background ------------------------------------------- */
+  --color-canvas:          #ffffff;
+  --color-soft-stone:      #eeece7;
+  --color-pale-green-wash: #edfce9;
+  --color-pale-blue-wash:  #f1f5ff;
+  --color-card-border:     #f2f2f2;
+
+  /* --- Text & rules ---------------------------------------------------- */
+  /* --color-heading: theme-adaptive foreground for headline/emphasis text
+     and canvas-drawn icons (h1-h6, active nav, wordmark, prose emphasis).
+     Distinct from --color-cohere-black, which is a FIXED near-total-black
+     fill used for surfaces that stay dark regardless of theme (announcement
+     bar, primary-button hover deepen, active-chip text on a coral fill).
+     Light value matches --color-cohere-black; dark.css overrides it to
+     --color-on-dark so headings stay legible on the dark canvas. */
+  --color-heading:      #000000;
+  --color-ink:          #212121;
+  /* Darkened from the extracted Cohere #93939f (3.04:1, failed AA) to clear
+     4.5:1 on Canvas White for small metadata text (dates, captions, footer
+     links). Resolved July 2026 accessibility audit. */
+  --color-muted-slate:  #68687a;
+  --color-slate:        #75758a;
+  --color-hairline:     #d9d9dd;
+  --color-border-light: #e5e7eb;
+
+  /* --- Semantic -------------------------------------------------------- */
+  --color-focus-blue:  #4c6ee6;
+  --color-form-violet: #9b60aa;
+  --color-error-red:   #b30000;
+
+  /* --- On-dark surface text overrides --------------------------------- */
+  --color-on-dark:       #ffffff;
+  --color-on-dark-muted: rgba(255, 255, 255, 0.72);
+
+  /* --- Spacing scale (rem, 1rem = 10px) ------------------------------- */
+  --spacing-0:  0;
+  --spacing-1:  0.2rem;
+  --spacing-2:  0.4rem;
+  --spacing-3:  0.6rem;
+  --spacing-4:  0.8rem;
+  --spacing-5:  1rem;
+  --spacing-6:  1.2rem;
+  --spacing-7:  1.6rem;
+  --spacing-8:  2rem;
+  --spacing-9:  2.2rem;
+  --spacing-10: 2.4rem;
+  --spacing-11: 2.8rem;
+  --spacing-12: 3.2rem;
+  --spacing-13: 3.6rem;
+  --spacing-14: 4rem;
+  --spacing-15: 5.6rem;
+  --spacing-16: 6rem;
+  --spacing-17: 6.4rem;
+  --spacing-18: 8rem;
+
+  /* --- Outer gutter scale (responsive) -------------------------------- */
+  --spacing-gutter:    1.6rem;
+  --spacing-gutter-md: 2.4rem;
+  --spacing-gutter-lg: 4rem;
+
+  /* --- Border radius scale -------------------------------------------- */
+  --radius-xs:   0.4rem;
+  --radius-sm:   0.8rem;
+  --radius-md:   1.6rem;
+  --radius-lg:   2.2rem;
+  --radius-xl:   3rem;
+  --radius-pill: 3.2rem;
+  --radius-full: 9999px;
+
+  /* --- Letter spacing -------------------------------------------------- */
+  --tracking-display-tight: -0.02em;
+  --tracking-tight:         -0.01em;
+  --tracking-mono:           0.02em;
+
+  /* --- Line height ----------------------------------------------------- */
+  --leading-body:    1.5;
+  --leading-display: 1.2;
+  --leading-feature: 1.3;
+
+  /* --- Type Scale (rem) ------------------------------------------------ */
+  --text-hero-display:     9.6rem;
+  --text-product-display:  7.2rem;
+  --text-section-display:  6rem;
+  --text-section-heading:  4.8rem;
+  --text-card-heading:     3.2rem;
+  --text-feature-heading:  2.4rem;
+  --text-body-lg:          1.8rem;
+  --text-body:             1.6rem;
+  --text-button:           1.4rem;
+  --text-caption:          1.4rem;
+  --text-mono-label:       1.4rem;
+  --text-micro:            1.2rem;
+
+  /* --- Shadows (whisper-soft) ----------------------------------------- */
+  --shadow-card:        0 0 0.5px rgba(17, 17, 28, 0.08), 0 1px 1px rgba(17, 17, 28, 0.06);
+  --shadow-nav:         0 1px 0 var(--color-hairline);
+  --shadow-focus-ring:  0 0 0 2px var(--color-focus-blue);
+  --shadow-form-focus:  0 0 0 1px var(--color-form-violet);
+
+  /* --- Motion ---------------------------------------------------------- */
+  --ease-out-soft:     cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --duration-button:   0.2s;
+  --duration-image:    0.3s;
+  --duration-expander: 300ms;
+
+  /* --- Container widths ----------------------------------------------- */
+  --container-sm: 343px;
+  --container-md: 500px;
+  --container-lg: 720px;
+  --container-xl: 1440px;
+
+  /* --- Nav heights ---------------------------------------------------- */
+  --nav-h:        7.2rem;
+  --nav-h-mobile: 5.6rem;
+}

@@ -1,0 +1,349 @@
+---
+/**
+ * Global Navigation — fixed top bar.
+ * Single nav height per device tier (mobile/desktop).
+ * Bottom hairline divider; no soft shadow.
+ *
+ * Cite as: DESIGN.md §4 (Layout — nav chrome).
+ */
+import SearchBox from '@/components/SearchBox.astro';
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/garden', label: 'Garden' },
+  { href: '/essays', label: 'Essays' },
+  { href: '/notes', label: 'Notes' },
+  { href: '/patterns', label: 'Patterns' },
+  { href: '/now', label: 'Now' },
+  { href: '/random', label: 'Random' },
+];
+
+const pathname = Astro.url.pathname;
+
+const isActive = (href: string) => {
+  if (href === '/') return pathname === '/';
+  if (href === '/random') return false; // redirect endpoint, never active
+  if (href === '/now') return pathname === '/now';
+  return pathname === href || pathname.startsWith(href + '/');
+};
+---
+
+<header class="nav-phx">
+  <div class="nav-inner">
+    {/* Wordmark */}
+    <a href="/" class="nav-wordmark" aria-label="phurix home">
+      <span class="nav-wordmark-text">phurix</span>
+    </a>
+
+    {/* Hamburger — mobile only */}
+    <button
+      type="button"
+      class="nav-toggle"
+      aria-label="Toggle navigation"
+      aria-controls="nav-mobile-menu"
+      aria-expanded="false"
+      data-nav-toggle
+    >
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+    </button>
+
+    {/* Primary links (desktop) */}
+    <nav class="nav-links" aria-label="Primary">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'nav-link',
+            isActive(link.href) && 'nav-link-active',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    {/* SearchBox — right cluster, after primary links */}
+    <div class="nav-search">
+      <SearchBox />
+    </div>
+
+    {/* Theme toggle — visible on all viewports, small a11y affordance */}
+    <button
+      type="button"
+      class="nav-theme-toggle"
+      aria-label="Toggle dark mode"
+      data-theme-toggle
+    >
+      <span class="nav-theme-toggle-icon-light" aria-hidden="true">☀</span>
+      <span class="nav-theme-toggle-icon-dark" aria-hidden="true">☾</span>
+    </button>
+  </div>
+
+  {/* Mobile menu — appears below the bar when hamburger is open */}
+  <nav
+    id="nav-mobile-menu"
+    class="nav-mobile"
+    aria-label="Primary mobile"
+    data-nav-mobile
+    hidden
+  >
+    {navLinks.map((link) => (
+      <a
+        href={link.href}
+        class:list={[
+          'nav-mobile-link',
+          isActive(link.href) && 'nav-link-active',
+        ]}
+      >
+        {link.label}
+      </a>
+    ))}
+  </nav>
+</header>
+
+<style>
+  .nav-phx {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+    height: var(--nav-h-mobile);
+  }
+
+  @media (min-width: 768px) {
+    .nav-phx { height: var(--nav-h); }
+  }
+
+  .nav-inner {
+    height: 100%;
+    max-width: var(--container-xl);
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-7);
+  }
+
+  .nav-wordmark-text {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.8rem;
+    letter-spacing: var(--tracking-display-tight);
+    color: var(--color-heading);
+  }
+
+  /* Hamburger — visible <768px only */
+  .nav-toggle {
+    display: inline-flex;
+    margin-left: auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  @media (min-width: 768px) {
+    .nav-toggle { display: none; }
+  }
+
+  .nav-toggle-bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-heading);
+    border-radius: 1px;
+    transition: transform var(--duration-button) ease, opacity var(--duration-button) ease;
+  }
+
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* Desktop nav links — hidden <768px, visible ≥768px */
+  .nav-links {
+    display: none;
+    gap: var(--spacing-7);
+  }
+
+  @media (min-width: 768px) {
+    .nav-links { display: flex; }
+  }
+
+  .nav-link {
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--color-ink);
+    padding-block: var(--spacing-1);
+    transition: color var(--duration-button) ease;
+    text-decoration: none;
+    position: relative;
+  }
+
+  .nav-link:hover { color: var(--color-action-blue); }
+
+  .nav-link-active {
+    color: var(--color-heading);
+  }
+
+  .nav-link-active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-heading);
+    border-radius: 1px;
+  }
+
+  /* Search cluster — sits at the right end, after primary links */
+  .nav-search {
+    margin-left: auto;
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .nav-search { display: flex; }
+  }
+
+  /* Mobile menu — hidden ≥768px; toggles open below the bar <768px */
+  .nav-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: var(--color-canvas);
+    border-top: 1px solid var(--color-hairline);
+    padding: var(--spacing-4) var(--spacing-gutter) var(--spacing-5);
+  }
+
+  .nav-mobile[hidden] { display: none; }
+
+  @media (min-width: 768px) {
+    .nav-mobile { display: none !important; }
+  }
+
+  .nav-mobile-link {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    font-weight: 500;
+    color: var(--color-ink);
+    padding-block: var(--spacing-5);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .nav-mobile-link:last-child {
+    border-bottom: none;
+  }
+
+  .nav-mobile-link:hover { color: var(--color-action-blue); }
+
+  /* Theme toggle — small square button, visible on every viewport.
+     Stays BEFORE the hamburger on mobile so it's an always-available
+     accessibility affordance; on desktop it sits at the far right. */
+  .nav-theme-toggle {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+    cursor: pointer;
+    transition: background-color var(--duration-button) ease;
+    padding: 0;
+  }
+
+  .nav-theme-toggle:hover { background: var(--color-soft-stone); }
+
+  .nav-theme-toggle:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus-ring);
+  }
+
+  .nav-theme-toggle-icon-light,
+  .nav-theme-toggle-icon-dark {
+    position: absolute;
+    font-size: 1.6rem;
+    line-height: 1;
+    transition: opacity var(--duration-button) ease;
+  }
+
+  /* Default (light) → show "go dark" (moon) icon, hide sun. */
+  .nav-theme-toggle-icon-light {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .nav-theme-toggle-icon-dark {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Dark mode → show "go light" (sun) icon, hide moon. */
+  :root[data-theme="dark"] .nav-theme-toggle-icon-light {
+    opacity: 1;
+    visibility: visible;
+  }
+  :root[data-theme="dark"] .nav-theme-toggle-icon-dark {
+    opacity: 0;
+    visibility: hidden;
+  }
+</style>
+
+<script>
+  function initNavToggle() {
+    const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+    const menu = document.querySelector<HTMLElement>('[data-nav-mobile]');
+    if (!toggle || !menu) return;
+
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      if (isOpen) {
+        menu.setAttribute('hidden', '');
+      } else {
+        menu.removeAttribute('hidden');
+      }
+    });
+  }
+
+  initNavToggle();
+  document.addEventListener('astro:after-swap', initNavToggle);
+
+  function applyTheme(theme: 'light' | 'dark') {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('phurix-theme', theme);
+  }
+
+  function initThemeToggle() {
+    const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+    if (!toggle) return;
+    toggle.addEventListener('click', () => {
+      const current: 'light' | 'dark' =
+        document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  initThemeToggle();
+  document.addEventListener('astro:after-swap', initThemeToggle);
+</script>

@@ -1,0 +1,122 @@
+---
+/**
+ * BookTile — library book cover tile.
+ * Placeholder cover with title+author typography on color.
+ * Currently-reading marker is a small coral pill (no gold).
+ */
+interface Props {
+  title: string;
+  author: string;
+  coverColor: string;
+  year?: number;
+  /** Add a small coral "Reading" pill in the top-right. */
+  currentlyReading?: boolean;
+  class?: string;
+}
+
+const {
+  title,
+  author,
+  coverColor,
+  year,
+  currentlyReading = false,
+  class: className = '',
+} = Astro.props;
+---
+
+<div
+  class:list={['book-tile', currentlyReading && 'book-tile-current', className]}
+  style={`--book-color: ${coverColor}`}
+>
+  {currentlyReading && <span class="book-reading-chip">Reading</span>}
+  <div class="book-cover">
+    <div class="book-inner">
+      <p class="book-title">{title}</p>
+      <p class="book-author">{author}</p>
+      {year && <p class="book-year">{year}</p>}
+    </div>
+  </div>
+</div>
+
+<style>
+  .book-tile {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    display: flex;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid transparent;
+    transition: border-color var(--duration-button) ease;
+  }
+
+  .book-tile:hover {
+    border-color: var(--color-border-light);
+  }
+
+  .book-cover {
+    flex: 1;
+    background: var(--book-color);
+    padding: var(--spacing-7);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .book-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .book-title {
+    font-family: var(--font-display);
+    font-size: var(--text-card-heading);
+    font-weight: 400;
+    color: var(--color-on-dark);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-tight);
+    margin: 0;
+  }
+
+  .book-author {
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    color: var(--color-on-dark);
+    opacity: 0.78;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .book-year {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-on-dark);
+    opacity: 0.55;
+    margin: 0;
+    margin-top: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+  }
+
+  /* Currently-reading coral pill in the top-right (DESIGN.md §2 — coral, not gold). */
+  .book-reading-chip {
+    position: absolute;
+    top: var(--spacing-3);
+    right: var(--spacing-3);
+    z-index: 2;
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    font-weight: 500;
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-coral);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+  }
+</style>

@@ -1,0 +1,125 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import CollectionGrid from '@/components/CollectionGrid.astro';
+import GardenCard from '@/components/GardenCard.astro';
+import { getCollection } from 'astro:content';
+import { findOnThisDay, type MergedEntry } from '@/lib/onThisDay';
+
+type NoteMergedEntry = MergedEntry & { entryType: 'note' };
+
+const allNotes = await getCollection('notes');
+
+const notes: NoteMergedEntry[] = allNotes
+  .map((n) => ({
+    ...n,
+    entryType: 'note' as const,
+    displayDate: n.data.date,
+  }))
+  .sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
+
+const today = new Date();
+const onThisDayMatches = findOnThisDay(notes, today);
+const onThisDay = onThisDayMatches[0] ?? null;
+const onThisDayHref = onThisDay ? `/notes/${onThisDay.id}` : '#';
+const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.getFullYear();
+---
+
+<Layout title="Notes" description="Short thoughts, working ideas, and observations.">
+  <section class="page-header-section">
+    <div class="container-phx">
+      <p class="section-eyebrow">Garden</p>
+      <h1 class="page-title">Notes</h1>
+      <p class="page-lede">
+        Short thoughts, working ideas, and observations. Roughly in reverse
+        chronological order.
+      </p>
+    </div>
+  </section>
+
+  {onThisDay && (
+    <section class="on-this-day">
+      <div class="container-phx">
+        <p class="on-this-day-line">
+          On this day in {onThisDayYear} — <a href={onThisDayHref}>{onThisDay.data.title}</a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <section class="container-phx section">
+    <CollectionGrid cols={3} gap="md">
+      {notes.map((note) => (
+        <GardenCard
+          title={note.data.title}
+          type="note"
+          excerpt={note.data.excerpt}
+          date={note.displayDate}
+          topics={note.data.topics}
+          growthStage={note.data.growthStage}
+          href={`/notes/${note.id}`}
+          newSince={note.displayDate}
+        />
+      ))}
+    </CollectionGrid>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral-text);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-heading);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .page-lede {
+    font-family: var(--font-serif);
+    font-size: var(--text-body-lg);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
+    max-width: 60ch;
+  }
+
+  .on-this-day {
+    padding-block: var(--spacing-7) var(--spacing-4);
+    background: var(--color-soft-stone);
+  }
+
+  .on-this-day-line {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-body);
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .on-this-day-line a {
+    color: var(--color-action-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .on-this-day-line a:hover {
+    color: var(--color-heading);
+  }
+</style>

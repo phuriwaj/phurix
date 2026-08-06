@@ -1,0 +1,263 @@
+---
+/**
+ * Pattern detail — `/patterns/[slug]` (DESIGN.md §4 — read the pattern).
+ * Same reading-frame as essay/notes detail.
+ * Cite: DESIGN.md §4 (patterns detail).
+ */
+import Layout from '@/layouts/Layout.astro';
+import TopicPhoto from '@/components/TopicPhoto.astro';
+import { getCollection, render, getEntry } from 'astro:content';
+import { pickArtTopic } from '@/lib/topics';
+import { findBacklinks } from '@/lib/backlinks';
+
+export async function getStaticPaths() {
+  const patterns = await getCollection('patterns');
+  return patterns.map((p) => ({
+    params: { slug: p.id },
+    props: { pattern: p },
+  }));
+}
+
+const { pattern } = Astro.props;
+const { Content } = await render(pattern);
+const allTopics = pattern.data.topics ?? [];
+const artTopic = pickArtTopic(allTopics);
+
+const relatedRefs = pattern.data.related ?? [];
+const relatedEntries = await Promise.all(
+  relatedRefs.map((ref) => getEntry(ref))
+);
+const relatedItems = relatedEntries.filter((e): e is NonNullable<typeof e> => Boolean(e));
+
+const allNotesForBacklinks = await getCollection('notes');
+const allEssaysForBacklinks = await getCollection('essays');
+const backlinkSources = [
+  ...findBacklinks(pattern.id, 'patterns', allNotesForBacklinks),
+  ...findBacklinks(pattern.id, 'patterns', allEssaysForBacklinks),
+].filter(({ entry: source }) => source.id !== pattern.id);
+---
+
+<Layout
+  title={`${pattern.data.title} — phurix`}
+  description={pattern.data.lede}
+  hideAnnouncement
+>
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: pattern.data.title,
+      datePublished: pattern.data.date.toISOString(),
+      description: pattern.data.lede ?? '',
+      keywords: (pattern.data.topics ?? []).join(', '),
+      mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+    })}
+  />
+  <article class="pattern-article">
+    <header class="pattern-header container-phx">
+      <p class="section-eyebrow">
+        <a href="/patterns" class="back-link">← Patterns</a>
+      </p>
+
+      <div class="pattern-art">
+        <TopicPhoto topic={artTopic} scale="md" showCredit={true} />
+      </div>
+
+      <h1 class="pattern-h1">{pattern.data.title}</h1>
+      <p class="pattern-lede">{pattern.data.lede}</p>
+      <div class="pattern-meta-row">
+        <time datetime={pattern.data.date.toISOString()} class="pattern-date">
+          {new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }).format(new Date(pattern.data.date))}
+        </time>
+      </div>
+    </header>
+
+    <div class="pattern-body container-phx">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
+    {relatedItems.length > 0 && (
+      <aside class="pattern-related container-phx">
+        <p class="pattern-related-label">Used in:</p>
+        <ul class="pattern-related-list">
+          {relatedItems.map((entry, i) => (
+            <li>
+              <a href={`/patterns/${entry.id}`}>{entry.data.title}</a>
+              {i < relatedItems.length - 1 && <span class="pattern-related-sep"> · </span>}
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
+
+    {backlinkSources.length > 0 && (
+      <aside class="pattern-related container-phx">
+        <p class="pattern-related-label">Linked from:</p>
+        <ul class="pattern-related-list">
+          {backlinkSources.map(({ entry: source, collection: coll }, i) => (
+            <li>
+              <span class="pattern-related-collection">{coll}/</span>
+              <a href={`/${coll}/${source.id}`}>{source.data.title}</a>
+              {i < backlinkSources.length - 1 && <span class="pattern-related-sep"> · </span>}
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
+
+    <footer class="pattern-footer container-phx">
+      <a href="/patterns" class="back-link">← Back to all patterns</a>
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  .pattern-article {
+    padding-block: var(--spacing-15);
+  }
+
+  .pattern-header {
+    max-width: 65ch;
+    margin-bottom: var(--spacing-15);
+    margin-inline: auto;
+  }
+
+  .pattern-art {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: var(--spacing-8);
+    max-width: 32rem;
+  }
+
+  .pattern-art :global(svg),
+  .pattern-art :global(img) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral-text);
+    font-weight: 500;
+    margin-bottom: var(--spacing-5);
+  }
+
+  .back-link {
+    color: var(--color-action-blue);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--duration-button) ease;
+  }
+
+  .back-link:hover {
+    color: var(--color-heading);
+  }
+
+  .pattern-h1 {
+    font-family: var(--font-display);
+    font-size: var(--text-card-heading);
+    font-weight: 400;
+    color: var(--color-heading);
+    line-height: 1.15;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .pattern-lede {
+    font-family: var(--font-serif);
+    font-size: var(--text-body-lg);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
+    margin-bottom: var(--spacing-7);
+  }
+
+  .pattern-meta-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-5);
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+  }
+
+  .pattern-date { font-weight: 500; }
+
+  .pattern-body {
+    max-width: 65ch;
+    margin-inline: auto;
+  }
+
+  .pattern-related {
+    max-width: 65ch;
+    margin-inline: auto;
+    margin-top: var(--spacing-12);
+    padding-top: var(--spacing-7);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .pattern-related-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral-text);
+    margin-bottom: var(--spacing-4);
+  }
+
+  .pattern-related-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    color: var(--color-ink);
+  }
+
+  .pattern-related-list a {
+    color: var(--color-action-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .pattern-related-list a:hover {
+    color: var(--color-heading);
+  }
+
+  .pattern-related-sep {
+    color: var(--color-muted-slate);
+    margin-inline-start: 0.3em;
+  }
+
+  .pattern-related-collection {
+    color: var(--color-muted-slate);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    margin-inline-end: 0.2em;
+    letter-spacing: var(--tracking-mono);
+  }
+
+  .pattern-footer {
+    margin-top: var(--spacing-15);
+    padding-top: var(--spacing-8);
+    border-top: 1px solid var(--color-hairline);
+    max-width: 65ch;
+  }
+</style>

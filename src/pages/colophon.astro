@@ -1,0 +1,183 @@
+---
+/**
+ * /colophon — single-page design statement.
+ * Cite as: DESIGN.md §3 (Typography stack), §4 (Layout — single-page containers).
+ */
+import Layout from '@/layouts/Layout.astro';
+
+const githubUrl = 'https://github.com/phurix';
+const rssUrl = '/rss.xml';
+const newsletterAnchor = '#newsletter';
+---
+
+<Layout
+  title="Colophon — phurix"
+  description="Notes on how this site is built, hosted, and licensed."
+>
+  <section class="page-header-section">
+    <div class="container-phx">
+      <p class="section-eyebrow">Colophon</p>
+      <h1 class="page-title">Colophon</h1>
+      <p class="page-lede">
+        Notes on how this site is built, hosted, and licensed.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-phx colophon-section">
+    <div class="prose">
+      <p>
+        <strong>Stack.</strong> Astro 7, statically generated with
+        <code>output: 'static'</code>. Tailwind 4 via its Vite plugin. MDX
+        content collections for essays, notes, patterns, books, talks, and
+        projects. TypeScript in strict mode. React is mounted for islands
+        only — there are no React pages.
+      </p>
+
+      <p>
+        <strong>Host.</strong> The site lives at
+        <a href="https://phurix.dev">phurix.dev</a>. Deploys run from the
+        <code>master</code> branch and the build emits a flat
+        <code>dist/</code> that any CDN can serve.
+      </p>
+
+      <p>
+        <strong>Fonts.</strong> Space Grotesk for display, Inter for UI,
+        Lora for long-form prose, JetBrains Mono for technical labels.
+        All four are self-hosted via the Astro Fonts API and declared as
+        CSS variables in <code>theme.css</code>.
+      </p>
+
+      <p>
+        <strong>Type.</strong> All type is hand-set. The body face is Lora
+        at 18px on a 1.7 line-height on long-form pages, capped at 65
+        characters per line. The chrome runs Inter at 14–16px. Display
+        headlines use Space Grotesk at 400 weight — never 700.
+      </p>
+
+      <p>
+        <strong>Palette.</strong> White canvas with a near-black primary
+        CTA, deep green for product bands, coral for editorial taxonomy,
+        and a focus-blue for interactive states. One accent job per color.
+      </p>
+
+      <p>
+        <strong>Imagery.</strong> Topic photographs come from Unsplash,
+        bundled locally and processed at build time via
+        <code>astro:assets</code> to WebP with responsive widths. They
+        appear with rounded corners and a soft card shadow. No overlays,
+        no filters, no parallax.
+      </p>
+
+      <p>
+        <strong>RSS.</strong> Available at <a href={rssUrl}>/rss.xml</a>.
+        The feed merges essays, notes, and patterns into a single
+        reverse-chronological stream. Per-tag feeds are not generated.
+      </p>
+
+      <p>
+        <strong>Privacy.</strong> No third-party analytics. No tracking.
+        No cookies. The only network requests beyond this domain are the
+        font files (Google Fonts via Astro Fonts) and the optional
+        Unsplash photo CDN. If a feature ever needs analytics, it will be
+        added deliberately and documented here.
+      </p>
+
+      <p>
+        <strong>How to cite.</strong> Suggested format: Author, "Title,"
+        phurix, DATE, URL. Unless otherwise noted, all writing is
+        licensed
+        <a
+          href="https://creativecommons.org/licenses/by-nc/4.0/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          CC BY-NC 4.0
+        </a>. Short quotes are welcome with attribution.
+      </p>
+
+      <p>
+        <strong>Acknowledgements.</strong> With thanks to the libraries
+        and tools that make this site possible — Astro, Tailwind, the
+        MDX community, and the photographers whose work appears
+        throughout.
+      </p>
+
+      <p class="colophon-subscribe">
+        Subscribe via <a href={rssUrl}>RSS</a>,
+        <a href={newsletterAnchor}>email</a>, or
+        <a
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >GitHub</a>.
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral-text);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-heading);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .page-lede {
+    font-family: var(--font-serif);
+    font-size: var(--text-body-lg);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
+    max-width: 60ch;
+  }
+
+  .colophon-section {
+    padding-block: var(--spacing-12);
+  }
+
+  @media (min-width: 1024px) {
+    .colophon-section {
+      padding-block: var(--spacing-15);
+    }
+  }
+
+  .colophon-subscribe {
+    margin-block-start: var(--spacing-12);
+    padding-block-start: var(--spacing-8);
+    border-top: 1px solid var(--color-hairline);
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    color: var(--color-muted-slate);
+  }
+
+  .colophon-subscribe a {
+    color: var(--color-action-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .colophon-subscribe a:hover {
+    color: var(--color-heading);
+  }
+</style>

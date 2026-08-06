@@ -1,0 +1,298 @@
+/* =========================================================================
+   Global resets + canvas + base typography.
+   Always loaded after theme.css.
+   ========================================================================= */
+
+@import "./theme.css";
+
+/* --- Root scale: 1rem = 10px (DESIGN.md anchor) ----------------------- */
+:root {
+  font-size: 62.5%; /* 10px base — rem math matches DESIGN.md */
+}
+
+/* --- Resets ---------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Body padding clears the fixed nav — single tier on mobile/desktop */
+body {
+  padding-top: var(--nav-h-mobile);
+}
+
+@media (min-width: 768px) {
+  body { padding-top: var(--nav-h); }
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* --- Canvas: white, with soft-stone accents per page --------------- */
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-body); /* 16px */
+  line-height: var(--leading-body); /* 1.5 */
+  letter-spacing: var(--tracking-tight); /* -0.01em */
+  color: var(--color-ink);
+  background-color: var(--color-canvas);
+  font-feature-settings: "kern" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Restore the user-meaningful default text-size assumption for users with
+   accessibility preferences. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --- Typography baseline -------------------------------------------- */
+/* Per DESIGN.md §3: h1/h2 share display face, weight 400. Body uses -0.01em. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  line-height: var(--leading-display); /* 1.2 */
+  letter-spacing: var(--tracking-display-tight); /* -0.02em */
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--color-heading);
+}
+
+/* h1 = 48px via clamp (DESIGN.md §3), weight 400, display face */
+h1 {
+  font-size: clamp(3.2rem, 6vw, 4.8rem);
+}
+
+/* h2 = 32px, weight 400, cohere-black */
+h2 {
+  font-size: clamp(2.4rem, 4vw, 3.2rem);
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--text-card-heading);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* --- Image fade-in (DESIGN.md §7 — image treatment) ------------------ */
+img {
+  opacity: 0;
+  transition: opacity var(--duration-image) ease-in;
+}
+
+img[src],
+img[srcset] {
+  opacity: 1;
+}
+
+/* --- Focus ring: Focus Blue, never default browser blue ------------- */
+:focus-visible {
+  outline: 2px solid var(--color-focus-blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* --- Universal button reset ------------------------------------------ */
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* --- Utility: tight tracking for all Inter surfaces ------------------ */
+.tight-tracking {
+  letter-spacing: var(--tracking-tight);
+}
+
+/* --- Container: max-width + responsive gutter ------------------------ */
+.container-phx {
+  width: 100%;
+  max-width: var(--container-xl);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+
+@media (min-width: 768px) {
+  .container-phx {
+    padding-inline: var(--spacing-gutter-md);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-phx {
+    padding-inline: var(--spacing-gutter-lg);
+  }
+}
+
+/* --- Section rhythm -------------------------------------------------- */
+.section {
+  padding-block: var(--spacing-8);
+}
+
+@media (min-width: 1024px) {
+  .section {
+    padding-block: var(--spacing-10);
+  }
+}
+
+/* --- Skip link (visually hidden until focused) ---------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =========================================================================
+   Long-form prose utility — DESIGN.md §3 (Typography)
+   Lora 18px / 1.7 / 65ch, with per-element rules consolidated from
+   essays/[slug].astro, notes/[slug].astro, and patterns/[slug].astro.
+   Per-page styles only override when a page truly differs.
+   ========================================================================= */
+.prose {
+  font-family: var(--font-serif);
+  font-size: var(--text-body-lg);
+  line-height: 1.7;
+  color: var(--color-ink);
+  max-width: 65ch;
+  margin-inline: auto;
+}
+
+.prose h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-card-heading);
+  font-weight: 400;
+  color: var(--color-heading);
+  margin-top: var(--spacing-10);
+  margin-bottom: var(--spacing-5);
+  line-height: 1.2;
+}
+
+.prose h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-feature-heading);
+  font-weight: 400;
+  color: var(--color-heading);
+  margin-top: var(--spacing-7);
+  margin-bottom: var(--spacing-4);
+  line-height: 1.25;
+}
+
+.prose p {
+  color: var(--color-ink);
+  line-height: 1.75;
+  margin-bottom: var(--spacing-7);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: var(--spacing-7);
+  margin-bottom: var(--spacing-7);
+}
+
+.prose li {
+  color: var(--color-ink);
+  margin-bottom: var(--spacing-4);
+  line-height: 1.7;
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--color-coral);
+  padding-left: var(--spacing-7);
+  margin-left: 0;
+  font-style: italic;
+  color: var(--color-muted-slate);
+  margin-block: var(--spacing-7);
+}
+
+.prose code {
+  background: var(--color-soft-stone);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: var(--font-mono);
+}
+
+.prose pre {
+  background: var(--color-near-black);
+  color: var(--color-on-dark);
+  padding: var(--spacing-7);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin-bottom: var(--spacing-7);
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+.prose a {
+  color: var(--color-action-blue);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--duration-button) ease;
+}
+
+.prose a:hover {
+  color: var(--color-heading);
+}
+
+.prose strong {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.prose em {
+  font-style: italic;
+}

@@ -1,0 +1,96 @@
+---
+/**
+ * Essays index — `/essays` (DESIGN.md §4 — long-form catalogue).
+ * Page header + "If you only read three" curated picks + 2-col grid.
+ * Cite: DESIGN.md §4 (essays index).
+ */
+import Layout from '@/layouts/Layout.astro';
+import CollectionGrid from '@/components/CollectionGrid.astro';
+import GardenCard from '@/components/GardenCard.astro';
+import CuratedPicks from '@/components/CuratedPicks.astro';
+import { getCollection } from 'astro:content';
+
+const essays = await getCollection('essays');
+const sortedEssays = essays.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const curatedEssays = [
+  { title: 'On Typography, and the Trust It Quietly Asks For', href: '/essays/on-typography-and-trust' },
+  { title: 'Design Systems Are Grammar, Not Paint', href: '/essays/design-systems-are-grammar' },
+  { title: 'The Case for Boring Technology', href: '/essays/the-case-for-boring-technology' },
+];
+---
+
+<Layout title="Essays" description="Longer pieces on design, development, and the practice of building for the web.">
+  <section class="page-header-section">
+    <div class="container-phx">
+      <p class="section-eyebrow">Collection</p>
+      <h1 class="page-title">Essays</h1>
+      <p class="page-lede">
+        Longer pieces on design, development, and the practice of building for
+        the web.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    <p class="section-eyebrow">If you only read three</p>
+    <CuratedPicks items={curatedEssays} />
+  </section>
+
+  <section class="container-phx section grid-section">
+    <CollectionGrid cols={2} gap="md">
+      {sortedEssays.map((essay) => (
+        <GardenCard
+          title={essay.data.title}
+          type="essay"
+          lede={essay.data.lede}
+          date={new Date(essay.data.date)}
+          topics={essay.data.topics}
+          href={`/essays/${essay.id}`}
+        />
+      ))}
+    </CollectionGrid>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral-text);
+    font-weight: 500;
+    margin-bottom: var(--spacing-5);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-heading);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .page-lede {
+    font-family: var(--font-serif);
+    font-size: var(--text-body-lg);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
+    max-width: 60ch;
+  }
+
+  .grid-section {
+    border-top: 1px solid var(--color-hairline);
+  }
+</style>

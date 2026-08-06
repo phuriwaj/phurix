@@ -1,0 +1,186 @@
+---
+/**
+ * /projects — A short shelf of side projects.
+ * Cite as: DESIGN.md §4 (/projects) — not in top nav; accessible via /about and footer.
+ */
+import Layout from '@/layouts/Layout.astro';
+import TopicChip from '@/components/TopicChip.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+---
+
+<Layout title="Projects — phurix" description="Projects by phurix">
+  <section class="page-header-section">
+    <div class="container-phx">
+      <p class="section-eyebrow">Projects</p>
+      <h1 class="page-title">Projects</h1>
+      <p class="page-lede">
+        A small selection of recent projects — case studies available on
+        request.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    <ul class="project-list">
+      {projects.map((p) => (
+        <li class="project-row">
+          <div class="project-body">
+            <h2 class="project-title">{p.data.title}</h2>
+            <p class="project-desc">{p.data.desc}</p>
+            {p.data.tags && p.data.tags.length > 0 && (
+              <div class="tag-row">
+                {p.data.tags.map((t) => <TopicChip label={t} size="sm" />)}
+              </div>
+            )}
+          </div>
+          {p.data.url && (
+            <a
+              href={p.data.url}
+              class="project-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View project →
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+
+    <p class="projects-more">
+      More on <a
+        href="https://github.com/phurix"
+        target="_blank"
+        rel="noopener noreferrer"
+      >github.com/phurix</a>.
+    </p>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral-text);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-heading);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .page-lede {
+    font-family: var(--font-serif);
+    font-size: var(--text-body-lg);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
+    max-width: 60ch;
+  }
+
+  .project-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .project-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+    padding-block: var(--spacing-8);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .project-row:first-child {
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  @media (min-width: 768px) {
+    .project-row {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--spacing-12);
+    }
+  }
+
+  .project-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: var(--text-feature-heading);
+    font-weight: 400;
+    color: var(--color-ink);
+    margin: 0 0 var(--spacing-4);
+    letter-spacing: var(--tracking-display-tight);
+  }
+
+  .project-desc {
+    font-family: var(--font-sans);
+    color: var(--color-muted-slate);
+    line-height: 1.5;
+    margin: 0 0 var(--spacing-5);
+    max-width: 60ch;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+
+  .project-link {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--color-action-blue);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--duration-button) ease;
+  }
+
+  .project-link:hover {
+    color: var(--color-heading);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .projects-more {
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    color: var(--color-muted-slate);
+    margin-block-start: var(--spacing-12);
+  }
+
+  .projects-more a {
+    color: var(--color-action-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .projects-more a:hover {
+    color: var(--color-heading);
+  }
+</style>

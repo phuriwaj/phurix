@@ -1,0 +1,183 @@
+---
+/**
+ * GardenCard — card used on /garden and home preview grids.
+ * image (optional) + type label + growth stage badge (optional) +
+ * title + lede/excerpt + date + topic chips.
+ * Uses Card.astro as base.
+ */
+import Card from './Card.astro';
+import TopicChip from './TopicChip.astro';
+import GrowthBadge from './GrowthBadge.astro';
+import TopicPhoto from './TopicPhoto.astro';
+import CuratedMark from './CuratedMark.astro';
+import { pickArtTopic } from '@/lib/topics';
+
+interface Props {
+  title: string;
+  type: 'note' | 'essay' | 'talk' | 'pattern' | 'practice';
+  excerpt?: string;
+  lede?: string;
+  date: Date;
+  topics?: string[];
+  growthStage?: 'seedling' | 'growing' | 'evergreen';
+  href: string;
+  imageSrc?: string;
+  class?: string;
+  /** When set, if the date is within the past 30 days, render a ✦ mark. */
+  newSince?: Date;
+}
+
+const {
+  title,
+  type,
+  excerpt,
+  lede,
+  date,
+  topics = [],
+  growthStage,
+  href,
+  imageSrc,
+  class: className = '',
+  newSince,
+} = Astro.props;
+
+const displayText = excerpt ?? lede ?? '';
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+}).format(date);
+
+const typeLabels = { note: 'Note', essay: 'Essay', talk: 'Talk', pattern: 'Pattern', practice: 'Practice' };
+
+const NOW_MS = Date.now();
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+const isNew = newSince instanceof Date && (NOW_MS - newSince.getTime()) <= THIRTY_DAYS_MS;
+---
+
+<Card emphasis="bordered" class:list={['garden-card', className]}>
+  <a href={href} class="garden-card-link">
+    <div class="garden-card-art">
+      {imageSrc ? (
+        <img src={imageSrc} alt="" loading="lazy" />
+      ) : (
+        <TopicPhoto
+          topic={pickArtTopic(topics)}
+          scale="sm"
+          showCredit={false}
+        />
+      )}
+    </div>
+
+    <div class="garden-card-body">
+      <div class="garden-card-meta">
+        <span class="garden-type-label">{typeLabels[type]}</span>
+        {growthStage && <GrowthBadge stage={growthStage} />}
+        <time class="garden-date" datetime={date.toISOString()}>{formattedDate}</time>
+      </div>
+
+      <h3 class="garden-card-title">
+        {isNew && <CuratedMark size="sm" />}
+        {title}
+      </h3>
+
+      {displayText && <p class="garden-card-excerpt">{displayText}</p>}
+
+      {topics.length > 0 && (
+        <div class="garden-card-topics">
+          {topics.map((t) => <TopicChip label={t} />)}
+        </div>
+      )}
+    </div>
+  </a>
+</Card>
+
+<style>
+  .garden-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .garden-card-art {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--color-soft-stone);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+
+  .garden-card-art img,
+  .garden-card-art :global(svg) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .garden-card-body {
+    padding: var(--spacing-7);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  @media (min-width: 768px) {
+    .garden-card-body {
+      padding: var(--spacing-8);
+    }
+  }
+
+  .garden-card-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+  }
+
+  .garden-type-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral-text);
+  }
+
+  .garden-date {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    margin-left: auto;
+    letter-spacing: var(--tracking-mono);
+  }
+
+  .garden-card-title {
+    font-family: var(--font-display);
+    font-size: var(--text-feature-heading);
+    font-weight: 400;
+    color: var(--color-ink);
+    line-height: 1.25;
+    letter-spacing: var(--tracking-display-tight);
+    margin: 0;
+  }
+
+  .garden-card-excerpt {
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    color: var(--color-muted-slate);
+    line-height: 1.5;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .garden-card-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-2);
+  }
+</style>

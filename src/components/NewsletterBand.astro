@@ -1,0 +1,172 @@
+---
+/**
+ * NewsletterBand — near-black subscribe band.
+ * Cite as: DESIGN.md §7 (Component — subscribe band).
+ *
+ * Coral mono eyebrow, white display headline, white input, white submit pill.
+ */
+interface Props {
+  /** Override the default headline. */
+  headline?: string;
+  /** Override the default subhead. */
+  subhead?: string;
+  /** Form submit target. */
+  action?: string;
+  /** CTA label. */
+  ctaLabel?: string;
+  class?: string;
+}
+
+const {
+  headline = 'Letters from a working library.',
+  subhead = "Occasional notes from the studio — essays, experiments, things I'm thinking about. No spam, no marketing. Just a short dispatch when there's something worth sharing.",
+  ctaLabel = 'Subscribe',
+  action = '/api/subscribe',
+  class: className = '',
+} = Astro.props;
+---
+
+<section class:list={['newsletter-band', className]}>
+  <div class="newsletter-band-inner">
+    <div class="newsletter-band-text">
+      <p class="newsletter-band-eyebrow">AI moves fast</p>
+      <h2 class="newsletter-band-headline">{headline}</h2>
+      <p class="newsletter-band-blurb">{subhead}</p>
+    </div>
+    <form class="newsletter-band-form" action={action} method="post">
+      <label for="newsletter-email" class="sr-only">Email address</label>
+      <input
+        type="email"
+        id="newsletter-email"
+        name="email"
+        placeholder="your@email.com"
+        class="newsletter-band-input"
+        required
+      />
+      <button type="submit" class="newsletter-band-submit">{ctaLabel}</button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .newsletter-band {
+    background: var(--color-near-black);
+    color: var(--color-on-dark);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-10);
+  }
+
+  @media (min-width: 768px) {
+    .newsletter-band {
+      padding: var(--spacing-14);
+    }
+  }
+
+  .newsletter-band-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-10);
+  }
+
+  @media (min-width: 768px) {
+    .newsletter-band-inner {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--spacing-14);
+    }
+  }
+
+  .newsletter-band-text {
+    flex: 1;
+    max-width: 50ch;
+  }
+
+  .newsletter-band-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral); /* fixed near-black surface — bright coral (6.83:1); coral-text would fail here */
+    margin: 0 0 var(--spacing-5);
+  }
+
+  .newsletter-band-headline {
+    font-family: var(--font-display);
+    font-size: var(--text-card-heading);
+    font-weight: 400;
+    color: var(--color-on-dark);
+    line-height: 1.2;
+    letter-spacing: var(--tracking-display-tight);
+    margin: 0 0 var(--spacing-5);
+  }
+
+  .newsletter-band-blurb {
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    color: var(--color-on-dark-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .newsletter-band-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+    min-width: 280px;
+  }
+
+  @media (min-width: 480px) {
+    .newsletter-band-form {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+  }
+
+  .newsletter-band-input {
+    flex: 1;
+    padding: 12px 24px;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-canvas);
+    border-radius: var(--radius-pill);
+    outline: none;
+    min-width: 0;
+    transition:
+      border-color var(--duration-button) ease,
+      box-shadow var(--duration-button) ease;
+  }
+
+  .newsletter-band-input::placeholder {
+    color: var(--color-muted-slate);
+  }
+
+  .newsletter-band-input:focus {
+    border-color: var(--color-form-violet);
+    box-shadow: var(--shadow-form-focus);
+  }
+
+  .newsletter-band-submit {
+    padding: 12px 24px;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    font-weight: 500;
+    color: var(--color-near-black);
+    background: var(--color-on-dark);
+    border: 1px solid var(--color-on-dark);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    letter-spacing: var(--tracking-tight);
+    transition:
+      background-color var(--duration-button) ease,
+      color var(--duration-button) ease;
+  }
+
+  .newsletter-band-submit:hover {
+    background: var(--color-soft-coral);
+    border-color: var(--color-soft-coral);
+  }
+</style>

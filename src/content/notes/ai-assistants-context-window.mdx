@@ -1,0 +1,13 @@
+---
+title: "AI Assistants and the Context Window"
+date: 2025-02-18
+topics: ["ai", "writing"]
+growthStage: "seedling"
+excerpt: "The context window is not memory. Three habits I use to work with the constraint instead of against it — and why each is just structured omission in disguise."
+---
+
+The most common failure mode I see in prompt engineering is treating the context window like working memory — piling in everything and hoping the model holds the important parts. What actually works is **structured omission**: give the model a clear role, a specific task, and only the context directly relevant to that task.
+
+The first structural habit that helped me: always state what I have already tried before describing the problem, so the model does not re-propose the same solutions. The second: when working with a codebase, give the model a named slice rather than the entire file — "the `parseArgs` function in utils.ts" is better than the whole file. The third: I close loops explicitly — "the output should be a single bash command, nothing else" — because ambiguity about format multiplies context usage.
+
+None of these are clever tricks. They are just respecting the constraint instead of pretending it isn't there. The model is most useful when you tell it precisely what shape of answer you want, in precisely the slice of context it needs to know about, after precisely the prior attempts it should not re-litigate. The rest is silence — and the silence is what makes the model useful.

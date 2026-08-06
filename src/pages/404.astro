@@ -1,0 +1,70 @@
+---
+/**
+ * /404 — Recover from a missed link.
+ * Cite as: DESIGN.md §4 (/404) — display-scale h1 is earned here (Cohere: massive type sparingly).
+ */
+import Layout from '@/layouts/Layout.astro';
+import Button from '@/components/Button.astro';
+---
+
+<Layout title="404 — phurix">
+  <meta name="robots" content="noindex" />
+  <section class="container-phx section not-found">
+    <p class="section-eyebrow">Error 404</p>
+    <h1 class="page-title">Page not found.</h1>
+    <p class="page-lede">
+      That page is no longer at this address. Try heading home, or browse the
+      Garden.
+    </p>
+
+    <div class="cta-row mt-15">
+      <Button variant="primary" href="/">← Back to Home</Button>
+      <Button variant="outline" href="/garden">Browse the Garden</Button>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .not-found {
+    text-align: center;
+    padding-block: var(--spacing-18);
+  }
+
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral-text);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(4.8rem, 12vw, 9.6rem);
+    font-weight: 400;
+    color: var(--color-heading);
+    line-height: 1.0;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-7);
+  }
+
+  .page-lede {
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
+    max-width: 50ch;
+    margin-inline: auto;
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-5);
+    justify-content: center;
+  }
+
+  .mt-15 { margin-top: var(--spacing-15); }
+</style>

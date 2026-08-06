@@ -1,0 +1,423 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import GardenCard from '@/components/GardenCard.astro';
+import CollectionGrid from '@/components/CollectionGrid.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { findOnThisDay } from '@/lib/onThisDay';
+
+type MergedEntry =
+  | (CollectionEntry<'essays'> & { entryType: 'essay'; displayDate: Date })
+  | (CollectionEntry<'notes'> & { entryType: 'note'; displayDate: Date })
+  | (CollectionEntry<'talks'> & { entryType: 'talk'; displayDate: Date })
+  | (CollectionEntry<'patterns'> & { entryType: 'pattern'; displayDate: Date })
+  | (CollectionEntry<'practices'> & { entryType: 'practice'; displayDate: Date });
+
+const allEssays = await getCollection('essays');
+const allNotes = await getCollection('notes');
+const allTalks = await getCollection('talks');
+const allPatterns = await getCollection('patterns');
+const allPractices = await getCollection('practices');
+
+const allEntries: MergedEntry[] = [
+  ...allEssays.map((e) => ({
+    ...e,
+    entryType: 'essay' as const,
+    displayDate: e.data.date,
+  })),
+  ...allNotes.map((n) => ({
+    ...n,
+    entryType: 'note' as const,
+    displayDate: n.data.date,
+  })),
+  ...allTalks.map((t) => ({
+    ...t,
+    entryType: 'talk' as const,
+    displayDate: t.data.date,
+  })),
+  ...allPatterns.map((p) => ({
+    ...p,
+    entryType: 'pattern' as const,
+    displayDate: p.data.date,
+  })),
+  ...allPractices.map((pr) => ({
+    ...pr,
+    entryType: 'practice' as const,
+    displayDate: pr.data.date,
+  })),
+].sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
+
+const topicsForEntry = (entry: MergedEntry): string[] => {
+  if (entry.entryType === 'talk') {
+    const t = (entry.data as unknown as { topics?: string[] }).topics;
+    return t ?? [];
+  }
+  return entry.data.topics;
+};
+
+const allTopics = [...new Set(allEntries.flatMap(topicsForEntry))].sort();
+
+const today = new Date();
+const onThisDayMatches = findOnThisDay(allEntries, today);
+const onThisDay = onThisDayMatches[0] ?? null;
+const onThisDayHref = onThisDay
+  ? onThisDay.entryType === 'essay'
+    ? `/essays/${onThisDay.id}`
+    : onThisDay.entryType === 'note'
+    ? `/notes/${onThisDay.id}`
+    : onThisDay.entryType === 'pattern'
+    ? `/patterns/${onThisDay.id}`
+    : onThisDay.entryType === 'practice'
+    ? `/practices/${onThisDay.id}`
+    : onThisDay.data.link ?? '#'
+  : '#';
+const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.getFullYear();
+---
+
+<Layout title="Garden" description="Everything I've written, in reverse chronological order.">
+  <section class="page-header-section">
+    <div class="container-phx">
+      <h1 class="page-title">The Garden</h1>
+      <p class="page-lede">
+        Everything I've written, in reverse chronological order.
+        Filter by type, topic, or growth stage.
+      </p>
+    </div>
+  </section>
+
+  {onThisDay && (
+    <section class="on-this-day">
+      <div class="container-phx">
+        <p class="on-this-day-line">
+          On this day in {onThisDayYear} — <a href={onThisDayHref}>{onThisDay.data.title}</a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <section class="filter-section">
+    <div class="container-phx">
+      <div class="filter-group">
+        <span class="filter-label">Type</span>
+        <div class="filter-chips" id="type-filters">
+          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-type="all" aria-pressed="true">All</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="note" aria-pressed="false">Note</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="essay" aria-pressed="false">Essay</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="talk" aria-pressed="false">Talk</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="pattern" aria-pressed="false">Pattern</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="practice" aria-pressed="false">Practice</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Topic</span>
+        <div class="filter-chips" id="topic-filters">
+          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-topic="all" aria-pressed="true">All</button>
+          {allTopics.map((topic) => (
+            <button class="topic-chip topic-chip-md" data-filter-topic={topic} aria-pressed="false">{topic}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Growth</span>
+        <div class="filter-chips" id="growth-filters">
+          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-growth="all" aria-pressed="true">All</button>
+          <button class="topic-chip topic-chip-md" data-filter-growth="seedling" aria-pressed="false">Seedling</button>
+          <button class="topic-chip topic-chip-md" data-filter-growth="growing" aria-pressed="false">Growing</button>
+          <button class="topic-chip topic-chip-md" data-filter-growth="evergreen" aria-pressed="false">Evergreen</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    <div id="entries-grid">
+      <CollectionGrid cols={3} gap="md">
+      {allEntries.map((entry) => {
+        const href = entry.entryType === 'essay'
+          ? `/essays/${entry.id}`
+          : entry.entryType === 'note'
+          ? `/notes/${entry.id}`
+          : entry.entryType === 'pattern'
+          ? `/patterns/${entry.id}`
+          : entry.entryType === 'practice'
+          ? `/practices/${entry.id}`
+          : entry.data.link ?? '#';
+
+        const entryTopics = topicsForEntry(entry);
+
+        const excerpt =
+          entry.entryType === 'essay' || entry.entryType === 'pattern'
+            ? entry.data.lede
+            : entry.entryType === 'note' || entry.entryType === 'practice'
+            ? entry.data.excerpt
+            : entry.data.description;
+
+        return (
+          <div
+            class="entry-card-wrapper"
+            data-type={entry.entryType}
+            data-topics={JSON.stringify(entryTopics)}
+            data-growth={(entry.entryType === 'note' || entry.entryType === 'practice') ? entry.data.growthStage : ''}
+          >
+            <GardenCard
+              title={entry.data.title}
+              type={entry.entryType}
+              excerpt={excerpt}
+              date={entry.displayDate}
+              topics={entryTopics}
+              growthStage={(entry.entryType === 'note' || entry.entryType === 'practice') ? entry.data.growthStage : undefined}
+              href={href}
+              newSince={entry.displayDate}
+            />
+          </div>
+        );
+      })}
+      </CollectionGrid>
+      <p class="garden-empty" id="garden-empty" hidden>No matches — clear filters.</p>
+    </div>
+
+    <p class="garden-random-link">
+      Or — <a href="/random">read something random</a>.
+    </p>
+  </section>
+</Layout>
+
+<style>
+  .page-header-section {
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-heading);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .page-lede {
+    font-family: var(--font-sans);
+    font-size: var(--text-body-lg);
+    line-height: 1.5;
+    color: var(--color-muted-slate);
+    max-width: 60ch;
+  }
+
+  .on-this-day {
+    padding-block: var(--spacing-7) var(--spacing-4);
+    background: var(--color-soft-stone);
+  }
+
+  .on-this-day-line {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-body);
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .on-this-day-line a {
+    color: var(--color-action-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .on-this-day-line a:hover {
+    color: var(--color-heading);
+  }
+
+  .filter-section {
+    padding-block: var(--spacing-7);
+    background: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+    position: sticky;
+    top: var(--nav-h-mobile);
+    z-index: 10;
+  }
+
+  @media (min-width: 768px) {
+    .filter-section { top: var(--nav-h); }
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-5);
+    margin-bottom: var(--spacing-5);
+    flex-wrap: wrap;
+  }
+
+  .filter-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .filter-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    color: var(--color-coral-text);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    min-width: 4rem;
+  }
+
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+
+  .entry-card-wrapper {
+    transition: opacity 0.2s ease;
+  }
+
+  .entry-card-wrapper.hidden {
+    display: none;
+  }
+
+  .garden-empty {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-body);
+    color: var(--color-muted-slate);
+    text-align: center;
+    padding-block: var(--spacing-15);
+    margin: 0;
+  }
+
+  .garden-random-link {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-body);
+    color: var(--color-muted-slate);
+    text-align: center;
+    margin-block-start: var(--spacing-12);
+  }
+
+  .garden-random-link a {
+    color: var(--color-action-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .garden-random-link a:hover {
+    color: var(--color-heading);
+  }
+</style>
+
+<script>
+  function initGardenFilter() {
+    const grid = document.getElementById('entries-grid');
+    if (!grid) return;
+
+    let activeType = 'all';
+    let activeTopic = 'all';
+    let activeGrowth = 'all';
+
+    const typeFilters = document.getElementById('type-filters');
+    const topicFilters = document.getElementById('topic-filters');
+    const growthFilters = document.getElementById('growth-filters');
+    const emptyState = document.getElementById('garden-empty');
+
+    function setActive(container: Element | null, selected: HTMLElement) {
+      container?.querySelectorAll('button').forEach((b) => {
+        b.classList.remove('topic-chip-active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      selected.classList.add('topic-chip-active');
+      selected.setAttribute('aria-pressed', 'true');
+    }
+
+    function applyFilters() {
+      const cards = grid!.querySelectorAll('.entry-card-wrapper');
+      let visibleCount = 0;
+      cards.forEach((card) => {
+        const cardType = card.getAttribute('data-type');
+        const cardTopics = JSON.parse(card.getAttribute('data-topics') || '[]');
+        const cardGrowth = card.getAttribute('data-growth') || '';
+
+        const typeMatch = activeType === 'all' || cardType === activeType;
+        const topicMatch = activeTopic === 'all' || cardTopics.includes(activeTopic);
+        const growthMatch = activeGrowth === 'all' || cardGrowth === activeGrowth;
+
+        if (typeMatch && topicMatch && growthMatch) {
+          (card as HTMLElement).style.display = '';
+          visibleCount += 1;
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+
+      if (emptyState) {
+        if (visibleCount === 0) {
+          emptyState.removeAttribute('hidden');
+        } else {
+          emptyState.setAttribute('hidden', '');
+        }
+      }
+    }
+
+    function handleChipClick(e: Event) {
+      const btn = (e.target as HTMLElement).closest('button[data-filter-type], button[data-filter-topic], button[data-filter-growth]') as HTMLElement | null;
+      if (!btn) return;
+
+      if ('filterType' in btn.dataset) {
+        activeType = btn.dataset.filterType ?? 'all';
+        setActive(typeFilters, btn);
+      } else if ('filterTopic' in btn.dataset) {
+        activeTopic = btn.dataset.filterTopic ?? 'all';
+        setActive(topicFilters, btn);
+      } else if ('filterGrowth' in btn.dataset) {
+        activeGrowth = btn.dataset.filterGrowth ?? 'all';
+        setActive(growthFilters, btn);
+      }
+
+      applyFilters();
+    }
+
+    typeFilters?.addEventListener('click', handleChipClick);
+    topicFilters?.addEventListener('click', handleChipClick);
+    growthFilters?.addEventListener('click', handleChipClick);
+
+    const params = new URLSearchParams(window.location.search);
+
+    const typeParam = params.get('type');
+    if (typeParam && ['note', 'essay', 'talk', 'pattern', 'practice'].includes(typeParam)) {
+      activeType = typeParam;
+      const btn = typeFilters?.querySelector(`[data-filter-type="${typeParam}"]`) as HTMLElement | null;
+      if (btn) {
+        setActive(typeFilters, btn);
+      }
+    }
+
+    const topicParam = params.get('topic');
+    if (topicParam) {
+      const btn = topicFilters?.querySelector(`[data-filter-topic="${topicParam}"]`) as HTMLElement | null;
+      if (btn) {
+        activeTopic = topicParam;
+        setActive(topicFilters, btn);
+      }
+    }
+
+    const growthParam = params.get('growth');
+    if (growthParam && ['seedling', 'growing', 'evergreen'].includes(growthParam)) {
+      activeGrowth = growthParam;
+      const btn = growthFilters?.querySelector(`[data-filter-growth="${growthParam}"]`) as HTMLElement | null;
+      if (btn) {
+        setActive(growthFilters, btn);
+      }
+    }
+
+    applyFilters();
+  }
+
+  initGardenFilter();
+  document.addEventListener('astro:after-swap', initGardenFilter);
+</script>

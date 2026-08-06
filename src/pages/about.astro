@@ -1,0 +1,420 @@
+---
+/**
+ * /about — portrait of the author.
+ * Cite as: DESIGN.md §4 (Layout — about-page structure, includes subscribe surface).
+ */
+import Layout from '@/layouts/Layout.astro';
+import Card from '@/components/Card.astro';
+import Button from '@/components/Button.astro';
+import Timeline from '@/components/Timeline.astro';
+import TopicPhoto from '@/components/TopicPhoto.astro';
+import TopicChip from '@/components/TopicChip.astro';
+import NewsletterBand from '@/components/NewsletterBand.astro';
+import GardenCard from '@/components/GardenCard.astro';
+import CollectionGrid from '@/components/CollectionGrid.astro';
+import { getCollection } from 'astro:content';
+import { nowItems } from '@/data/now';
+
+const workHistory = [
+  {
+    role: 'Senior Frontend Engineer',
+    org: 'Clearhead',
+    dates: '2022–Present',
+    description: 'Building design systems and React component libraries for a remote-first product team.',
+  },
+  {
+    role: 'Frontend Developer',
+    org: 'Freelance',
+    dates: '2019–2022',
+    description: 'Worked with early-stage startups on landing pages, dashboards, and design system audits.',
+  },
+  {
+    role: 'UI Designer',
+    org: 'Studio Nitro',
+    dates: '2017–2019',
+    description: 'Designed interfaces for mobile apps and web products, collaborating closely with engineering.',
+  },
+  {
+    role: 'Junior Designer',
+    org: 'Agency RKT',
+    dates: '2015–2017',
+    description: 'Production design for marketing sites and branding projects.',
+  },
+];
+
+const skills = [
+  'TypeScript', 'React', 'Astro', 'CSS / Tailwind', 'Node.js', 'PostgreSQL', 'Figma', 'Design Systems',
+];
+
+const nowPreview = nowItems
+  .filter((item): item is { label: string; value: string } => 'value' in item)
+  .slice(0, 3);
+
+const allProjects = await getCollection('projects');
+const projects = allProjects
+  .slice()
+  .sort((a, b) => {
+    const ay = a.data.year ?? 0;
+    const by = b.data.year ?? 0;
+    return by - ay;
+  })
+  .slice(0, 2);
+
+const allTalks = await getCollection('talks');
+const talks = allTalks
+  .slice()
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+---
+
+<Layout
+  title="About — phurix"
+  description="About Phuriwaj, web developer and designer based in Bangkok."
+>
+  <section class="page-header-section">
+    <div class="container-phx">
+      <p class="section-eyebrow">About</p>
+      <h1 class="page-title">Phuriwaj Ruengnaowaroj</h1>
+      <p class="page-lede">
+        I'm a web developer and designer based in Bangkok, building
+        thoughtful interfaces and the systems that hold them together.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    <div class="identity-grid">
+      <div class="identity-photo">
+        <TopicPhoto topic="anthropology" scale="portrait" showCredit={true} />
+      </div>
+      <div class="prose identity-prose">
+        <p>
+          I'm a web developer and designer based in Bangkok, working at
+          the intersection of design systems and the everyday interfaces
+          that depend on them. I spend most of my time thinking about
+          components — what makes them feel coherent, what makes them
+          survive contact with real product work, and what makes them
+          cheap to change.
+        </p>
+        <p>
+          Before this I worked as a UI designer at small studios, then
+          as a freelance frontend developer for early-stage startups. The
+          throughline has always been the same: I want the software I
+          ship to feel considered. Not polished for the sake of polish,
+          but deliberate in the small decisions — typography, spacing,
+          motion, the way a button looks when you press it.
+        </p>
+        <p>
+          Outside of work I keep a small digital garden, read more than I
+          probably should, and drink a lot of coffee. The notes and
+          essays on this site are an attempt to think out loud about the
+          craft — the patterns I'm noticing, the questions I'm chewing
+          on, the things I keep changing my mind about.
+        </p>
+        <p>
+          If you're working on something interesting, I'd love to hear
+          about it.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-phx section subscribe-section">
+    <NewsletterBand />
+  </section>
+
+  <section class="container-phx section">
+    <header class="section-header">
+      <h2 class="section-heading">Now</h2>
+    </header>
+    <p class="now-section-subhead">
+      A short preview of what I'm up to.
+      <a href="/now" class="section-link">See the full /now →</a>
+    </p>
+    <div class="now-preview">
+      {nowPreview.map((item) => (
+        <div class="now-preview-row">
+          <span class="now-preview-label">{item.label}</span>
+          <span class="now-preview-value">{item.value}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    <header class="section-header">
+      <h2 class="section-heading">Work History</h2>
+    </header>
+    <Timeline entries={workHistory} />
+  </section>
+
+  <section class="container-phx section">
+    <header class="section-header section-header-row">
+      <h2 class="section-heading">Projects</h2>
+      <Button variant="outline" href="/projects">All projects →</Button>
+    </header>
+    <div class="project-grid">
+      {projects.map((p) => (
+        <Card emphasis="bordered">
+          <h3 class="project-title">{p.data.title}</h3>
+          <p class="project-desc">{p.data.desc}</p>
+          <div class="tag-row">
+            {p.data.tags.map((t) => <TopicChip label={t} size="sm" />)}
+          </div>
+          <div class="project-cta">
+            {p.data.url ? (
+              <Button variant="outline" size="sm" href={p.data.url}>View project</Button>
+            ) : (
+              <Button variant="outline" size="sm" href="/contact">Discuss this project</Button>
+            )}
+          </div>
+        </Card>
+      ))}
+    </div>
+  </section>
+
+  <section class="container-phx section">
+    <header class="section-header section-header-row">
+      <h2 class="section-heading">Talks</h2>
+      <Button variant="outline" href="/talks">All talks →</Button>
+    </header>
+    <CollectionGrid cols={3} gap="md">
+      {talks.map((talk) => (
+        <GardenCard
+          title={talk.data.title}
+          type="talk"
+          excerpt={talk.data.description}
+          date={talk.data.date}
+          topics={[talk.data.event]}
+          href={talk.data.link ?? '#'}
+        />
+      ))}
+    </CollectionGrid>
+  </section>
+
+  <section class="container-phx section">
+    <header class="section-header">
+      <h2 class="section-heading">Skills</h2>
+    </header>
+    <ul class="skill-grid">
+      {skills.map((s) => <li><TopicChip label={s} size="sm" /></li>)}
+    </ul>
+  </section>
+
+  <section class="container-phx section cta-section">
+    <div class="cta-row">
+      <Button variant="primary" href="/garden">See my work</Button>
+      <Button variant="outline" href="/contact">Get in touch</Button>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* --- Page header ---------------------------------------------------- */
+  .page-header-section {
+    padding-block: var(--spacing-15) var(--spacing-10);
+    background: var(--color-soft-stone);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral-text);
+    font-weight: 500;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-weight: 400;
+    color: var(--color-heading);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .page-lede {
+    font-family: var(--font-sans);
+    font-size: var(--text-body-lg);
+    line-height: 1.5;
+    color: var(--color-ink);
+    max-width: 60ch;
+  }
+
+  /* --- Section header (h2 + optional right CTA) ---------------------- */
+  .section-header {
+    margin-bottom: var(--spacing-8);
+  }
+
+  .section-header-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-5);
+  }
+
+  .section-heading {
+    font-family: var(--font-display);
+    font-size: var(--text-card-heading);
+    font-weight: 400;
+    color: var(--color-heading);
+  }
+
+  .section-link {
+    color: var(--color-action-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    margin-inline-start: var(--spacing-4);
+    transition: color var(--duration-button) ease;
+  }
+
+  .section-link:hover {
+    color: var(--color-heading);
+  }
+
+  /* --- Identity grid: prose + portrait photo ------------------------- */
+  .identity-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-12);
+    align-items: start;
+  }
+
+  @media (min-width: 1024px) {
+    .identity-grid {
+      grid-template-columns: 1fr 18rem;
+      gap: var(--spacing-15);
+    }
+  }
+
+  .identity-photo {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    order: -1;
+  }
+
+  @media (min-width: 1024px) {
+    .identity-photo {
+      order: 0;
+    }
+  }
+
+  .identity-prose {
+    max-width: 65ch;
+  }
+
+  /* --- Subscribe band wrapper ---------------------------------------- */
+  .subscribe-section {
+    padding-block: var(--spacing-12);
+  }
+
+  @media (min-width: 1024px) {
+    .subscribe-section {
+      padding-block: var(--spacing-15);
+    }
+  }
+
+  /* --- Now preview --------------------------------------------------- */
+  .now-section-subhead {
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    color: var(--color-muted-slate);
+    margin-bottom: var(--spacing-8);
+    line-height: 1.5;
+  }
+
+  .now-preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+  }
+
+  .now-preview-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--spacing-5);
+  }
+
+  .now-preview-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral-text);
+    flex-shrink: 0;
+    min-width: 9rem;
+  }
+
+  .now-preview-value {
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    color: var(--color-ink);
+    line-height: 1.5;
+  }
+
+  /* --- Projects grid ------------------------------------------------- */
+  .project-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-7);
+  }
+
+  @media (min-width: 768px) {
+    .project-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: var(--text-feature-heading);
+    font-weight: 400;
+    color: var(--color-heading);
+    margin-bottom: var(--spacing-4);
+    letter-spacing: var(--tracking-display-tight);
+  }
+
+  .project-desc {
+    font-family: var(--font-sans);
+    color: var(--color-muted-slate);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-5);
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-7);
+  }
+
+  .project-cta {
+    margin-top: auto;
+  }
+
+  /* --- Skills -------------------------------------------------------- */
+  .skill-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+  }
+
+  /* --- CTA ----------------------------------------------------------- */
+  .cta-section {
+    padding-top: 0;
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-5);
+  }
+</style>

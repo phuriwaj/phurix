@@ -1,0 +1,330 @@
+---
+/**
+ * Essay detail — `/essays/[slug]` (DESIGN.md §4 — read the essay).
+ * Lora 18px body via shared `.prose` utility (src/styles/global.css).
+ * Title in display face, weight 400. back-link + meta row + topic chips.
+ * Cite: DESIGN.md §4 (Layout — essays detail) + DESIGN.md §3 (Typography stack).
+ */
+import Layout from '@/layouts/Layout.astro';
+import TopicChip from '@/components/TopicChip.astro';
+import TopicPhoto from '@/components/TopicPhoto.astro';
+import { getCollection, render, getEntry } from 'astro:content';
+import { pickArtTopic } from '@/lib/topics';
+import { findBacklinks } from '@/lib/backlinks';
+
+export async function getStaticPaths() {
+  const essays = await getCollection('essays');
+  return essays.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const allEssays = await getCollection('essays');
+const sortedEssays = allEssays.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const currentIndex = sortedEssays.findIndex((e) => e.id === entry.id);
+const prevEssay = currentIndex < sortedEssays.length - 1 ? sortedEssays[currentIndex + 1] : null;
+const nextEssay = currentIndex > 0 ? sortedEssays[currentIndex - 1] : null;
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(new Date(entry.data.date));
+
+const artTopic = pickArtTopic(entry.data.topics);
+
+const relatedRefs = entry.data.related ?? [];
+const relatedResolved = await Promise.all(
+  relatedRefs.map((ref) => getEntry(ref))
+);
+const relatedItems = relatedResolved.filter(
+  (e): e is NonNullable<typeof e> => Boolean(e)
+);
+
+const allNotesForBacklinks = await getCollection('notes');
+const allEssaysForBacklinks = await getCollection('essays');
+const allPatternsForBacklinks = await getCollection('patterns');
+const backlinkSources = [
+  ...findBacklinks(entry.id, 'essays', allNotesForBacklinks),
+  ...findBacklinks(entry.id, 'essays', allEssaysForBacklinks),
+  ...findBacklinks(entry.id, 'essays', allPatternsForBacklinks),
+].filter(({ entry: source }) => source.id !== entry.id);
+---
+
+<Layout title={`${entry.data.title} — phurix`} description={entry.data.lede} hideAnnouncement>
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: entry.data.title,
+      datePublished: entry.data.date.toISOString(),
+      description: entry.data.lede,
+      keywords: entry.data.topics.join(', '),
+      mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+    })}
+  />
+  <section class="section">
+    <div class="container-phx">
+      <a href="/essays" class="back-link">← Essays</a>
+
+      <article class="essay-article">
+        <header class="essay-header">
+          <div class="essay-art">
+            <TopicPhoto topic={artTopic} scale="lg" showCredit={true} />
+          </div>
+
+          <h1 class="essay-title">{entry.data.title}</h1>
+
+          {entry.data.lede && <p class="essay-lede">{entry.data.lede}</p>}
+
+          <div class="essay-meta">
+            <time class="essay-date" datetime={entry.data.date.toISOString()}>
+              {formattedDate}
+            </time>
+            <span class="essay-divider">·</span>
+            <span class="essay-read-time">{Math.max(1, Math.round((entry.body ?? '').split(/\s+/).length / 220))} min read</span>
+          </div>
+
+          {entry.data.topics && entry.data.topics.length > 0 && (
+            <div class="essay-topics">
+              {entry.data.topics.map((t) => <TopicChip label={t} size="sm" href={`/garden?topic=${t}`} />)}
+            </div>
+          )}
+        </header>
+
+        <div class="prose">
+          <Content />
+        </div>
+
+        <nav class="essay-nav">
+          {prevEssay && (
+            <a href={`/essays/${prevEssay.id}`} class="essay-nav-link essay-nav-prev">
+              ← {prevEssay.data.title}
+            </a>
+          )}
+          {nextEssay && (
+            <a href={`/essays/${nextEssay.id}`} class="essay-nav-link essay-nav-next">
+              {nextEssay.data.title} →
+            </a>
+          )}
+        </nav>
+
+        {(relatedItems.length > 0 || backlinkSources.length > 0) && (
+          <aside class="essay-links">
+            {relatedItems.length > 0 && (
+              <section class="essay-links-section">
+                <p class="essay-links-label">Related</p>
+                <ul class="essay-links-list">
+                  {relatedItems.map((rel, i) => (
+                    <li>
+                      <a href={`/essays/${rel.id}`}>{rel.data.title}</a>
+                      {i < relatedItems.length - 1 && <span class="essay-links-sep"> · </span>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {relatedItems.length > 0 && backlinkSources.length > 0 && (
+              <hr class="essay-links-divider" />
+            )}
+
+            {backlinkSources.length > 0 && (
+              <section class="essay-links-section">
+                <p class="essay-links-label">Linked from</p>
+                <ul class="essay-links-list">
+                  {backlinkSources.map(({ entry: source, collection: coll }, i) => (
+                    <li>
+                      <span class="essay-links-collection">{coll}/</span>
+                      <a href={`/${coll}/${source.id}`}>{source.data.title}</a>
+                      {i < backlinkSources.length - 1 && <span class="essay-links-sep"> · </span>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </aside>
+        )}
+      </article>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .back-link {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--color-action-blue);
+    text-decoration: none;
+    margin-bottom: var(--spacing-8);
+    transition: color var(--duration-button) ease;
+  }
+
+  .back-link:hover {
+    color: var(--color-heading);
+  }
+
+  .essay-article {
+    max-width: 65ch;
+    margin-inline: auto;
+  }
+
+  .essay-header {
+    margin-bottom: var(--spacing-12);
+  }
+
+  .essay-art {
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: var(--spacing-8);
+  }
+
+  .essay-art :global(svg),
+  .essay-art :global(img) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .essay-title {
+    font-family: var(--font-display);
+    font-size: var(--text-card-heading);
+    font-weight: 400;
+    color: var(--color-heading);
+    line-height: 1.15;
+    letter-spacing: var(--tracking-display-tight);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .essay-lede {
+    font-family: var(--font-serif);
+    font-size: var(--text-body-lg);
+    color: var(--color-muted-slate);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-7);
+    font-style: italic;
+  }
+
+  .essay-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+  }
+
+  .essay-divider { opacity: 0.5; }
+
+  .essay-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+
+  .essay-nav {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-5);
+    margin-top: var(--spacing-15);
+    padding-top: var(--spacing-8);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .essay-nav-link {
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--color-action-blue);
+    text-decoration: none;
+    transition: color var(--duration-button) ease;
+  }
+
+  .essay-nav-link:hover {
+    color: var(--color-heading);
+  }
+
+  .essay-nav-next {
+    margin-left: auto;
+  }
+
+  .essay-links {
+    margin-top: var(--spacing-15);
+    padding-top: var(--spacing-8);
+    border-top: 1px solid var(--color-hairline);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-7);
+  }
+
+  .essay-links-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  .essay-links-divider {
+    border: 0;
+    border-top: 1px solid var(--color-hairline);
+    margin: 0;
+  }
+
+  .essay-links-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral-text);
+  }
+
+  .essay-links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: var(--text-body);
+    color: var(--color-ink);
+  }
+
+  .essay-links-list a {
+    color: var(--color-action-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-button) ease;
+  }
+
+  .essay-links-list a:hover {
+    color: var(--color-heading);
+  }
+
+  .essay-links-collection {
+    color: var(--color-muted-slate);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    margin-inline-end: 0.2em;
+    letter-spacing: var(--tracking-mono);
+  }
+
+  .essay-links-sep {
+    color: var(--color-muted-slate);
+    margin-inline-start: 0.3em;
+  }
+</style>

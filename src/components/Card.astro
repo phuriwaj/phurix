@@ -1,0 +1,103 @@
+---
+/**
+ * Content Card — white or near-black surface.
+ * Two emphasis levels: flat (no border) and bordered (1px hairline).
+ * Dark variant: near-black background, on-dark text.
+ * Image-wrap radius 22px hero media, 8px smaller variants.
+ * Cite as: DESIGN.md §5 (Elevation & Depth — Flat / Bordered rows).
+ */
+interface Props {
+  /** Visual emphasis level — "flat" has no border; "bordered" adds a hairline. */
+  emphasis?: 'flat' | 'bordered';
+  /** Full-bleed image at top of card. */
+  imageSrc?: string;
+  imageAlt?: string;
+  /** Dark surface (near-black background). */
+  tone?: 'light' | 'dark';
+  class?: string;
+  as?: 'div' | 'article' | 'section';
+}
+
+const {
+  emphasis = 'flat',
+  imageSrc,
+  imageAlt = '',
+  tone = 'light',
+  class: className = '',
+  as: Tag = 'div',
+} = Astro.props as Props;
+
+const classes = [
+  'card-phx',
+  `card-${emphasis}`,
+  tone === 'dark' ? 'card-dark' : 'card-light',
+  imageSrc ? 'card-has-image' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag class={classes}>
+  {imageSrc && (
+    <div class="card-image-wrap">
+      <img src={imageSrc} alt={imageAlt} loading="lazy" />
+    </div>
+  )}
+  <div class="card-body">
+    <slot />
+  </div>
+</Tag>
+
+<style>
+  .card-phx {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: border-color var(--duration-button) ease,
+                box-shadow var(--duration-button) ease;
+  }
+
+  .card-light {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  .card-dark {
+    background: var(--color-near-black);
+    color: var(--color-on-dark);
+  }
+
+  .card-flat { box-shadow: none; }
+
+  .card-bordered {
+    border: 1px solid var(--color-hairline);
+  }
+
+  .card-bordered:hover {
+    border-color: var(--color-border-light);
+  }
+
+  .card-image-wrap {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--color-soft-stone);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-3);
+    margin-bottom: 0;
+  }
+
+  .card-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .card-body {
+    padding: var(--spacing-7);
+  }
+
+  @media (min-width: 768px) {
+    .card-body { padding: var(--spacing-8); }
+  }
+</style>

@@ -1,0 +1,371 @@
+---
+/**
+ * Footer — three-cluster near-black band.
+ *   Cluster 1 — Subscribe (newsletter form, coral mono eyebrow)
+ *   Cluster 2 — Find more (inline links + blogroll <details>)
+ *   Cluster 3 — Social + brand (icons + copyright)
+ * Cite as: DESIGN.md §4 (Layout — footer chrome); subscribe + blogroll are §7 components.
+ */
+import { blogroll } from '@/data/blogroll';
+
+const socialLinks = [
+  {
+    label: 'GitHub',
+    href: 'https://github.com/phurix',
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>`,
+  },
+  {
+    label: 'Bluesky',
+    href: 'https://bsky.app/profile/phurix.dev',
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 01-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.204-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8z"/></svg>`,
+  },
+  {
+    label: 'LinkedIn',
+    href: 'https://linkedin.com/in/phurix',
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`,
+  },
+  {
+    label: 'Mastodon',
+    href: 'https://hachyderm.io/@phurix',
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.327 8.566c0-4.339-2.843-5.61-2.843-5.61C17.347 2.366 14.94 2.105 12.451 2.064h-.07c-2.489.041-4.894.302-6.034.892 0 0-2.843 1.27-2.843 5.61 0 .993-.019 2.181.012 3.441.103 4.243.778 8.425 4.701 9.463 1.808.479 3.361.579 4.612.51 2.268-.126 3.541-.809 3.541-.809l-.075-1.646s-1.621.511-3.441.449c-1.804-.062-3.707-.194-3.999-2.409a4.523 4.523 0 01-.04-.621s1.77.433 4.014.536c1.372.063 2.658-.08 3.965-.236 2.506-.299 4.688-1.843 4.962-3.254.434-2.223.398-5.424.398-5.424zm-3.353 5.59h-2.081V9.057c0-1.075-.452-1.62-1.357-1.62-1 0-1.501.647-1.501 1.927v2.791h-2.069V9.364c0-1.28-.501-1.927-1.502-1.927-.905 0-1.357.546-1.357 1.62v5.099H6.026V8.903c0-1.074.273-1.927.823-2.558.566-.631 1.307-.955 2.228-.955 1.065 0 1.872.409 2.405 1.228l.518.869.519-.869c.533-.819 1.34-1.228 2.405-1.228.92 0 1.662.324 2.228.955.549.631.822 1.484.822 2.558v5.253z"/></svg>`,
+  },
+  {
+    label: 'RSS',
+    href: '/rss.xml',
+    icon: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.18 15.64a2.18 2.18 0 012.18 2.18C8.36 19.01 7.38 20 6.18 20C4.98 20 4 19.01 4 17.82a2.18 2.18 0 012.18-2.18M4 4.44A15.56 15.56 0 0119.56 20h-2.83A12.73 12.73 0 004 7.27V4.44m0 5.66a9.9 9.9 0 019.9 9.9h-2.83A7.07 7.07 0 004 12.93V10.1z"/></svg>`,
+  },
+];
+
+const findMoreLinks = [
+  { label: 'Garden', href: '/garden' },
+  { label: 'Essays', href: '/essays' },
+  { label: 'Notes', href: '/notes' },
+  { label: 'Patterns', href: '/patterns' },
+  { label: 'Practices', href: '/practices' },
+  { label: 'Now', href: '/now' },
+  { label: 'Projects', href: '/projects' },
+  { label: 'Graph', href: '/graph' },
+  { label: 'Library', href: '/library' },
+  { label: 'Talks', href: '/talks' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Colophon', href: '/colophon' },
+  { label: 'Concepts', href: '/concepts' },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer-phx" id="newsletter">
+  <div class="container-phx footer-inner">
+    {/* --- Cluster 1 — Subscribe ------------------------------ */}
+    <div class="footer-cluster footer-cluster-subscribe">
+      <p class="footer-eyebrow">AI moves fast</p>
+      <p class="footer-subscribe-subhead">
+        Letters from a working library, when there's something worth sharing.
+      </p>
+      <form class="footer-subscribe-form" action="/api/subscribe" method="post">
+        <label for="footer-email" class="sr-only">Email address</label>
+        <input
+          type="email"
+          id="footer-email"
+          name="email"
+          placeholder="your@email.com"
+          class="footer-subscribe-input"
+          required
+        />
+        <button type="submit" class="footer-subscribe-submit" aria-label="Subscribe">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="8" x2="13" y2="8" />
+            <polyline points="9,4 13,8 9,12" />
+          </svg>
+        </button>
+      </form>
+    </div>
+
+    {/* --- Cluster 2 — Find more ------------------------------ */}
+    <div class="footer-cluster footer-cluster-links">
+      <p class="footer-eyebrow">Find more</p>
+      <ul class="footer-link-list">
+        {findMoreLinks.map((link) => (
+          <li>
+            <a href={link.href} class="footer-link">{link.label}</a>
+          </li>
+        ))}
+        <li>
+          <details class="blogroll-details">
+            <summary class="footer-link footer-blogroll-summary">Blogroll</summary>
+            <ul class="blogroll-list">
+              {blogroll.map((entry) => (
+                <li>
+                  <a
+                    href={entry.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="blogroll-link"
+                  >
+                    {entry.name}
+                  </a>
+                  {entry.blurb && <span class="blogroll-blurb"> — {entry.blurb}</span>}
+                </li>
+              ))}
+            </ul>
+          </details>
+        </li>
+        <li>
+          <a href="/rss.xml" class="footer-link">RSS</a>
+        </li>
+      </ul>
+    </div>
+
+    {/* --- Cluster 3 — Social + brand ------------------------- */}
+    <div class="footer-cluster footer-cluster-social">
+      <p class="footer-eyebrow">Elsewhere</p>
+      <div class="footer-social">
+        {socialLinks.map((link) => (
+          <a
+            href={link.href}
+            class="footer-social-link"
+            aria-label={link.label}
+            target={link.href.startsWith('http') ? '_blank' : undefined}
+            rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+          >
+            <span class="footer-icon" set:html={link.icon} />
+          </a>
+        ))}
+      </div>
+      <small class="footer-copy">
+        © {year} Phuriwaj Ruengnaowaroj · Built with care · <a href="/colophon" class="footer-link">Colophon</a>
+      </small>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-phx {
+    margin-top: var(--spacing-15);
+    background: var(--color-near-black);
+    color: var(--color-on-dark);
+    padding-block: var(--spacing-15);
+  }
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-12);
+  }
+
+  @media (min-width: 768px) {
+    .footer-inner {
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: var(--spacing-14);
+      align-items: start;
+    }
+  }
+
+  .footer-cluster {
+    min-width: 0;
+  }
+
+  /* --- Cluster 1 — Subscribe --------------------------------- */
+  .footer-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-coral); /* fixed near-black surface — bright coral (6.83:1); coral-text would fail here */
+    margin: 0 0 var(--spacing-5);
+  }
+
+  .footer-subscribe-subhead {
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    color: var(--color-on-dark-muted);
+    line-height: 1.5;
+    margin: 0 0 var(--spacing-7);
+    max-width: 36ch;
+  }
+
+  .footer-subscribe-form {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-pill);
+    padding: 4px 4px 4px var(--spacing-7);
+    max-width: 360px;
+    transition: border-color var(--duration-button) ease,
+      box-shadow var(--duration-button) ease;
+  }
+
+  /* Focus indicator lives on the pill wrapper (input has outline: none
+     below) — same :focus-within pattern as SearchBox.astro. Fixes a
+     keyboard-focus gap: this input previously had no visible focus state. */
+  .footer-subscribe-form:focus-within {
+    border-color: var(--color-focus-blue);
+    box-shadow: var(--shadow-focus-ring);
+  }
+
+  .footer-subscribe-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--color-on-dark);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    padding-block: 6px;
+    min-width: 0;
+  }
+
+  .footer-subscribe-input::placeholder {
+    color: var(--color-on-dark-muted);
+  }
+
+  .footer-subscribe-submit {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: var(--color-on-dark);
+    color: var(--color-near-black);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      background-color var(--duration-button) ease;
+  }
+
+  .footer-subscribe-submit:hover {
+    background: var(--color-soft-coral);
+  }
+
+  /* --- Cluster 2 — Find more --------------------------------- */
+  .footer-link-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-7);
+    row-gap: var(--spacing-4);
+  }
+
+  .footer-link {
+    color: var(--color-on-dark-muted);
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    transition: color var(--duration-button) ease;
+  }
+
+  .footer-link:hover {
+    color: var(--color-on-dark);
+  }
+
+  .blogroll-details {
+    display: inline-block;
+  }
+
+  .blogroll-details summary {
+    cursor: pointer;
+    list-style: none;
+    color: var(--color-on-dark-muted);
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    transition: color var(--duration-button) ease;
+    display: inline-block;
+  }
+
+  .blogroll-details summary::-webkit-details-marker { display: none; }
+
+  .blogroll-details summary:hover { color: var(--color-on-dark); }
+
+  .blogroll-details[open] summary { color: var(--color-on-dark); }
+
+  .blogroll-list {
+    list-style: none;
+    padding: 0;
+    margin: var(--spacing-5) 0 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2);
+  }
+
+  @media (min-width: 768px) {
+    .blogroll-list { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .blogroll-link {
+    color: var(--color-on-dark-muted);
+    font-family: var(--font-sans);
+    font-size: var(--text-caption);
+    text-decoration: none;
+    transition: color var(--duration-button) ease;
+  }
+
+  .blogroll-link:hover { color: var(--color-on-dark); }
+
+  .blogroll-blurb {
+    color: var(--color-on-dark-muted);
+    opacity: 0.7;
+    font-family: var(--font-sans);
+    font-size: var(--text-micro);
+    margin-inline-start: var(--spacing-1);
+  }
+
+  /* --- Cluster 3 — Social + brand ---------------------------- */
+  .footer-cluster-social {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-5);
+  }
+
+  @media (min-width: 768px) {
+    .footer-cluster-social {
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+
+  .footer-social {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-7);
+  }
+
+  .footer-social-link {
+    color: var(--color-on-dark-muted);
+    transition: color var(--duration-button) ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer-social-link:hover {
+    color: var(--color-on-dark);
+  }
+
+  .footer-icon {
+    display: block;
+    width: 20px;
+    height: 20px;
+  }
+
+  .footer-icon :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .footer-copy {
+    font-family: var(--font-sans);
+    font-size: var(--text-micro);
+    color: var(--color-on-dark-muted);
+  }
+
+  .footer-copy .footer-link {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>
