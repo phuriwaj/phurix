@@ -12,7 +12,9 @@ export type MergedEntry =
   | (CollectionEntry<'notes'> & { entryType: 'note'; displayDate: Date })
   | (CollectionEntry<'talks'> & { entryType: 'talk'; displayDate: Date })
   | (CollectionEntry<'patterns'> & { entryType: 'pattern'; displayDate: Date })
-  | (CollectionEntry<'practices'> & { entryType: 'practice'; displayDate: Date });
+  | (CollectionEntry<'practices'> & { entryType: 'practice'; displayDate: Date })
+  | (CollectionEntry<'projects'> & { entryType: 'project'; displayDate: Date })
+  | (CollectionEntry<'books'> & { entryType: 'book'; displayDate: Date });
 
 /**
  * Returns entries whose `pubDate` (displayDate) shares the month and day

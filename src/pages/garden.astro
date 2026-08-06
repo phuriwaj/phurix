@@ -4,13 +4,15 @@ import GardenCard from '@/components/GardenCard.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
 import { getCollection } from 'astro:content';
 import { findOnThisDay, type MergedEntry } from '@/lib/onThisDay';
-import { normalize, hrefFor } from '@/lib/entries';
+import { normalize, hrefFor, dateFor, type AnyEntry } from '@/lib/entries';
 
 const allEssays = await getCollection('essays');
 const allNotes = await getCollection('notes');
 const allTalks = await getCollection('talks');
 const allPatterns = await getCollection('patterns');
 const allPractices = await getCollection('practices');
+const allProjects = await getCollection('projects');
+const allBooks = await getCollection('books');
 
 const allEntries: MergedEntry[] = [
   ...allEssays.map((e) => ({
@@ -38,10 +40,20 @@ const allEntries: MergedEntry[] = [
     entryType: 'practice' as const,
     displayDate: pr.data.date,
   })),
+  ...allProjects.map((p) => ({
+    ...p,
+    entryType: 'project' as const,
+    displayDate: dateFor(p),
+  })),
+  ...allBooks.map((b) => ({
+    ...b,
+    entryType: 'book' as const,
+    displayDate: dateFor(b),
+  })),
 ].sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
 
 const allTopics = [
-  ...new Set(allEntries.flatMap((e) => normalize(e).topics)),
+  ...new Set(allEntries.flatMap((e) => normalize(e as AnyEntry).topics)),
 ].sort();
 
 const today = new Date();
@@ -83,6 +95,8 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
           <button class="topic-chip topic-chip-md" data-filter-type="talk" aria-pressed="false">Talk</button>
           <button class="topic-chip topic-chip-md" data-filter-type="pattern" aria-pressed="false">Pattern</button>
           <button class="topic-chip topic-chip-md" data-filter-type="practice" aria-pressed="false">Practice</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="project" aria-pressed="false">Project</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="book" aria-pressed="false">Book</button>
         </div>
       </div>
 
@@ -349,7 +363,7 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
     const params = new URLSearchParams(window.location.search);
 
     const typeParam = params.get('type');
-    if (typeParam && ['note', 'essay', 'talk', 'pattern', 'practice'].includes(typeParam)) {
+    if (typeParam && ['note', 'essay', 'talk', 'pattern', 'practice', 'project', 'book'].includes(typeParam)) {
       activeType = typeParam;
       const btn = typeFilters?.querySelector(`[data-filter-type="${typeParam}"]`) as HTMLElement | null;
       if (btn) {

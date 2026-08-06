@@ -5,9 +5,13 @@
  *
  * Responsibilities:
  *   - Map collection key (`essays`) to card type (`essay`)
- *   - Resolve href per collection (talks → external link, rest → /<collection>/<id>)
- *   - Pick excerpt field (essay/pattern → lede, note/practice → excerpt, talk → description)
+ *   - Resolve href per collection (talks → external link, projects → external,
+ *     books → /library#<id>, rest → /<collection>/<id>)
+ *   - Pick excerpt field (essay/pattern → lede, note/practice → excerpt,
+ *     talk → description, project → desc, book → empty)
  *   - Surface growthStage only for collections that carry it
+ *   - Surface topics (talks/projects pull from `topics`/`tags`)
+ *   - Fall back to `year` (Jan 1) when `date` is absent (books, projects)
  */
 import type { CollectionEntry } from 'astro:content';
 
@@ -16,16 +20,27 @@ export type EntryCollectionKey =
   | 'notes'
   | 'talks'
   | 'patterns'
-  | 'practices';
+  | 'practices'
+  | 'projects'
+  | 'books';
 
-export type EntryType = 'essay' | 'note' | 'talk' | 'pattern' | 'practice';
+export type EntryType =
+  | 'essay'
+  | 'note'
+  | 'talk'
+  | 'pattern'
+  | 'practice'
+  | 'project'
+  | 'book';
 
-export type AnyGardenEntry =
+export type AnyEntry =
   | CollectionEntry<'essays'>
   | CollectionEntry<'notes'>
   | CollectionEntry<'talks'>
   | CollectionEntry<'patterns'>
-  | CollectionEntry<'practices'>;
+  | CollectionEntry<'practices'>
+  | CollectionEntry<'projects'>
+  | CollectionEntry<'books'>;
 
 export interface NormalizedEntry {
   type: EntryType;
@@ -43,9 +58,11 @@ const COLLECTION_TO_TYPE: Record<EntryCollectionKey, EntryType> = {
   talks: 'talk',
   patterns: 'pattern',
   practices: 'practice',
+  projects: 'project',
+  books: 'book',
 };
 
-export function hrefFor(entry: AnyGardenEntry): string {
+export function hrefFor(entry: AnyEntry): string {
   switch (entry.collection) {
     case 'essays':
       return `/essays/${entry.id}`;
@@ -57,10 +74,14 @@ export function hrefFor(entry: AnyGardenEntry): string {
       return `/practices/${entry.id}`;
     case 'talks':
       return entry.data.link ?? '#';
+    case 'projects':
+      return entry.data.url ?? '/projects';
+    case 'books':
+      return `/library#${entry.id}`;
   }
 }
 
-export function excerptFor(entry: AnyGardenEntry): string {
+export function excerptFor(entry: AnyEntry): string {
   switch (entry.collection) {
     case 'essays':
     case 'patterns':
@@ -70,15 +91,26 @@ export function excerptFor(entry: AnyGardenEntry): string {
       return entry.data.excerpt ?? '';
     case 'talks':
       return entry.data.description;
+    case 'projects':
+      return entry.data.desc;
+    case 'books':
+      return '';
   }
 }
 
-export function topicsFor(entry: AnyGardenEntry): string[] {
-  return entry.data.topics ?? [];
+export function topicsFor(entry: AnyEntry): string[] {
+  switch (entry.collection) {
+    case 'projects':
+      return entry.data.tags ?? [];
+    case 'books':
+      return [];
+    default:
+      return entry.data.topics ?? [];
+  }
 }
 
 export function growthStageFor(
-  entry: AnyGardenEntry,
+  entry: AnyEntry,
 ): NormalizedEntry['growthStage'] {
   if (entry.collection === 'notes' || entry.collection === 'practices') {
     return entry.data.growthStage;
@@ -86,14 +118,23 @@ export function growthStageFor(
   return undefined;
 }
 
-export function normalize(entry: AnyGardenEntry): NormalizedEntry {
+/** Fall back to Jan 1 of `year` when `date` is missing (books, projects). */
+export function dateFor(entry: AnyEntry): Date {
+  const explicit = entry.data.date as Date | undefined;
+  if (explicit) return explicit;
+  const year = (entry.data as { year?: number }).year;
+  if (typeof year === 'number') return new Date(year, 0, 1);
+  return new Date(0);
+}
+
+export function normalize(entry: AnyEntry): NormalizedEntry {
   return {
     type: COLLECTION_TO_TYPE[entry.collection],
     title: entry.data.title,
     href: hrefFor(entry),
     topics: topicsFor(entry),
     excerpt: excerptFor(entry),
-    date: entry.data.date,
+    date: dateFor(entry),
     growthStage: growthStageFor(entry),
   };
 }

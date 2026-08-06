@@ -11,6 +11,8 @@ interface Props {
   year?: number;
   /** Add a small coral "Reading" pill in the top-right. */
   currentlyReading?: boolean;
+  /** DOM id (used by /library anchors from /garden deep-links). */
+  id?: string;
   class?: string;
 }
 
@@ -20,11 +22,13 @@ const {
   coverColor,
   year,
   currentlyReading = false,
+  id,
   class: className = '',
 } = Astro.props;
 ---
 
 <div
+  id={id}
   class:list={['book-tile', currentlyReading && 'book-tile-current', className]}
   style={`--book-color: ${coverColor}`}
 >

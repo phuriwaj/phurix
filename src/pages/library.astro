@@ -27,6 +27,7 @@ const books = allBooks.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
     <div class="book-grid">
       {books.map((book) => (
         <BookTile
+          id={book.id}
           title={book.data.title}
           author={book.data.author}
           coverColor={book.data.coverColor}
