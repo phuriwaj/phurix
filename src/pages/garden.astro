@@ -88,35 +88,35 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
     <div class="container-phx">
       <div class="filter-group">
         <span class="filter-label">Type</span>
-        <div class="filter-chips" id="type-filters">
-          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-type="all" aria-pressed="true">All</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="note" aria-pressed="false">Note</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="essay" aria-pressed="false">Essay</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="talk" aria-pressed="false">Talk</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="pattern" aria-pressed="false">Pattern</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="practice" aria-pressed="false">Practice</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="project" aria-pressed="false">Project</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="book" aria-pressed="false">Book</button>
+        <div class="filter-chips" id="type-filters" role="radiogroup" aria-label="Filter by type">
+          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-type="all" role="radio" aria-checked="true" tabindex="0">All</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="note" role="radio" aria-checked="false" tabindex="-1">Note</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="essay" role="radio" aria-checked="false" tabindex="-1">Essay</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="talk" role="radio" aria-checked="false" tabindex="-1">Talk</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="pattern" role="radio" aria-checked="false" tabindex="-1">Pattern</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="practice" role="radio" aria-checked="false" tabindex="-1">Practice</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="project" role="radio" aria-checked="false" tabindex="-1">Project</button>
+          <button class="topic-chip topic-chip-md" data-filter-type="book" role="radio" aria-checked="false" tabindex="-1">Book</button>
         </div>
       </div>
 
       <div class="filter-group">
         <span class="filter-label">Topic</span>
-        <div class="filter-chips" id="topic-filters">
-          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-topic="all" aria-pressed="true">All</button>
+        <div class="filter-chips" id="topic-filters" role="radiogroup" aria-label="Filter by topic">
+          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-topic="all" role="radio" aria-checked="true" tabindex="0">All</button>
           {allTopics.map((topic) => (
-            <button class="topic-chip topic-chip-md" data-filter-topic={topic} aria-pressed="false">{topic}</button>
+            <button class="topic-chip topic-chip-md" data-filter-topic={topic} role="radio" aria-checked="false" tabindex="-1">{topic}</button>
           ))}
         </div>
       </div>
 
       <div class="filter-group">
         <span class="filter-label">Growth</span>
-        <div class="filter-chips" id="growth-filters">
-          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-growth="all" aria-pressed="true">All</button>
-          <button class="topic-chip topic-chip-md" data-filter-growth="seedling" aria-pressed="false">Seedling</button>
-          <button class="topic-chip topic-chip-md" data-filter-growth="growing" aria-pressed="false">Growing</button>
-          <button class="topic-chip topic-chip-md" data-filter-growth="evergreen" aria-pressed="false">Evergreen</button>
+        <div class="filter-chips" id="growth-filters" role="radiogroup" aria-label="Filter by growth stage">
+          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-growth="all" role="radio" aria-checked="true" tabindex="0">All</button>
+          <button class="topic-chip topic-chip-md" data-filter-growth="seedling" role="radio" aria-checked="false" tabindex="-1">Seedling</button>
+          <button class="topic-chip topic-chip-md" data-filter-growth="growing" role="radio" aria-checked="false" tabindex="-1">Growing</button>
+          <button class="topic-chip topic-chip-md" data-filter-growth="evergreen" role="radio" aria-checked="false" tabindex="-1">Evergreen</button>
         </div>
       </div>
     </div>
@@ -303,10 +303,12 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
     function setActive(container: Element | null, selected: HTMLElement) {
       container?.querySelectorAll('button').forEach((b) => {
         b.classList.remove('topic-chip-active');
-        b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('aria-checked', 'false');
+        b.setAttribute('tabindex', '-1');
       });
       selected.classList.add('topic-chip-active');
-      selected.setAttribute('aria-pressed', 'true');
+      selected.setAttribute('aria-checked', 'true');
+      selected.setAttribute('tabindex', '0');
     }
 
     function applyFilters() {
@@ -338,6 +340,16 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
       }
     }
 
+    function selectAtIndex(container: Element | null, index: number) {
+      if (!container) return;
+      const buttons = Array.from(container.querySelectorAll<HTMLElement>('button[role="radio"]'));
+      if (buttons.length === 0) return;
+      const wrapped = ((index % buttons.length) + buttons.length) % buttons.length;
+      const target = buttons[wrapped];
+      target.click();
+      target.focus();
+    }
+
     function handleChipClick(e: Event) {
       const btn = (e.target as HTMLElement).closest('button[data-filter-type], button[data-filter-topic], button[data-filter-growth]') as HTMLElement | null;
       if (!btn) return;
@@ -356,9 +368,45 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
       applyFilters();
     }
 
+    function handleChipKeydown(e: KeyboardEvent) {
+      const target = e.target as HTMLElement;
+      const btn = target.closest('button[role="radio"]') as HTMLElement | null;
+      if (!btn) return;
+      const container = btn.parentElement;
+      if (!container) return;
+
+      const buttons = Array.from(container.querySelectorAll<HTMLElement>('button[role="radio"]'));
+      const currentIndex = buttons.indexOf(btn);
+
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+          e.preventDefault();
+          selectAtIndex(container, currentIndex + 1);
+          break;
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          e.preventDefault();
+          selectAtIndex(container, currentIndex - 1);
+          break;
+        case 'Home':
+          e.preventDefault();
+          selectAtIndex(container, 0);
+          break;
+        case 'End':
+          e.preventDefault();
+          selectAtIndex(container, buttons.length - 1);
+          break;
+      }
+    }
+
     typeFilters?.addEventListener('click', handleChipClick);
     topicFilters?.addEventListener('click', handleChipClick);
     growthFilters?.addEventListener('click', handleChipClick);
+
+    typeFilters?.addEventListener('keydown', handleChipKeydown);
+    topicFilters?.addEventListener('keydown', handleChipKeydown);
+    growthFilters?.addEventListener('keydown', handleChipKeydown);
 
     const params = new URLSearchParams(window.location.search);
 
