@@ -33,6 +33,7 @@ const talks = defineCollection({
     event: z.string(),
     date: z.coerce.date(),
     description: z.string(),
+    topics: z.array(z.enum(RECOGNIZED_TOPICS_TUPLE)).default([]),
     link: z.url().optional(),
   }),
 });

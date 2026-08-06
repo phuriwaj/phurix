@@ -8,9 +8,6 @@
  *   - Resolve href per collection (talks → external link, rest → /<collection>/<id>)
  *   - Pick excerpt field (essay/pattern → lede, note/practice → excerpt, talk → description)
  *   - Surface growthStage only for collections that carry it
- *
- * Talks currently lack `topics` in their schema; once added, the talks branch
- * in `topicsFor` becomes a no-op and can be removed.
  */
 import type { CollectionEntry } from 'astro:content';
 
@@ -77,8 +74,6 @@ export function excerptFor(entry: AnyGardenEntry): string {
 }
 
 export function topicsFor(entry: AnyGardenEntry): string[] {
-  // Talks lack `topics` in schema today. Remove this branch once added.
-  if (entry.collection === 'talks') return [];
   return entry.data.topics ?? [];
 }
 
