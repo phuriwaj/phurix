@@ -86,39 +86,47 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
 
   <section class="filter-section">
     <div class="container-phx">
-      <div class="filter-group">
-        <span class="filter-label">Type</span>
-        <div class="filter-chips" id="type-filters" role="radiogroup" aria-label="Filter by type">
-          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-type="all" role="radio" aria-checked="true" tabindex="0">All</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="note" role="radio" aria-checked="false" tabindex="-1">Note</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="essay" role="radio" aria-checked="false" tabindex="-1">Essay</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="talk" role="radio" aria-checked="false" tabindex="-1">Talk</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="pattern" role="radio" aria-checked="false" tabindex="-1">Pattern</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="practice" role="radio" aria-checked="false" tabindex="-1">Practice</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="project" role="radio" aria-checked="false" tabindex="-1">Project</button>
-          <button class="topic-chip topic-chip-md" data-filter-type="book" role="radio" aria-checked="false" tabindex="-1">Book</button>
-        </div>
-      </div>
+      <details id="filter-details" class="filter-details" open>
+        <summary class="filter-summary">
+          <span class="filter-summary-label">Filters</span>
+          <span class="filter-summary-icon" aria-hidden="true"></span>
+        </summary>
+        <div class="filter-body">
+          <div class="filter-group">
+            <span class="filter-label">Type</span>
+            <div class="filter-chips" id="type-filters" role="radiogroup" aria-label="Filter by type">
+              <button class="topic-chip topic-chip-md topic-chip-active" data-filter-type="all" role="radio" aria-checked="true" tabindex="0">All</button>
+              <button class="topic-chip topic-chip-md" data-filter-type="note" role="radio" aria-checked="false" tabindex="-1">Note</button>
+              <button class="topic-chip topic-chip-md" data-filter-type="essay" role="radio" aria-checked="false" tabindex="-1">Essay</button>
+              <button class="topic-chip topic-chip-md" data-filter-type="talk" role="radio" aria-checked="false" tabindex="-1">Talk</button>
+              <button class="topic-chip topic-chip-md" data-filter-type="pattern" role="radio" aria-checked="false" tabindex="-1">Pattern</button>
+              <button class="topic-chip topic-chip-md" data-filter-type="practice" role="radio" aria-checked="false" tabindex="-1">Practice</button>
+              <button class="topic-chip topic-chip-md" data-filter-type="project" role="radio" aria-checked="false" tabindex="-1">Project</button>
+              <button class="topic-chip topic-chip-md" data-filter-type="book" role="radio" aria-checked="false" tabindex="-1">Book</button>
+            </div>
+          </div>
 
-      <div class="filter-group">
-        <span class="filter-label">Topic</span>
-        <div class="filter-chips" id="topic-filters" role="radiogroup" aria-label="Filter by topic">
-          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-topic="all" role="radio" aria-checked="true" tabindex="0">All</button>
-          {allTopics.map((topic) => (
-            <button class="topic-chip topic-chip-md" data-filter-topic={topic} role="radio" aria-checked="false" tabindex="-1">{topic}</button>
-          ))}
-        </div>
-      </div>
+          <div class="filter-group">
+            <span class="filter-label">Topic</span>
+            <div class="filter-chips" id="topic-filters" role="radiogroup" aria-label="Filter by topic">
+              <button class="topic-chip topic-chip-md topic-chip-active" data-filter-topic="all" role="radio" aria-checked="true" tabindex="0">All</button>
+              {allTopics.map((topic) => (
+                <button class="topic-chip topic-chip-md" data-filter-topic={topic} role="radio" aria-checked="false" tabindex="-1">{topic}</button>
+              ))}
+            </div>
+          </div>
 
-      <div class="filter-group">
-        <span class="filter-label">Growth</span>
-        <div class="filter-chips" id="growth-filters" role="radiogroup" aria-label="Filter by growth stage">
-          <button class="topic-chip topic-chip-md topic-chip-active" data-filter-growth="all" role="radio" aria-checked="true" tabindex="0">All</button>
-          <button class="topic-chip topic-chip-md" data-filter-growth="seedling" role="radio" aria-checked="false" tabindex="-1">Seedling</button>
-          <button class="topic-chip topic-chip-md" data-filter-growth="growing" role="radio" aria-checked="false" tabindex="-1">Growing</button>
-          <button class="topic-chip topic-chip-md" data-filter-growth="evergreen" role="radio" aria-checked="false" tabindex="-1">Evergreen</button>
+          <div class="filter-group">
+            <span class="filter-label">Growth</span>
+            <div class="filter-chips" id="growth-filters" role="radiogroup" aria-label="Filter by growth stage">
+              <button class="topic-chip topic-chip-md topic-chip-active" data-filter-growth="all" role="radio" aria-checked="true" tabindex="0">All</button>
+              <button class="topic-chip topic-chip-md" data-filter-growth="seedling" role="radio" aria-checked="false" tabindex="-1">Seedling</button>
+              <button class="topic-chip topic-chip-md" data-filter-growth="growing" role="radio" aria-checked="false" tabindex="-1">Growing</button>
+              <button class="topic-chip topic-chip-md" data-filter-growth="evergreen" role="radio" aria-checked="false" tabindex="-1">Evergreen</button>
+            </div>
+          </div>
         </div>
-      </div>
+      </details>
     </div>
   </section>
 
@@ -229,6 +237,55 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
 
   .filter-group:last-child {
     margin-bottom: 0;
+  }
+
+  /* Mobile collapse — <details> wrapped; summary only visible <768px */
+  .filter-summary {
+    display: none;
+  }
+
+  .filter-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .filter-summary-icon::before {
+    content: '−';
+  }
+
+  .filter-details:not([open]) .filter-summary-icon::before {
+    content: '+';
+  }
+
+  @media (max-width: 767px) {
+    .filter-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-5);
+      padding: var(--spacing-4) var(--spacing-5);
+      border: 1px solid var(--color-hairline);
+      border-radius: var(--radius-md);
+      background: var(--color-soft-stone);
+      font-family: var(--font-mono);
+      font-size: var(--text-mono-label);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-mono);
+      color: var(--color-ink);
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .filter-summary:hover {
+      border-color: var(--color-coral-text);
+    }
+
+    .filter-body {
+      padding-block-start: var(--spacing-5);
+    }
+
+    .filter-details:not([open]) .filter-body {
+      display: none;
+    }
   }
 
   .filter-label {
@@ -442,4 +499,22 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
 
   initGardenFilter();
   document.addEventListener('astro:after-swap', initGardenFilter);
+
+  function initFilterCollapse() {
+    const details = document.getElementById('filter-details');
+    if (!details) return;
+    const mq = window.matchMedia('(max-width: 767px)');
+    const sync = (e: MediaQueryListEvent | MediaQueryList) => {
+      if (e.matches) {
+        details.removeAttribute('open');
+      } else {
+        details.setAttribute('open', '');
+      }
+    };
+    sync(mq);
+    mq.addEventListener('change', sync);
+  }
+
+  initFilterCollapse();
+  document.addEventListener('astro:after-swap', initFilterCollapse);
 </script>
