@@ -148,7 +148,7 @@ const onThisDayItems = onThisDayMatches.map((m) => ({
           <div
             class="entry-card-wrapper"
             data-type={n.type}
-            data-topics={JSON.stringify(n.topics)}
+            data-topics={n.topics.join(' ')}
             data-growth={n.growthStage ?? ''}
           >
             <GardenCard
@@ -382,7 +382,7 @@ const onThisDayItems = onThisDayMatches.map((m) => ({
       let visibleCount = 0;
       cards.forEach((card) => {
         const cardType = card.getAttribute('data-type');
-        const cardTopics = JSON.parse(card.getAttribute('data-topics') || '[]');
+        const cardTopics = (card.getAttribute('data-topics') || '').split(' ').filter(Boolean);
         const cardGrowth = card.getAttribute('data-growth') || '';
 
         const typeMatch = activeType === 'all' || cardType === activeType;
