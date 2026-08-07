@@ -7,7 +7,9 @@ if (!key) {
   // eslint-disable-next-line no-console
   console.info('[posthog] PUBLIC_POSTHOG_KEY not set — analytics disabled.');
 } else {
-  const host = import.meta.env.PUBLIC_POSTHOG_HOST ?? 'https://us.i.posthog.com';
+  // Project 243278 is EU-hosted. Override via PUBLIC_POSTHOG_HOST for US
+  // or self-hosted targets.
+  const host = import.meta.env.PUBLIC_POSTHOG_HOST ?? 'https://eu.i.posthog.com';
 
   posthog.init(key, {
     api_host: host,

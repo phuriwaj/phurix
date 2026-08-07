@@ -11,8 +11,8 @@ import { defineConfig, devices } from '@playwright/test';
  *     zero requests to any posthog host, no console errors.
  *
  * Server orchestration lives in tests/e2e/run.sh — it spawns both preview
- * servers in the right order and tears them down on exit. This file just
- * declares the URL each project will hit and waits for connectivity.
+ * servers in the right order and tears them down on exit. Each project just
+ * pins a baseURL so Playwright knows where the pre-built static site lives.
  */
 export default defineConfig({
   testDir: './tests/e2e',
@@ -29,19 +29,11 @@ export default defineConfig({
       name: 'posthog-configured',
       testMatch: /posthog-configured\.spec\.ts$/,
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:4321' },
-      webServer: {
-        url: 'http://localhost:4321',
-        timeout: 30_000,
-      },
     },
     {
       name: 'posthog-disabled',
       testMatch: /posthog-disabled\.spec\.ts$/,
       use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:4322' },
-      webServer: {
-        url: 'http://localhost:4322',
-        timeout: 30_000,
-      },
     },
   ],
 });
