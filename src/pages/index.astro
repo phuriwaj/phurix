@@ -7,7 +7,7 @@
  * Cite: DESIGN.md §4 (home).
  */
 import Layout from '@/layouts/Layout.astro';
-import AnimatedHero from '@/components/AnimatedHero.tsx';
+import { HeroSection } from '@/components/blocks/hero-section-5';
 import GardenCard from '@/components/GardenCard.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
 import Button from '@/components/Button.astro';
@@ -58,7 +58,7 @@ for (const pick of curatedPicks) {
 ---
 
 <Layout title="phurix" description="Personal website of Phuriwaj Ruengnaowaroj">
-  <AnimatedHero client:load />
+  <HeroSection client:load />
 
   <section class="container-phx curated-section section">
     <CuratedPicks items={curatedPicks} />
