@@ -69,6 +69,35 @@
   --color-on-dark:       #ffffff;
   --color-on-dark-muted: rgba(255, 255, 255, 0.72);
 
+  /* --- shadcn semantic palette (Phase 2 migration bridge) --------------
+     Aliases to the Cohere tokens above so shadcn components + the marketing
+     hero-section-5 can use bg-background / text-foreground / etc. utilities
+     without forking the design system. Old token names coexist for now. */
+  --color-background:         var(--color-canvas);
+  --color-foreground:         var(--color-ink);
+  --color-card:               var(--color-canvas);
+  --color-card-foreground:    var(--color-ink);
+  --color-popover:            var(--color-canvas);
+  --color-popover-foreground: var(--color-ink);
+  --color-primary:            var(--color-near-black);
+  --color-primary-foreground: var(--color-on-dark);
+  --color-secondary:          var(--color-soft-stone);
+  --color-secondary-foreground: var(--color-ink);
+  --color-muted:              var(--color-soft-stone);
+  --color-muted-foreground:   var(--color-muted-slate);
+  --color-accent:             var(--color-coral);
+  --color-accent-foreground:  var(--color-coral-text);
+  --color-destructive:        var(--color-error-red);
+  --color-destructive-foreground: var(--color-on-dark);
+  --color-border:             var(--color-hairline);
+  --color-input:              var(--color-border-light);
+  --color-ring:               var(--color-focus-blue);
+
+  /* shadcn radius scale — same intent, mapped to existing radii */
+  --radius-lg: var(--radius-md);
+  --radius-md: var(--radius-sm);
+  --radius-sm: var(--radius-xs);
+
   /* --- Spacing scale (rem, 1rem = 10px) ------------------------------- */
   --spacing-0:  0;
   --spacing-1:  0.2rem;
