@@ -108,9 +108,16 @@ const PHOTOS: Record<string, PhotoRef> = {
 // failure is an *unrecognized* topic, not a missing photo.
 const photo = PHOTOS[topic];
 const hasPhoto = Boolean(photo);
+
+const aspectClass = {
+  sm: 'aspect-[4/3]',
+  md: 'aspect-[4/3]',
+  lg: 'aspect-video',
+  portrait: 'aspect-[3/4]',
+}[scale];
 ---
 
-<figure class:list={['topic-photo', `tp-${scale}`, className]}>
+<figure class:list={['relative m-0 w-full h-full bg-soft-stone overflow-hidden rounded-inherit', aspectClass, className]}>
   {hasPhoto ? (
     <>
       <Image
@@ -118,109 +125,27 @@ const hasPhoto = Boolean(photo);
         alt={photo!.alt}
         loading="lazy"
         decoding="async"
-        class="tp-img"
+        class="block w-full h-full object-cover object-center"
         format="webp"
         widths={[400, 800, 1200]}
         sizes="(min-width: 1024px) 800px, 100vw"
       />
       {showCredit && (
-        <figcaption class="tp-credit">
+        <figcaption class="absolute right-2 bottom-1.5 text-[0.625rem] leading-none text-on-dark bg-black/45 px-1 py-1 rounded-sm backdrop-blur-sm text-right opacity-0 transition-opacity duration-200 whitespace-nowrap hover:opacity-100 focus-within:opacity-100 [&_a]:text-inherit [&_a]:no-underline [&_a]:underline [&_a]:[text-decoration-color:rgba(255,255,255,0.45)] [&_a]:underline-offset-[1px] [&_a:hover]:[text-decoration-color:currentColor]">
           Photo:&nbsp;<a href={photo!.profile} rel="noopener noreferrer" target="_blank">{photo!.photographer}</a>&nbsp;/&nbsp;<a href="https://unsplash.com/?utm_source=phurix&utm_medium=referral" rel="noopener noreferrer" target="_blank">Unsplash</a>
         </figcaption>
       )}
     </>
   ) : (
-    <div class="tp-placeholder" role="img" aria-label={`No photo registered for topic: ${topic}`}>
-      <span class="tp-placeholder-label">no photo for: <code>{topic}</code></span>
+    <div
+      class="flex items-center justify-center w-full h-full p-7 border border-dashed border-hairline"
+      style="background: repeating-linear-gradient(45deg, var(--color-soft-stone), var(--color-soft-stone) 12px, var(--color-canvas) 12px, var(--color-canvas) 24px);"
+      role="img"
+      aria-label={`No photo registered for topic: ${topic}`}
+    >
+      <span class="font-mono text-micro text-muted-slate uppercase tracking-mono">
+        no photo for: <code class="font-mono text-error-red">{topic}</code>
+      </span>
     </div>
   )}
 </figure>
-
-<style>
-  .topic-photo {
-    position: relative;
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--color-soft-stone, #eeece7);
-    overflow: hidden;
-    border-radius: inherit;
-  }
-
-  .tp-img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
-
-  .tp-sm { aspect-ratio: 4 / 3; }
-  .tp-md { aspect-ratio: 4 / 3; }
-  .tp-lg { aspect-ratio: 16 / 9; }
-  .tp-portrait { aspect-ratio: 3 / 4; }
-
-  .tp-credit {
-    position: absolute;
-    right: 0.5rem;
-    bottom: 0.4rem;
-    font-size: 0.625rem;
-    line-height: 1;
-    color: var(--color-on-dark);
-    background: rgba(0, 0, 0, 0.45);
-    padding: 0.25rem 0.45rem;
-    border-radius: 0.25rem;
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
-    text-align: right;
-    opacity: 0;
-    transition: opacity 200ms ease;
-    white-space: nowrap;
-  }
-
-  .topic-photo:hover .tp-credit,
-  .topic-photo:focus-within .tp-credit {
-    opacity: 1;
-  }
-
-  .tp-credit a {
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-color: rgba(255, 255, 255, 0.45);
-    text-underline-offset: 1px;
-  }
-
-  .tp-credit a:hover {
-    text-decoration-color: currentColor;
-  }
-
-  .tp-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    padding: var(--spacing-7);
-    background: repeating-linear-gradient(
-      45deg,
-      var(--color-soft-stone),
-      var(--color-soft-stone) 12px,
-      var(--color-canvas) 12px,
-      var(--color-canvas) 24px
-    );
-    border: 1px dashed var(--color-hairline);
-  }
-
-  .tp-placeholder-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    color: var(--color-muted-slate);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-  }
-
-  .tp-placeholder-label code {
-    font-family: inherit;
-    color: var(--color-error-red);
-  }
-</style>

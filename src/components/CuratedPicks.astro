@@ -18,66 +18,16 @@ interface Props {
 const { items, heading, class: className = '' } = Astro.props;
 ---
 
-<div class:list={['curated-picks', className]}>
-  {heading && <p class="curated-picks-heading">{heading}</p>}
-  <ol class="curated-picks-list">
+<div class:list={['w-full', className]}>
+  {heading && (
+    <p class="font-mono text-mono-label font-medium uppercase tracking-mono text-coral-text mb-5">{heading}</p>
+  )}
+  <ol class="list-none p-0 m-0 max-w-[60ch]">
     {items.map((item) => (
-      <li class="curated-picks-item">
+      <li class="flex items-baseline py-5 border-t border-hairline last:border-b border-hairline">
         <CuratedMark size="md" />
-        <a href={item.href} class="curated-picks-link">{item.title}</a>
+        <a href={item.href} class="font-display italic text-body-lg font-normal text-action-blue no-underline tracking-display-tight transition-colors duration-button ease hover:text-heading hover:underline hover:underline-offset-2 hover:[text-decoration-thickness:2px]">{item.title}</a>
       </li>
     ))}
   </ol>
 </div>
-
-<style>
-  .curated-picks {
-    width: 100%;
-  }
-
-  .curated-picks-heading {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-label);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-    color: var(--color-coral-text);
-    margin-bottom: var(--spacing-5);
-  }
-
-  .curated-picks-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    max-width: 60ch;
-  }
-
-  .curated-picks-item {
-    display: flex;
-    align-items: baseline;
-    padding-block: var(--spacing-5);
-    border-top: 1px solid var(--color-hairline);
-  }
-
-  .curated-picks-item:last-child {
-    border-bottom: 1px solid var(--color-hairline);
-  }
-
-  .curated-picks-link {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: var(--text-body-lg);
-    font-weight: 400;
-    color: var(--color-action-blue);
-    text-decoration: none;
-    letter-spacing: var(--tracking-display-tight);
-    transition: color var(--duration-button) ease;
-  }
-
-  .curated-picks-link:hover {
-    color: var(--color-heading);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    text-decoration-thickness: 2px;
-  }
-</style>
