@@ -25,7 +25,7 @@ const allEntries: MergedEntry[] = [
     entryType: 'note' as const,
     displayDate: n.data.date,
   })),
-  ...allTalks.map((t) => ({
+  ...allTalks.filter((t) => t.data.link).map((t) => ({
     ...t,
     entryType: 'talk' as const,
     displayDate: t.data.date,
