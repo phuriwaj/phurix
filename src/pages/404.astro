@@ -4,7 +4,7 @@
  * Cite as: DESIGN.md §4 (/404) — display-scale h1 is earned here (Cohere: massive type sparingly).
  */
 import Layout from '@/layouts/Layout.astro';
-import Button from '@/components/Button.astro';
+import { Button } from '@/components/ui/button';
 ---
 
 <Layout title="404 — phurix">
@@ -18,8 +18,12 @@ import Button from '@/components/Button.astro';
     </p>
 
     <div class="cta-row mt-15">
-      <Button variant="primary" href="/">← Back to Home</Button>
-      <Button variant="outline" href="/garden">Browse the Garden</Button>
+      <Button asChild variant="default" className="rounded-full h-auto px-6 py-3 text-base">
+        <a href="/">← Back to Home</a>
+      </Button>
+      <Button asChild variant="outline" className="rounded-full h-auto px-6 py-3 text-base">
+        <a href="/garden">Browse the Garden</a>
+      </Button>
     </div>
   </section>
 </Layout>

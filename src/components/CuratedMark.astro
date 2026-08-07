@@ -12,26 +12,18 @@ interface Props {
 }
 
 const { size = 'md', class: className = '' } = Astro.props;
-const sizeMap = { sm: '0.9em', md: '1.1em', lg: '1.4em' };
+const sizeClass = {
+  sm: 'text-[0.9em]',
+  md: 'text-[1.1em]',
+  lg: 'text-[1.4em]',
+}[size];
 ---
 
 <span
-  class:list={['curated-mark', `curated-mark-${size}`, className]}
+  class:list={[
+    'inline-block text-coral-text font-display leading-none align-[0.05em] me-2',
+    sizeClass,
+    className,
+  ]}
   aria-hidden="true"
-  style={`font-size: ${sizeMap[size]}`}
 >✦</span>
-
-<style>
-  .curated-mark {
-    display: inline-block;
-    color: var(--color-coral-text);
-    font-family: var(--font-display);
-    font-weight: 400;
-    line-height: 0;
-    vertical-align: 0.05em;
-    margin-inline-end: 0.4em;
-  }
-  .curated-mark-sm { font-size: 0.9em; }
-  .curated-mark-md { font-size: 1.1em; }
-  .curated-mark-lg { font-size: 1.4em; }
-</style>

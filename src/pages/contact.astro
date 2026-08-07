@@ -4,7 +4,7 @@
  * Cite as: DESIGN.md §4 (/contact) — email-first per Sloan / Mod.
  */
 import Layout from '@/layouts/Layout.astro';
-import Button from '@/components/Button.astro';
+import { Button } from '@/components/ui/button';
 import Card from '@/components/Card.astro';
 
 const channels = [
@@ -37,8 +37,10 @@ const channels = [
     </div>
 
     <div class="cta-row mt-15">
-      <Button variant="primary" href="mailto:hello@phurix.dev">
+      <Button asChild variant="default" className="rounded-full h-auto px-6 py-3 text-base">
+        <a href="mailto:hello@phurix.dev">
         Email me directly
+      </a>
       </Button>
     </div>
   </section>

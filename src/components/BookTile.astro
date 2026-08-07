@@ -29,98 +29,23 @@ const {
 
 <div
   id={id}
-  class:list={['book-tile', currentlyReading && 'book-tile-current', className]}
+  class:list={[
+    'relative w-full aspect-[2/3] flex rounded-sm overflow-hidden border border-transparent',
+    'transition-colors duration-200 hover:border-border-light',
+    className,
+  ]}
   style={`--book-color: ${coverColor}`}
 >
-  {currentlyReading && <span class="book-reading-chip">Reading</span>}
-  <div class="book-cover">
-    <div class="book-inner">
-      <p class="book-title">{title}</p>
-      <p class="book-author">{author}</p>
-      {year && <p class="book-year">{year}</p>}
+  {currentlyReading && (
+    <span class="absolute top-3 right-3 z-[2] font-mono text-micro font-medium text-ink bg-canvas border border-coral px-2.5 py-1 rounded-pill tracking-[0.02em] uppercase">
+      Reading
+    </span>
+  )}
+  <div class="flex-1 p-5 flex flex-col justify-end overflow-hidden relative" style={`background: var(--book-color);`}>
+    <div class="relative z-[1] flex flex-col gap-1">
+      <p class="font-display text-card-heading font-normal text-on-dark leading-[1.1] tracking-[-0.02em] m-0">{title}</p>
+      <p class="font-sans text-caption text-on-dark/78 font-normal m-0">{author}</p>
+      {year && <p class="font-mono text-micro text-on-dark/55 mt-1 tracking-[0.02em] m-0">{year}</p>}
     </div>
   </div>
 </div>
-
-<style>
-  .book-tile {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 2 / 3;
-    display: flex;
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    border: 1px solid transparent;
-    transition: border-color var(--duration-button) ease;
-  }
-
-  .book-tile:hover {
-    border-color: var(--color-border-light);
-  }
-
-  .book-cover {
-    flex: 1;
-    background: var(--book-color);
-    padding: var(--spacing-7);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .book-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-2);
-  }
-
-  .book-title {
-    font-family: var(--font-display);
-    font-size: var(--text-card-heading);
-    font-weight: 400;
-    color: var(--color-on-dark);
-    line-height: 1.1;
-    letter-spacing: var(--tracking-display-tight);
-    margin: 0;
-  }
-
-  .book-author {
-    font-family: var(--font-sans);
-    font-size: var(--text-caption);
-    color: var(--color-on-dark);
-    opacity: 0.78;
-    font-weight: 400;
-    margin: 0;
-  }
-
-  .book-year {
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    color: var(--color-on-dark);
-    opacity: 0.55;
-    margin: 0;
-    margin-top: var(--spacing-2);
-    letter-spacing: var(--tracking-mono);
-  }
-
-  /* Currently-reading coral pill in the top-right (DESIGN.md §2 — coral, not gold). */
-  .book-reading-chip {
-    position: absolute;
-    top: var(--spacing-3);
-    right: var(--spacing-3);
-    z-index: 2;
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    font-weight: 500;
-    color: var(--color-ink);
-    background: var(--color-canvas);
-    border: 1px solid var(--color-coral);
-    padding: 4px 10px;
-    border-radius: var(--radius-pill);
-    letter-spacing: var(--tracking-mono);
-    text-transform: uppercase;
-  }
-</style>

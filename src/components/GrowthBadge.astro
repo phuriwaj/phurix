@@ -29,55 +29,26 @@ const config = {
 };
 
 const { icon, label } = config[stage];
+
+const stageClass = {
+  seedling: 'text-action-blue bg-pale-blue-wash',
+  growing: 'text-coral-text bg-coral/10',
+  evergreen: 'text-evergreen-text bg-pale-green-wash',
+}[stage];
+
+const sizeClass = size === 'md' ? 'text-caption' : 'text-micro';
 ---
 
-<span class:list={['growth-badge', `growth-${stage}`, `growth-size-${size}`, className]} aria-label={`Growth stage: ${label}`}>
-  <span class="growth-icon" aria-hidden="true" set:html={icon} />
-  <span class="growth-label">{label}</span>
+<span
+  class:list={[
+    'inline-flex items-center gap-1 font-mono font-medium uppercase px-2 py-0.5 rounded-pill border border-current leading-snug',
+    'tracking-[0.02em]',
+    sizeClass,
+    stageClass,
+    className,
+  ]}
+  aria-label={`Growth stage: ${label}`}
+>
+  <span class="inline-flex items-center leading-none" aria-hidden="true" set:html={icon} />
+  <span>{label}</span>
 </span>
-
-<style>
-  .growth-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4em;
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    font-weight: 500;
-    letter-spacing: var(--tracking-mono);
-    text-transform: uppercase;
-    padding: 2px 8px;
-    border-radius: var(--radius-pill);
-    border: 1px solid currentColor;
-    line-height: 1.4;
-  }
-
-  .growth-size-md {
-    font-size: var(--text-caption);
-  }
-
-  .growth-seedling {
-    color: var(--color-action-blue);
-    background: var(--color-pale-blue-wash);
-  }
-
-  .growth-growing {
-    color: var(--color-coral-text);
-    background: color-mix(in srgb, var(--color-coral) 14%, var(--color-canvas));
-  }
-
-  .growth-evergreen {
-    color: var(--color-evergreen-text);
-    background: var(--color-pale-green-wash);
-  }
-
-  .growth-icon {
-    display: inline-flex;
-    align-items: center;
-    line-height: 0;
-  }
-
-  .growth-label {
-    font-size: inherit;
-  }
-</style>

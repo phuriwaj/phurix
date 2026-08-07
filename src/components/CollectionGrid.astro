@@ -1,8 +1,9 @@
 ---
 /**
- * CollectionGrid — responsive grid container for garden/card collections.
- * 1 col mobile → 2 col tablet → 3 col desktop.
+ * CollectionGrid — responsive grid layout for content collections.
+ * 1 col mobile → 2 col tablet (≥768px) → 3 col desktop (≥1024px).
  * Optional `tone` prop tints the grid background for a wash effect.
+ * Cite as: DESIGN.md §5 (Spacing — gap scale + grid breakpoints).
  */
 interface Props {
   cols?: 1 | 2 | 3;
@@ -13,44 +14,27 @@ interface Props {
 }
 
 const { cols = 3, gap = 'md', tone = 'none', class: className = '' } = Astro.props;
+
+const gapClass = {
+  sm: 'gap-7',
+  md: 'gap-10',
+  lg: 'gap-12',
+}[gap];
+
+const colsClass = {
+  1: 'grid-cols-1',
+  2: 'grid-cols-1 md:grid-cols-2',
+  3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+}[cols];
+
+const toneClass =
+  tone === 'pale-green'
+    ? 'bg-pale-green-wash p-10 rounded-md'
+    : tone === 'pale-blue'
+      ? 'bg-pale-blue-wash p-10 rounded-md'
+      : 'bg-transparent';
 ---
 
-<div class:list={['collection-grid', `cols-${cols}`, `gap-${gap}`, `tone-${tone}`, className]}>
+<div class:list={['grid', colsClass, gapClass, toneClass, className]}>
   <slot />
 </div>
-
-<style>
-  .collection-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .gap-sm { gap: var(--spacing-7); }
-  .gap-md { gap: var(--spacing-10); }
-  .gap-lg { gap: var(--spacing-12); }
-
-  .tone-none { background: transparent; }
-  .tone-pale-green {
-    background: var(--color-pale-green-wash);
-    padding: var(--spacing-10);
-    border-radius: var(--radius-md);
-  }
-  .tone-pale-blue {
-    background: var(--color-pale-blue-wash);
-    padding: var(--spacing-10);
-    border-radius: var(--radius-md);
-  }
-
-  @media (min-width: 768px) {
-    .cols-2,
-    .cols-3 {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .cols-3 {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-</style>

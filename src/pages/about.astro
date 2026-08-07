@@ -5,7 +5,7 @@
  */
 import Layout from '@/layouts/Layout.astro';
 import Card from '@/components/Card.astro';
-import Button from '@/components/Button.astro';
+import { Button } from '@/components/ui/button';
 import Timeline from '@/components/Timeline.astro';
 import TopicPhoto from '@/components/TopicPhoto.astro';
 import TopicChip from '@/components/TopicChip.astro';
@@ -151,7 +151,9 @@ const talks = allTalks
   <section class="container-phx section">
     <header class="section-header section-header-row">
       <h2 class="section-heading">Projects</h2>
-      <Button variant="outline" href="/projects">All projects →</Button>
+      <Button asChild variant="outline" className="rounded-full h-auto px-6 py-3 text-base">
+        <a href="/projects">All projects →</a>
+      </Button>
     </header>
     <div class="project-grid">
       {projects.map((p) => (
@@ -163,9 +165,13 @@ const talks = allTalks
           </div>
           <div class="project-cta">
             {p.data.url ? (
-              <Button variant="outline" size="sm" href={p.data.url}>View project</Button>
+              <Button asChild variant="outline" size="sm" className="rounded-full h-auto px-4 py-1.5 text-sm">
+                <a href={p.data.url}>View project</a>
+              </Button>
             ) : (
-              <Button variant="outline" size="sm" href="/contact">Discuss this project</Button>
+              <Button asChild variant="outline" size="sm" className="rounded-full h-auto px-4 py-1.5 text-sm">
+                <a href="/contact">Discuss this project</a>
+              </Button>
             )}
           </div>
         </Card>
@@ -176,7 +182,9 @@ const talks = allTalks
   <section class="container-phx section">
     <header class="section-header section-header-row">
       <h2 class="section-heading">Talks</h2>
-      <Button variant="outline" href="/talks">All talks →</Button>
+      <Button asChild variant="outline" className="rounded-full h-auto px-6 py-3 text-base">
+        <a href="/talks">All talks →</a>
+      </Button>
     </header>
     <CollectionGrid cols={3} gap="md">
       {talks.map((talk) => (
@@ -203,8 +211,12 @@ const talks = allTalks
 
   <section class="container-phx section cta-section">
     <div class="cta-row">
-      <Button variant="primary" href="/garden">See my work</Button>
-      <Button variant="outline" href="/contact">Get in touch</Button>
+      <Button asChild variant="default" className="rounded-full h-auto px-6 py-3 text-base">
+        <a href="/garden">See my work</a>
+      </Button>
+      <Button asChild variant="outline" className="rounded-full h-auto px-6 py-3 text-base">
+        <a href="/contact">Get in touch</a>
+      </Button>
     </div>
   </section>
 </Layout>

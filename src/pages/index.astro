@@ -10,7 +10,7 @@ import Layout from '@/layouts/Layout.astro';
 import { HeroSection } from '@/components/blocks/hero-section-5';
 import GardenCard from '@/components/GardenCard.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
-import Button from '@/components/Button.astro';
+import { Button } from '@/components/ui/button';
 import CuratedPicks from '@/components/CuratedPicks.astro';
 import NewsletterBand from '@/components/NewsletterBand.astro';
 import BookTile from '@/components/BookTile.astro';
@@ -67,7 +67,9 @@ for (const pick of curatedPicks) {
   <section class="section-preview container-phx section">
     <div class="preview-header">
       <h2>Essays</h2>
-      <Button variant="outline" href="/essays">All essays →</Button>
+      <Button asChild variant="outline" className="rounded-full h-auto px-6 py-3 text-base">
+        <a href="/essays">All essays →</a>
+      </Button>
     </div>
     <CollectionGrid cols={3} gap="md">
       {recentEssays.map((essay) => (
@@ -86,7 +88,9 @@ for (const pick of curatedPicks) {
   <section class="section-preview container-phx section">
     <div class="preview-header">
       <h2>Notes</h2>
-      <Button variant="outline" href="/notes">All notes →</Button>
+      <Button asChild variant="outline" className="rounded-full h-auto px-6 py-3 text-base">
+        <a href="/notes">All notes →</a>
+      </Button>
     </div>
     <CollectionGrid cols={3} gap="md">
       {recentNotes.map((note) => (
@@ -106,7 +110,9 @@ for (const pick of curatedPicks) {
   <section class="section-preview container-phx section">
     <div class="preview-header">
       <h2>Patterns</h2>
-      <Button variant="outline" href="/patterns">All patterns →</Button>
+      <Button asChild variant="outline" className="rounded-full h-auto px-6 py-3 text-base">
+        <a href="/patterns">All patterns →</a>
+      </Button>
     </div>
     <CollectionGrid cols={3} gap="md">
       {recentPatterns.map((pattern) => (
@@ -125,7 +131,9 @@ for (const pick of curatedPicks) {
   <section class="section-preview container-phx section">
     <div class="preview-header">
       <h2>Library</h2>
-      <Button variant="outline" href="/library">Browse the library →</Button>
+      <Button asChild variant="outline" className="rounded-full h-auto px-6 py-3 text-base">
+        <a href="/library">Browse the library →</a>
+      </Button>
     </div>
     <div class="library-strip">
       {recentBooks.map((book) => (
