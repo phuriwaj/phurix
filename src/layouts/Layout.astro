@@ -83,6 +83,13 @@ const fullTitle = title === 'phurix' ? title : `${title} — phurix`;
     {/* Lora (serif) and Space Grotesk (display) — build-time downloaded via Astro Fonts API. */}
     <Font cssVariable="--font-serif" preload />
     <Font cssVariable="--font-display" preload />
+
+    {/* PostHog analytics — bundled once by Vite, deduped across pages.
+        No-op when PUBLIC_POSTHOG_KEY is unset (see src/scripts/posthog-init.ts). */}
+    <script>
+      import '@/scripts/posthog-init';
+    </script>
+
     <ClientRouter />
   </head>
   <body>

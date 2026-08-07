@@ -26,6 +26,7 @@
     "lucide-react": "^1.29.0",
     "minisearch": "^7.2.0",
     "motion": "^13.0.0",
+    "posthog-js": "^1.414.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-use-measure": "^2.1.7",
