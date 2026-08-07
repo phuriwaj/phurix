@@ -12,6 +12,10 @@ node_modules/
 .env
 .env.*
 !.env.example
+!.env.posthog.example
+
+# Self-hosted PostHog server clone (created by scripts/posthog-up.sh)
+.posthog-server/
 
 # Editor directories
 .DS_Store
