@@ -23,18 +23,18 @@ const entriesJson = JSON.stringify(entries);
   title={q ? `Search: ${q}` : 'Search'}
   description="Search notes, essays, patterns, books, talks, projects, and practices."
 >
-  <section class="page-header-section">
+  <section class="py-15 bg-canvas border-b border-hairline">
     <div class="container-phx">
-      <a href="/" class="search-back">← Back home</a>
-      <h1 class="page-title">Search</h1>
-      <p class="page-lede">
+      <a href="/" class="inline-block text-muted-slate text-caption no-underline mb-4 transition-colors duration-button ease hover:text-heading">← Back home</a>
+      <h1 class="font-display font-normal text-heading leading-[1.1] tracking-display-tight text-[clamp(3.2rem,6vw,4.8rem)] mb-5">Search</h1>
+      <p class="font-serif text-body-lg leading-[1.5] text-muted-slate max-w-[60ch]">
         Notes, essays, patterns, books, talks, projects, and practices.
       </p>
-      <form class="search-page-form" role="search" data-search-page-form>
+      <form role="search" data-search-page-form class="mt-7">
         <label class="sr-only" for="search-page-input">Search query</label>
         <input
           id="search-page-input"
-          class="search-page-input"
+          class="w-full max-w-[600px] h-12 px-5 font-sans text-body-lg text-ink bg-canvas border border-hairline rounded-xs outline-none transition-[border-color,box-shadow] duration-button ease focus:border-focus-blue focus:shadow-focus-ring"
           type="search"
           name="q"
           value={q}
@@ -50,11 +50,11 @@ const entriesJson = JSON.stringify(entries);
     {q ? (
       <div data-search-page-results></div>
     ) : (
-      <div class="search-empty" data-search-page-empty>
+      <div class="py-8 text-muted-slate text-body" data-search-page-empty>
         <p>Type a query above to search across the site.</p>
       </div>
     )}
-    <div class="search-empty" data-search-page-no-results hidden>
+    <div class="py-8 text-muted-slate text-body [&_a]:text-action-blue [&_a]:no-underline hover:[&_a]:underline" data-search-page-no-results hidden>
       <p>No results for that query.</p>
       <p>
         Try a different word, or <a href="/garden/">browse the garden</a>.
@@ -63,132 +63,12 @@ const entriesJson = JSON.stringify(entries);
   </section>
 </Layout>
 
-<style>
-  .search-back {
-    display: inline-block;
-    color: var(--color-muted-slate);
-    font-size: var(--text-caption);
-    text-decoration: none;
-    margin-bottom: var(--spacing-4);
-  }
-
-  .search-back:hover { color: var(--color-heading); }
-
-  .search-page-form {
-    margin-top: var(--spacing-7);
-  }
-
-  .search-page-input {
-    width: 100%;
-    max-width: 600px;
-    height: 48px;
-    padding: 0 var(--spacing-5);
-    font-family: var(--font-sans);
-    font-size: var(--text-body-lg);
-    color: var(--color-ink);
-    background: var(--color-canvas);
-    border: 1px solid var(--color-hairline);
-    border-radius: var(--radius-xs);
-    outline: none;
-    transition: border-color var(--duration-button) ease,
-      box-shadow var(--duration-button) ease;
-  }
-
-  .search-page-input:focus {
-    border-color: var(--color-focus-blue);
-    box-shadow: var(--shadow-focus-ring);
-  }
-
-  .search-empty {
-    padding: var(--spacing-8) 0;
-    color: var(--color-muted-slate);
-    font-size: var(--text-body);
-  }
-
-  .search-empty a {
-    color: var(--color-action-blue);
-    text-decoration: none;
-  }
-  .search-empty a:hover { text-decoration: underline; }
-
-  .result-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-5);
-  }
-
-  .result-item {
-    border: 1px solid var(--color-hairline);
-    border-radius: var(--radius-md);
-    background: var(--color-canvas);
-    padding: var(--spacing-5) var(--spacing-7);
-    transition: box-shadow var(--duration-button) ease,
-      border-color var(--duration-button) ease;
-  }
-
-  .result-item:hover {
-    box-shadow: var(--shadow-card);
-    border-color: var(--color-border-light);
-  }
-
-  .result-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .result-meta {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-4);
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    color: var(--color-muted-slate);
-    margin-bottom: var(--spacing-2);
-    letter-spacing: var(--tracking-mono);
-    text-transform: uppercase;
-  }
-
-  .result-type {
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-    font-weight: 500;
-    color: var(--color-coral-text);
-  }
-
-  .result-title {
-    font-family: var(--font-display);
-    font-size: var(--text-body-lg);
-    font-weight: 400;
-    color: var(--color-ink);
-    line-height: var(--leading-body);
-    letter-spacing: var(--tracking-display-tight);
-    margin: 0 0 var(--spacing-2) 0;
-  }
-
-  .result-excerpt {
-    font-family: var(--font-sans);
-    font-size: var(--text-body);
-    color: var(--color-muted-slate);
-    line-height: var(--leading-body);
-    margin: 0;
-  }
-</style>
-
 <script is:inline define:vars={{ entriesJson, initialQuery: q }}>
   window.__SEARCHPAGE_DATA__ = entriesJson;
   window.__SEARCHPAGE_QUERY__ = initialQuery;
 </script>
 
 <script>
-  // /search — client-side search runtime.
-  // Reads the build-time index, runs MiniSearch against `?q=` and renders
-  // results into [data-search-page-results]. Submits reload with ?q=... so
-  // the URL is shareable.
-
   import MiniSearch from 'minisearch';
 
   type SearchableEntry = {
@@ -340,3 +220,74 @@ const entriesJson = JSON.stringify(entries);
 
   document.addEventListener('astro:page-load', init);
 </script>
+
+<style>
+  /* Result-list styles for HTML injected by the script — Tailwind can't
+     reach into JS-rendered markup cleanly, so a small scoped sheet covers
+     the dynamic result rows. */
+  .result-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+  }
+
+  .result-item {
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    background: var(--color-canvas);
+    padding: var(--spacing-5) var(--spacing-7);
+    transition: box-shadow var(--duration-button) ease,
+      border-color var(--duration-button) ease;
+  }
+
+  .result-item:hover {
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-border-light);
+  }
+
+  .result-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .result-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-muted-slate);
+    margin-bottom: var(--spacing-2);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+  }
+
+  .result-type {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    font-weight: 500;
+    color: var(--color-coral-text);
+  }
+
+  .result-title {
+    font-family: var(--font-display);
+    font-size: var(--text-body-lg);
+    font-weight: 400;
+    color: var(--color-ink);
+    line-height: var(--leading-body);
+    letter-spacing: var(--tracking-display-tight);
+    margin: 0 0 var(--spacing-2) 0;
+  }
+
+  .result-excerpt {
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    color: var(--color-muted-slate);
+    line-height: var(--leading-body);
+    margin: 0;
+  }
+</style>

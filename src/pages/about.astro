@@ -71,11 +71,11 @@ const talks = allTalks
   title="About — phurix"
   description="About Phuriwaj, web developer and designer based in Bangkok."
 >
-  <section class="page-header-section">
+  <section class="py-15 md:py-15 bg-soft-stone border-b border-hairline">
     <div class="container-phx">
-      <p class="section-eyebrow">About</p>
-      <h1 class="page-title">Phuriwaj Ruengnaowaroj</h1>
-      <p class="page-lede">
+      <p class="font-mono text-mono-label font-medium uppercase tracking-mono text-coral-text mb-4">About</p>
+      <h1 class="font-display font-normal text-heading leading-[1.1] tracking-display-tight text-[clamp(3.2rem,6vw,4.8rem)] mb-5">Phuriwaj Ruengnaowaroj</h1>
+      <p class="font-sans text-body-lg leading-[1.5] text-ink max-w-[60ch]">
         I'm a web developer and designer based in Bangkok, building
         thoughtful interfaces and the systems that hold them together.
       </p>
@@ -83,11 +83,11 @@ const talks = allTalks
   </section>
 
   <section class="container-phx section">
-    <div class="identity-grid">
-      <div class="identity-photo">
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_18rem] gap-12 lg:gap-15 items-start">
+      <div class="rounded-lg overflow-hidden order-first lg:order-none">
         <TopicPhoto topic="anthropology" scale="portrait" showCredit={true} />
       </div>
-      <div class="prose identity-prose">
+      <div class="prose max-w-[65ch]">
         <p>
           I'm a web developer and designer based in Bangkok, working at
           the intersection of design systems and the everyday interfaces
@@ -119,51 +119,51 @@ const talks = allTalks
     </div>
   </section>
 
-  <section class="container-phx section subscribe-section">
+  <section class="container-phx py-12 lg:py-15">
     <NewsletterBand />
   </section>
 
   <section class="container-phx section">
-    <header class="section-header">
-      <h2 class="section-heading">Now</h2>
+    <header class="mb-8">
+      <h2 class="font-display text-card-heading font-normal text-heading">Now</h2>
     </header>
-    <p class="now-section-subhead">
+    <p class="font-serif text-body text-muted-slate mb-8 leading-[1.5]">
       A short preview of what I'm up to.
-      <a href="/now" class="section-link">See the full /now →</a>
+      <a href="/now" class="text-action-blue underline underline-offset-2 ms-4 transition-colors duration-button ease hover:text-heading">See the full /now →</a>
     </p>
-    <div class="now-preview">
+    <div class="flex flex-col gap-5">
       {nowPreview.map((item) => (
-        <div class="now-preview-row">
-          <span class="now-preview-label">{item.label}</span>
-          <span class="now-preview-value">{item.value}</span>
+        <div class="flex flex-wrap items-baseline gap-5">
+          <span class="font-mono text-micro font-medium uppercase tracking-mono text-coral-text flex-shrink-0 min-w-[9rem]">{item.label}</span>
+          <span class="font-sans text-body text-ink leading-[1.5]">{item.value}</span>
         </div>
       ))}
     </div>
   </section>
 
   <section class="container-phx section">
-    <header class="section-header">
-      <h2 class="section-heading">Work History</h2>
+    <header class="mb-8">
+      <h2 class="font-display text-card-heading font-normal text-heading">Work History</h2>
     </header>
     <Timeline entries={workHistory} />
   </section>
 
   <section class="container-phx section">
-    <header class="section-header section-header-row">
-      <h2 class="section-heading">Projects</h2>
+    <header class="flex flex-wrap items-baseline justify-between gap-5 mb-8">
+      <h2 class="font-display text-card-heading font-normal text-heading">Projects</h2>
       <Button asChild variant="outline" className="rounded-full h-auto px-6 py-3 text-base">
         <a href="/projects">All projects →</a>
       </Button>
     </header>
-    <div class="project-grid">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
       {projects.map((p) => (
         <Card emphasis="bordered">
-          <h3 class="project-title">{p.data.title}</h3>
-          <p class="project-desc">{p.data.desc}</p>
-          <div class="tag-row">
+          <h3 class="font-display text-feature-heading font-normal text-heading mb-4 tracking-display-tight">{p.data.title}</h3>
+          <p class="font-sans text-muted-slate leading-[1.5] mb-5">{p.data.desc}</p>
+          <div class="flex flex-wrap gap-2 mb-7">
             {p.data.tags.map((t) => <TopicChip label={t} size="sm" />)}
           </div>
-          <div class="project-cta">
+          <div class="mt-auto">
             {p.data.url ? (
               <Button asChild variant="outline" size="sm" className="rounded-full h-auto px-4 py-1.5 text-sm">
                 <a href={p.data.url}>View project</a>
@@ -180,8 +180,8 @@ const talks = allTalks
   </section>
 
   <section class="container-phx section">
-    <header class="section-header section-header-row">
-      <h2 class="section-heading">Talks</h2>
+    <header class="flex flex-wrap items-baseline justify-between gap-5 mb-8">
+      <h2 class="font-display text-card-heading font-normal text-heading">Talks</h2>
       <Button asChild variant="outline" className="rounded-full h-auto px-6 py-3 text-base">
         <a href="/talks">All talks →</a>
       </Button>
@@ -201,16 +201,16 @@ const talks = allTalks
   </section>
 
   <section class="container-phx section">
-    <header class="section-header">
-      <h2 class="section-heading">Skills</h2>
+    <header class="mb-8">
+      <h2 class="font-display text-card-heading font-normal text-heading">Skills</h2>
     </header>
-    <ul class="skill-grid">
+    <ul class="list-none p-0 m-0 flex flex-wrap gap-4">
       {skills.map((s) => <li><TopicChip label={s} size="sm" /></li>)}
     </ul>
   </section>
 
-  <section class="container-phx section cta-section">
-    <div class="cta-row">
+  <section class="container-phx section pt-0">
+    <div class="flex flex-wrap gap-5">
       <Button asChild variant="default" className="rounded-full h-auto px-6 py-3 text-base">
         <a href="/garden">See my work</a>
       </Button>
@@ -220,213 +220,3 @@ const talks = allTalks
     </div>
   </section>
 </Layout>
-
-<style>
-  /* --- Page header ---------------------------------------------------- */
-  .page-header-section {
-    padding-block: var(--spacing-15) var(--spacing-10);
-    background: var(--color-soft-stone);
-    border-bottom: 1px solid var(--color-hairline);
-  }
-
-  .section-eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-label);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-    color: var(--color-coral-text);
-    font-weight: 500;
-    margin-bottom: var(--spacing-4);
-  }
-
-  .page-title {
-    font-family: var(--font-display);
-    font-size: clamp(3.2rem, 6vw, 4.8rem);
-    font-weight: 400;
-    color: var(--color-heading);
-    line-height: 1.1;
-    letter-spacing: var(--tracking-display-tight);
-    margin-bottom: var(--spacing-5);
-  }
-
-  .page-lede {
-    font-family: var(--font-sans);
-    font-size: var(--text-body-lg);
-    line-height: 1.5;
-    color: var(--color-ink);
-    max-width: 60ch;
-  }
-
-  /* --- Section header (h2 + optional right CTA) ---------------------- */
-  .section-header {
-    margin-bottom: var(--spacing-8);
-  }
-
-  .section-header-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--spacing-5);
-  }
-
-  .section-heading {
-    font-family: var(--font-display);
-    font-size: var(--text-card-heading);
-    font-weight: 400;
-    color: var(--color-heading);
-  }
-
-  .section-link {
-    color: var(--color-action-blue);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    margin-inline-start: var(--spacing-4);
-    transition: color var(--duration-button) ease;
-  }
-
-  .section-link:hover {
-    color: var(--color-heading);
-  }
-
-  /* --- Identity grid: prose + portrait photo ------------------------- */
-  .identity-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--spacing-12);
-    align-items: start;
-  }
-
-  @media (min-width: 1024px) {
-    .identity-grid {
-      grid-template-columns: 1fr 18rem;
-      gap: var(--spacing-15);
-    }
-  }
-
-  .identity-photo {
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    order: -1;
-  }
-
-  @media (min-width: 1024px) {
-    .identity-photo {
-      order: 0;
-    }
-  }
-
-  .identity-prose {
-    max-width: 65ch;
-  }
-
-  /* --- Subscribe band wrapper ---------------------------------------- */
-  .subscribe-section {
-    padding-block: var(--spacing-12);
-  }
-
-  @media (min-width: 1024px) {
-    .subscribe-section {
-      padding-block: var(--spacing-15);
-    }
-  }
-
-  /* --- Now preview --------------------------------------------------- */
-  .now-section-subhead {
-    font-family: var(--font-serif);
-    font-size: var(--text-body);
-    color: var(--color-muted-slate);
-    margin-bottom: var(--spacing-8);
-    line-height: 1.5;
-  }
-
-  .now-preview {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-5);
-  }
-
-  .now-preview-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--spacing-5);
-  }
-
-  .now-preview-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-    color: var(--color-coral-text);
-    flex-shrink: 0;
-    min-width: 9rem;
-  }
-
-  .now-preview-value {
-    font-family: var(--font-sans);
-    font-size: var(--text-body);
-    color: var(--color-ink);
-    line-height: 1.5;
-  }
-
-  /* --- Projects grid ------------------------------------------------- */
-  .project-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--spacing-7);
-  }
-
-  @media (min-width: 768px) {
-    .project-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-
-  .project-title {
-    font-family: var(--font-display);
-    font-size: var(--text-feature-heading);
-    font-weight: 400;
-    color: var(--color-heading);
-    margin-bottom: var(--spacing-4);
-    letter-spacing: var(--tracking-display-tight);
-  }
-
-  .project-desc {
-    font-family: var(--font-sans);
-    color: var(--color-muted-slate);
-    line-height: 1.5;
-    margin-bottom: var(--spacing-5);
-  }
-
-  .tag-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-2);
-    margin-bottom: var(--spacing-7);
-  }
-
-  .project-cta {
-    margin-top: auto;
-  }
-
-  /* --- Skills -------------------------------------------------------- */
-  .skill-grid {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-4);
-  }
-
-  /* --- CTA ----------------------------------------------------------- */
-  .cta-section {
-    padding-top: 0;
-  }
-
-  .cta-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-5);
-  }
-</style>

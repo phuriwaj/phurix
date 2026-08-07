@@ -16,32 +16,32 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 ---
 
 <Layout title="Now — phurix" description="What Phuriwaj is up to right now." hideAnnouncement>
-  <section class="page-header-section">
+  <section class="py-15 bg-canvas border-b border-hairline">
     <div class="container-phx">
-      <p class="section-eyebrow">Now</p>
-      <h1 class="page-title">What I'm up to</h1>
-      <p class="page-lede">
+      <p class="font-mono text-mono-label font-medium uppercase tracking-mono text-coral-text mb-4">Now</p>
+      <h1 class="font-display font-normal text-heading leading-[1.1] tracking-display-tight text-[clamp(3.2rem,6vw,4.8rem)] mb-5">What I'm up to</h1>
+      <p class="font-serif text-body-lg leading-[1.5] text-muted-slate max-w-[60ch]">
         A snapshot of life right now — location, work, reading, and thoughts in
         progress. Updated occasionally, not on a schedule.
       </p>
-      <p class="now-last-updated">
+      <p class="font-mono text-micro text-muted-slate mt-4 tracking-mono uppercase">
         Updated <time datetime={lastUpdatedDate.toISOString()}>{formattedDate}</time>
       </p>
     </div>
   </section>
 
-  <section class="container-phx section now-sections">
-    <dl class="now-list">
+  <section class="container-phx py-12">
+    <dl class="list-none p-0 m-0 max-w-[65ch]">
       {nowItems.map((item) => (
-        <div class="now-item">
-          <dt class="now-label">{item.label}</dt>
-          <dd class="now-value">
+        <div class="flex flex-col gap-4 py-8 border-b border-hairline first:border-t border-hairline">
+          <dt class="font-mono text-mono-label font-medium text-coral-text uppercase tracking-mono m-0">{item.label}</dt>
+          <dd class="m-0">
             {'value' in item ? (
-              <p>{item.value}</p>
+              <p class="font-sans text-body leading-[1.5] text-ink m-0">{item.value}</p>
             ) : (
-              <ul class="reading-list">
+              <ul class="list-none p-0 m-0 flex flex-col gap-2">
                 {item.list.map((entry) => (
-                  <li>{entry}</li>
+                  <li class="font-sans text-body text-ink leading-[1.5] before:content-['—_'] before:text-muted-slate">{entry}</li>
                 ))}
               </ul>
             )}
@@ -51,114 +51,3 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
     </dl>
   </section>
 </Layout>
-
-<style>
-  .page-header-section {
-    padding-block: var(--spacing-15) var(--spacing-10);
-    background: var(--color-canvas);
-    border-bottom: 1px solid var(--color-hairline);
-  }
-
-  .section-eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-label);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-    color: var(--color-coral-text);
-    font-weight: 500;
-    margin-bottom: var(--spacing-4);
-  }
-
-  .page-title {
-    font-family: var(--font-display);
-    font-size: clamp(3.2rem, 6vw, 4.8rem);
-    font-weight: 400;
-    color: var(--color-heading);
-    line-height: 1.1;
-    letter-spacing: var(--tracking-display-tight);
-    margin-bottom: var(--spacing-5);
-  }
-
-  .page-lede {
-    font-family: var(--font-serif);
-    font-size: var(--text-body-lg);
-    line-height: 1.5;
-    color: var(--color-muted-slate);
-    max-width: 60ch;
-  }
-
-  .now-last-updated {
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    color: var(--color-muted-slate);
-    margin-block-start: var(--spacing-4);
-    letter-spacing: var(--tracking-mono);
-    text-transform: uppercase;
-  }
-
-  .now-sections {
-    padding-block: var(--spacing-12);
-  }
-
-  .now-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    max-width: 65ch;
-  }
-
-  .now-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-4);
-    padding-block: var(--spacing-8);
-    border-bottom: 1px solid var(--color-hairline);
-  }
-
-  .now-item:first-child {
-    border-top: 1px solid var(--color-hairline);
-  }
-
-  .now-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-label);
-    font-weight: 500;
-    color: var(--color-coral-text);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-    margin: 0;
-  }
-
-  .now-value {
-    margin: 0;
-  }
-
-  .now-value p {
-    font-family: var(--font-sans);
-    font-size: var(--text-body);
-    line-height: 1.5;
-    color: var(--color-ink);
-    margin: 0;
-  }
-
-  .reading-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-2);
-  }
-
-  .reading-list li {
-    font-family: var(--font-sans);
-    font-size: var(--text-body);
-    color: var(--color-ink);
-    line-height: 1.5;
-  }
-
-  .reading-list li::before {
-    content: '— ';
-    color: var(--color-muted-slate);
-  }
-</style>

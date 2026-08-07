@@ -26,8 +26,8 @@ const manifest = [
     <meta name="robots" content="noindex" />
     <title>Redirecting…</title>
   </head>
-  <body>
-    <main class="random-interstitial">
+  <body class="m-0 p-0 h-screen font-display text-body-lg text-muted-slate bg-canvas flex items-center justify-center text-center p-8 [&_p]:m-0 [&_a]:text-action-blue [&_a]:underline">
+    <main>
       <p>Picking a random post…</p>
       <noscript>
         <p>
@@ -44,21 +44,5 @@ const manifest = [
         window.location.replace('/garden/');
       }
     </script>
-    <style>
-      html, body { margin: 0; padding: 0; height: 100%; }
-      body {
-        font-family: var(--font-display);
-        font-size: var(--text-body-lg);
-        color: var(--color-muted-slate);
-        background: var(--color-canvas);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: var(--spacing-8);
-      }
-      .random-interstitial p { margin: 0; }
-      a { color: var(--color-action-blue); text-decoration: underline; }
-    </style>
   </body>
 </html>
