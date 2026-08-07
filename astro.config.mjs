@@ -11,6 +11,10 @@ export default defineConfig({
   site: 'https://phurix.dev',
   output: 'static',
   trailingSlash: 'always',
+  // Allow tests/e2e/run.sh to direct the build output to a per-project
+  // directory (ASTRO_OUT_DIR=dist-configured, dist-disabled) so the two
+  // preview servers don't share state.
+  outDir: process.env.ASTRO_OUT_DIR ?? 'dist',
   server: {
     host: '0.0.0.0',
   },

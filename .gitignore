@@ -34,6 +34,16 @@ graphify-out/cost.json
 # Astro build cache
 .astro/
 
+# Test outputs
+dist-configured/   # posthog-configured e2e output (ASTRO_OUT_DIR override)
+dist-disabled/     # posthog-disabled e2e output
+test-results/      # Playwright per-test failures + traces
+tests/e2e/.preview-*.log
+
+# Playwright artifacts
+playwright-report/
+.playwright/
+
 # TypeScript cache
 *.tsbuildinfo
 
