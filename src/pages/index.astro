@@ -1,15 +1,16 @@
 ---
 /**
  * Home — `/` (DESIGN.md §4 — identity page).
- * Hero + curated picks + four recent strips (Essays / Notes / Patterns /
+ * Hero (now AnimatedHero.tsx — React island, mouse-parallax) +
+ * curated picks + four recent strips (Essays / Notes / Patterns /
  * Library) + dark-near-black Newsletter closing band.
  * Cite: DESIGN.md §4 (home).
  */
 import Layout from '@/layouts/Layout.astro';
+import AnimatedHero from '@/components/AnimatedHero.tsx';
 import GardenCard from '@/components/GardenCard.astro';
 import CollectionGrid from '@/components/CollectionGrid.astro';
 import Button from '@/components/Button.astro';
-import TopicPhoto from '@/components/TopicPhoto.astro';
 import CuratedPicks from '@/components/CuratedPicks.astro';
 import NewsletterBand from '@/components/NewsletterBand.astro';
 import BookTile from '@/components/BookTile.astro';
@@ -57,30 +58,7 @@ for (const pick of curatedPicks) {
 ---
 
 <Layout title="phurix" description="Personal website of Phuriwaj Ruengnaowaroj">
-  <section class="hero-section">
-    <div class="container-phx hero-grid">
-      <div class="hero-content">
-        <p class="hero-eyebrow">Phuriwaj Ruengnaowaroj</p>
-        <h1 class="hero-headline">
-          Writing about web craft, design systems, and the occasional deep dive.
-        </h1>
-        <p class="hero-lede">
-          A developer and designer thinking out loud about how interfaces
-          communicate — from component APIs to the grammar hiding in our
-          design tokens. Based in Bangkok, working on tooling for design
-          systems at scale.
-        </p>
-        <div class="hero-actions">
-          <Button variant="primary" href="/garden">Open the Garden</Button>
-          <Button variant="outline" href="/essays">Read the latest essay</Button>
-        </div>
-        <p class="hero-trust">Built with — Astro, Tailwind, MDX, Space Grotesk, Inter, JetBrains Mono</p>
-      </div>
-      <div class="hero-art">
-        <TopicPhoto topic="design" scale="lg" showCredit={true} />
-      </div>
-    </div>
-  </section>
+  <AnimatedHero client:load />
 
   <section class="container-phx curated-section section">
     <CuratedPicks items={curatedPicks} />
@@ -169,93 +147,6 @@ for (const pick of curatedPicks) {
 </Layout>
 
 <style>
-  /* Hero — full-bleed pale-blue wash, 2-col grid on desktop */
-  .hero-section {
-    padding-block: var(--spacing-15) var(--spacing-12);
-    background: var(--color-pale-blue-wash);
-    overflow: hidden;
-  }
-
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--spacing-12);
-    align-items: center;
-  }
-
-  @media (min-width: 1024px) {
-    .hero-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: var(--spacing-15);
-    }
-  }
-
-  .hero-content { min-width: 0; }
-
-  .hero-eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-label);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-    color: var(--color-coral-text);
-    font-weight: 500;
-    margin-bottom: var(--spacing-5);
-  }
-
-  .hero-headline {
-    font-family: var(--font-display);
-    font-size: clamp(4rem, 7vw, 6rem);
-    font-weight: 400;
-    color: var(--color-heading);
-    line-height: 1.05;
-    letter-spacing: var(--tracking-display-tight);
-    margin-bottom: var(--spacing-7);
-    max-width: 22ch;
-  }
-
-  .hero-lede {
-    font-family: var(--font-sans);
-    font-size: var(--text-body-lg);
-    line-height: 1.5;
-    color: var(--color-ink);
-    max-width: 60ch;
-    margin-bottom: var(--spacing-8);
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-5);
-    margin-bottom: var(--spacing-8);
-  }
-
-  .hero-trust {
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    color: var(--color-muted-slate);
-    letter-spacing: var(--tracking-mono);
-    text-transform: uppercase;
-    margin: 0;
-  }
-
-  .hero-art {
-    aspect-ratio: 16 / 9;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    background: var(--color-soft-stone);
-  }
-
-  .hero-art :global(svg),
-  .hero-art :global(img) {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  @media (max-width: 1023px) {
-    .hero-art { order: -1; }
-  }
-
   /* Curated picks strip — hairline above, no heading per brief */
   .curated-section {
     border-top: 1px solid var(--color-hairline);
