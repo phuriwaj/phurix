@@ -11,11 +11,11 @@ const projects = await getCollection('projects');
 ---
 
 <Layout title="Projects — phurix" description="Projects by phurix">
-  <section class="page-header-section">
+  <section class="py-15 bg-canvas border-b border-hairline">
     <div class="container-phx">
-      <p class="section-eyebrow">Projects</p>
-      <h1 class="page-title">Projects</h1>
-      <p class="page-lede">
+      <p class="font-mono text-mono-label font-medium uppercase tracking-mono text-coral-text mb-4">Projects</p>
+      <h1 class="font-display font-normal text-heading leading-[1.1] tracking-display-tight text-[clamp(3.2rem,6vw,4.8rem)] mb-5">Projects</h1>
+      <p class="font-serif text-body-lg leading-[1.5] text-muted-slate max-w-[60ch]">
         A small selection of recent projects — case studies available on
         request.
       </p>
@@ -23,14 +23,14 @@ const projects = await getCollection('projects');
   </section>
 
   <section class="container-phx section">
-    <ul class="project-list">
+    <ul class="list-none p-0 m-0">
       {projects.map((p) => (
-        <li id={p.id} class="project-row">
-          <div class="project-body">
-            <h2 class="project-title">{p.data.title}</h2>
-            <p class="project-desc">{p.data.desc}</p>
+        <li id={p.id} class="flex flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-12 py-8 border-b border-hairline first:border-t border-hairline">
+          <div class="flex-1 min-w-0">
+            <h2 class="font-display text-feature-heading font-normal text-ink m-0 mb-4 tracking-display-tight">{p.data.title}</h2>
+            <p class="font-sans text-muted-slate leading-[1.5] m-0 mb-5 max-w-[60ch]">{p.data.desc}</p>
             {p.data.tags && p.data.tags.length > 0 && (
-              <div class="tag-row">
+              <div class="flex flex-wrap gap-2">
                 {p.data.tags.map((t) => <TopicChip label={t} size="sm" />)}
               </div>
             )}
@@ -38,9 +38,9 @@ const projects = await getCollection('projects');
           {p.data.url && (
             <a
               href={p.data.url}
-              class="project-link"
               target="_blank"
               rel="noopener noreferrer"
+              class="inline-block font-sans text-caption font-medium text-action-blue no-underline whitespace-nowrap transition-colors duration-button ease hover:text-heading hover:underline hover:underline-offset-2"
             >
               View project →
             </a>
@@ -49,7 +49,7 @@ const projects = await getCollection('projects');
       ))}
     </ul>
 
-    <p class="projects-more">
+    <p class="font-serif text-body text-muted-slate mt-12 [&_a]:text-action-blue [&_a]:underline [&_a]:underline-offset-2 [&_a]:transition-colors [&_a]:duration-button [&_a]:ease [&_a:hover]:text-heading">
       More on <a
         href="https://github.com/phurix"
         target="_blank"
@@ -58,129 +58,3 @@ const projects = await getCollection('projects');
     </p>
   </section>
 </Layout>
-
-<style>
-  .page-header-section {
-    padding-block: var(--spacing-15) var(--spacing-10);
-    background: var(--color-canvas);
-    border-bottom: 1px solid var(--color-hairline);
-  }
-
-  .section-eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-label);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-    color: var(--color-coral-text);
-    font-weight: 500;
-    margin-bottom: var(--spacing-4);
-  }
-
-  .page-title {
-    font-family: var(--font-display);
-    font-size: clamp(3.2rem, 6vw, 4.8rem);
-    font-weight: 400;
-    color: var(--color-heading);
-    line-height: 1.1;
-    letter-spacing: var(--tracking-display-tight);
-    margin-bottom: var(--spacing-5);
-  }
-
-  .page-lede {
-    font-family: var(--font-serif);
-    font-size: var(--text-body-lg);
-    line-height: 1.5;
-    color: var(--color-muted-slate);
-    max-width: 60ch;
-  }
-
-  .project-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .project-row {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-5);
-    padding-block: var(--spacing-8);
-    border-bottom: 1px solid var(--color-hairline);
-  }
-
-  .project-row:first-child {
-    border-top: 1px solid var(--color-hairline);
-  }
-
-  @media (min-width: 768px) {
-    .project-row {
-      flex-direction: row;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: var(--spacing-12);
-    }
-  }
-
-  .project-body {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .project-title {
-    font-family: var(--font-display);
-    font-size: var(--text-feature-heading);
-    font-weight: 400;
-    color: var(--color-ink);
-    margin: 0 0 var(--spacing-4);
-    letter-spacing: var(--tracking-display-tight);
-  }
-
-  .project-desc {
-    font-family: var(--font-sans);
-    color: var(--color-muted-slate);
-    line-height: 1.5;
-    margin: 0 0 var(--spacing-5);
-    max-width: 60ch;
-  }
-
-  .tag-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-2);
-  }
-
-  .project-link {
-    display: inline-block;
-    font-family: var(--font-sans);
-    font-size: var(--text-caption);
-    font-weight: 500;
-    color: var(--color-action-blue);
-    text-decoration: none;
-    white-space: nowrap;
-    transition: color var(--duration-button) ease;
-  }
-
-  .project-link:hover {
-    color: var(--color-heading);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  .projects-more {
-    font-family: var(--font-serif);
-    font-size: var(--text-body);
-    color: var(--color-muted-slate);
-    margin-block-start: var(--spacing-12);
-  }
-
-  .projects-more a {
-    color: var(--color-action-blue);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    transition: color var(--duration-button) ease;
-  }
-
-  .projects-more a:hover {
-    color: var(--color-heading);
-  }
-</style>

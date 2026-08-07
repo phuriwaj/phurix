@@ -15,46 +15,16 @@ const allProjects = await getCollection('projects');
 const allBooks = await getCollection('books');
 
 const allEntries: MergedEntry[] = [
-  ...allEssays.map((e) => ({
-    ...e,
-    entryType: 'essay' as const,
-    displayDate: e.data.date,
-  })),
-  ...allNotes.map((n) => ({
-    ...n,
-    entryType: 'note' as const,
-    displayDate: n.data.date,
-  })),
-  ...allTalks.filter((t) => t.data.link).map((t) => ({
-    ...t,
-    entryType: 'talk' as const,
-    displayDate: t.data.date,
-  })),
-  ...allPatterns.map((p) => ({
-    ...p,
-    entryType: 'pattern' as const,
-    displayDate: p.data.date,
-  })),
-  ...allPractices.map((pr) => ({
-    ...pr,
-    entryType: 'practice' as const,
-    displayDate: pr.data.date,
-  })),
-  ...allProjects.map((p) => ({
-    ...p,
-    entryType: 'project' as const,
-    displayDate: dateFor(p),
-  })),
-  ...allBooks.map((b) => ({
-    ...b,
-    entryType: 'book' as const,
-    displayDate: dateFor(b),
-  })),
+  ...allEssays.map((e) => ({ ...e, entryType: 'essay' as const, displayDate: e.data.date })),
+  ...allNotes.map((n) => ({ ...n, entryType: 'note' as const, displayDate: n.data.date })),
+  ...allTalks.filter((t) => t.data.link).map((t) => ({ ...t, entryType: 'talk' as const, displayDate: t.data.date })),
+  ...allPatterns.map((p) => ({ ...p, entryType: 'pattern' as const, displayDate: p.data.date })),
+  ...allPractices.map((pr) => ({ ...pr, entryType: 'practice' as const, displayDate: pr.data.date })),
+  ...allProjects.map((p) => ({ ...p, entryType: 'project' as const, displayDate: dateFor(p) })),
+  ...allBooks.map((b) => ({ ...b, entryType: 'book' as const, displayDate: dateFor(b) })),
 ].sort((a, b) => b.displayDate.getTime() - a.displayDate.getTime());
 
-const allTopics = [
-  ...new Set(allEntries.flatMap((e) => normalize(e as AnyEntry).topics)),
-].sort();
+const allTopics = [...new Set(allEntries.flatMap((e) => normalize(e as AnyEntry).topics))].sort();
 
 const today = new Date();
 const onThisDayMatches = findOnThisDay(allEntries, today);
@@ -63,13 +33,17 @@ const onThisDayItems = onThisDayMatches.map((m) => ({
   href: hrefFor(m),
   year: m.displayDate.getFullYear(),
 }));
+
+// Filter chip shared base style — matches TopicChip 'md' outline.
+// aria-checked toggles active visual via utility classes below.
+const chipBase = 'inline-block font-mono uppercase tracking-[0.02em] bg-transparent text-coral-text border border-coral cursor-pointer leading-relaxed text-button py-1 px-3 rounded-pill transition-[background-color,color,border-color] duration-200 aria-checked:bg-coral aria-checked:text-cohere-black aria-checked:border-coral hover:bg-coral/10 aria-checked:hover:bg-soft-coral aria-checked:hover:border-soft-coral';
 ---
 
 <Layout title="Garden" description="Everything I've written, in reverse chronological order.">
-  <section class="page-header-section">
+  <section class="py-15 bg-canvas border-b border-hairline">
     <div class="container-phx">
-      <h1 class="page-title">The Garden</h1>
-      <p class="page-lede">
+      <h1 class="font-display font-normal text-heading leading-[1.1] tracking-display-tight text-[clamp(3.2rem,6vw,4.8rem)] mb-5">The Garden</h1>
+      <p class="font-sans text-body-lg leading-[1.5] text-muted-slate max-w-[60ch]">
         Everything I've written, in reverse chronological order.
         Filter by type, topic, or growth stage.
       </p>
@@ -77,15 +51,15 @@ const onThisDayItems = onThisDayMatches.map((m) => ({
   </section>
 
   {onThisDayItems.length > 0 && (
-    <section class="on-this-day">
+    <section class="py-7 pb-4 bg-soft-stone">
       <div class="container-phx">
-        <p class="on-this-day-line">
+        <p class="font-serif italic text-body text-ink m-0 [&_a]:text-action-blue [&_a]:underline [&_a]:underline-offset-2 [&_a]:transition-colors [&_a]:duration-button [&_a]:ease [&_a:hover]:text-heading">
           On this day —{' '}
           {onThisDayItems.map((item, i) => (
             <span>
               {i > 0 && ', '}
               <a href={item.href}>{item.title}</a>
-              <span class="on-this-day-year"> ({item.year})</span>
+              <span class="font-serif italic text-muted-slate text-caption ms-1"> ({item.year})</span>
             </span>
           ))}
         </p>
@@ -93,45 +67,46 @@ const onThisDayItems = onThisDayMatches.map((m) => ({
     </section>
   )}
 
-  <section class="filter-section">
+  <section class="py-7 bg-canvas border-b border-hairline sticky top-14 md:top-[7.2rem] z-10">
     <div class="container-phx">
-      <details id="filter-details" class="filter-details" open>
-        <summary class="filter-summary">
-          <span class="filter-summary-label">Filters</span>
-          <span class="filter-summary-icon" aria-hidden="true"></span>
+      <details id="filter-details" class="group max-md:border max-md:border-hairline max-md:rounded-md max-md:bg-soft-stone [&[open]]:max-md:pb-0" open>
+        <summary class="list-none cursor-pointer max-md:flex max-md:items-center max-md:justify-between max-md:gap-5 max-md:py-4 max-md:px-5 max-md:font-mono max-md:text-mono-label max-md:uppercase max-md:tracking-mono max-md:text-ink max-md:hover:border-coral-text">
+          <span class="max-md:inline hidden">Filters</span>
+          <span class="hidden max-md:inline" aria-hidden="true">+</span>
+          <span class="hidden group-open:max-md:inline" aria-hidden="true">−</span>
         </summary>
-        <div class="filter-body">
-          <div class="filter-group">
-            <span class="filter-label">Type</span>
-            <div class="filter-chips" id="type-filters" role="radiogroup" aria-label="Filter by type">
-              <button class="topic-chip topic-chip-md topic-chip-active" data-filter-type="all" role="radio" aria-checked="true" tabindex="0">All</button>
-              <button class="topic-chip topic-chip-md" data-filter-type="note" role="radio" aria-checked="false" tabindex="-1">Note</button>
-              <button class="topic-chip topic-chip-md" data-filter-type="essay" role="radio" aria-checked="false" tabindex="-1">Essay</button>
-              <button class="topic-chip topic-chip-md" data-filter-type="talk" role="radio" aria-checked="false" tabindex="-1">Talk</button>
-              <button class="topic-chip topic-chip-md" data-filter-type="pattern" role="radio" aria-checked="false" tabindex="-1">Pattern</button>
-              <button class="topic-chip topic-chip-md" data-filter-type="practice" role="radio" aria-checked="false" tabindex="-1">Practice</button>
-              <button class="topic-chip topic-chip-md" data-filter-type="project" role="radio" aria-checked="false" tabindex="-1">Project</button>
-              <button class="topic-chip topic-chip-md" data-filter-type="book" role="radio" aria-checked="false" tabindex="-1">Book</button>
+        <div class="max-md:pt-5">
+          <div class="flex items-center flex-wrap gap-5 mb-5 last:mb-0">
+            <span class="font-mono text-mono-label font-medium text-coral-text uppercase tracking-mono min-w-16">Type</span>
+            <div id="type-filters" role="radiogroup" aria-label="Filter by type" class="flex flex-wrap gap-2">
+              <button class={chipBase} data-filter-type="all" role="radio" aria-checked="true" tabindex="0">All</button>
+              <button class={chipBase} data-filter-type="note" role="radio" aria-checked="false" tabindex="-1">Note</button>
+              <button class={chipBase} data-filter-type="essay" role="radio" aria-checked="false" tabindex="-1">Essay</button>
+              <button class={chipBase} data-filter-type="talk" role="radio" aria-checked="false" tabindex="-1">Talk</button>
+              <button class={chipBase} data-filter-type="pattern" role="radio" aria-checked="false" tabindex="-1">Pattern</button>
+              <button class={chipBase} data-filter-type="practice" role="radio" aria-checked="false" tabindex="-1">Practice</button>
+              <button class={chipBase} data-filter-type="project" role="radio" aria-checked="false" tabindex="-1">Project</button>
+              <button class={chipBase} data-filter-type="book" role="radio" aria-checked="false" tabindex="-1">Book</button>
             </div>
           </div>
 
-          <div class="filter-group">
-            <span class="filter-label">Topic</span>
-            <div class="filter-chips" id="topic-filters" role="radiogroup" aria-label="Filter by topic">
-              <button class="topic-chip topic-chip-md topic-chip-active" data-filter-topic="all" role="radio" aria-checked="true" tabindex="0">All</button>
+          <div class="flex items-center flex-wrap gap-5 mb-5 last:mb-0">
+            <span class="font-mono text-mono-label font-medium text-coral-text uppercase tracking-mono min-w-16">Topic</span>
+            <div id="topic-filters" role="radiogroup" aria-label="Filter by topic" class="flex flex-wrap gap-2">
+              <button class={chipBase} data-filter-topic="all" role="radio" aria-checked="true" tabindex="0">All</button>
               {allTopics.map((topic) => (
-                <button class="topic-chip topic-chip-md" data-filter-topic={topic} role="radio" aria-checked="false" tabindex="-1">{topic}</button>
+                <button class={chipBase} data-filter-topic={topic} role="radio" aria-checked="false" tabindex="-1">{topic}</button>
               ))}
             </div>
           </div>
 
-          <div class="filter-group">
-            <span class="filter-label">Growth</span>
-            <div class="filter-chips" id="growth-filters" role="radiogroup" aria-label="Filter by growth stage">
-              <button class="topic-chip topic-chip-md topic-chip-active" data-filter-growth="all" role="radio" aria-checked="true" tabindex="0">All</button>
-              <button class="topic-chip topic-chip-md" data-filter-growth="seedling" role="radio" aria-checked="false" tabindex="-1">Seedling</button>
-              <button class="topic-chip topic-chip-md" data-filter-growth="growing" role="radio" aria-checked="false" tabindex="-1">Growing</button>
-              <button class="topic-chip topic-chip-md" data-filter-growth="evergreen" role="radio" aria-checked="false" tabindex="-1">Evergreen</button>
+          <div class="flex items-center flex-wrap gap-5 mb-5 last:mb-0">
+            <span class="font-mono text-mono-label font-medium text-coral-text uppercase tracking-mono min-w-16">Growth</span>
+            <div id="growth-filters" role="radiogroup" aria-label="Filter by growth stage" class="flex flex-wrap gap-2">
+              <button class={chipBase} data-filter-growth="all" role="radio" aria-checked="true" tabindex="0">All</button>
+              <button class={chipBase} data-filter-growth="seedling" role="radio" aria-checked="false" tabindex="-1">Seedling</button>
+              <button class={chipBase} data-filter-growth="growing" role="radio" aria-checked="false" tabindex="-1">Growing</button>
+              <button class={chipBase} data-filter-growth="evergreen" role="radio" aria-checked="false" tabindex="-1">Evergreen</button>
             </div>
           </div>
         </div>
@@ -142,215 +117,37 @@ const onThisDayItems = onThisDayMatches.map((m) => ({
   <section class="container-phx section">
     <div id="entries-grid">
       <CollectionGrid cols={3} gap="md">
-      {allEntries.map((entry) => {
-        const n = normalize(entry);
-        return (
-          <div
-            class="entry-card-wrapper"
-            data-type={n.type}
-            data-topics={n.topics.join(' ')}
-            data-growth={n.growthStage ?? ''}
-          >
-            <GardenCard
-              title={n.title}
-              type={n.type}
-              excerpt={n.excerpt}
-              date={n.date}
-              topics={n.topics}
-              growthStage={n.growthStage}
-              href={n.href}
-              newSince={n.date}
-            />
-          </div>
-        );
-      })}
+        {allEntries.map((entry) => {
+          const n = normalize(entry);
+          return (
+            <div
+              class="transition-opacity duration-200"
+              data-type={n.type}
+              data-topics={n.topics.join(' ')}
+              data-growth={n.growthStage ?? ''}
+            >
+              <GardenCard
+                title={n.title}
+                type={n.type}
+                excerpt={n.excerpt}
+                date={n.date}
+                topics={n.topics}
+                growthStage={n.growthStage}
+                href={n.href}
+                newSince={n.date}
+              />
+            </div>
+          );
+        })}
       </CollectionGrid>
-      <p class="garden-empty" id="garden-empty" hidden>No matches — clear filters.</p>
+      <p class="font-serif italic text-body text-muted-slate text-center py-15 m-0" id="garden-empty" hidden>No matches — clear filters.</p>
     </div>
 
-    <p class="garden-random-link">
-      Or — <a href="/random">read something random</a>.
+    <p class="font-serif italic text-body text-muted-slate text-center mt-12">
+      Or — <a href="/random" class="text-action-blue underline underline-offset-2 transition-colors duration-button ease hover:text-heading">read something random</a>.
     </p>
   </section>
 </Layout>
-
-<style>
-  .page-header-section {
-    padding-block: var(--spacing-15) var(--spacing-10);
-    background: var(--color-canvas);
-    border-bottom: 1px solid var(--color-hairline);
-  }
-
-  .page-title {
-    font-family: var(--font-display);
-    font-size: clamp(3.2rem, 6vw, 4.8rem);
-    font-weight: 400;
-    color: var(--color-heading);
-    line-height: 1.1;
-    letter-spacing: var(--tracking-display-tight);
-    margin-bottom: var(--spacing-5);
-  }
-
-  .page-lede {
-    font-family: var(--font-sans);
-    font-size: var(--text-body-lg);
-    line-height: 1.5;
-    color: var(--color-muted-slate);
-    max-width: 60ch;
-  }
-
-  .on-this-day {
-    padding-block: var(--spacing-7) var(--spacing-4);
-    background: var(--color-soft-stone);
-  }
-
-  .on-this-day-line {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: var(--text-body);
-    color: var(--color-ink);
-    margin: 0;
-  }
-
-  .on-this-day-line a {
-    color: var(--color-action-blue);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    transition: color var(--duration-button) ease;
-  }
-
-  .on-this-day-line a:hover {
-    color: var(--color-heading);
-  }
-
-  .filter-section {
-    padding-block: var(--spacing-7);
-    background: var(--color-canvas);
-    border-bottom: 1px solid var(--color-hairline);
-    position: sticky;
-    top: var(--nav-h-mobile);
-    z-index: 10;
-  }
-
-  @media (min-width: 768px) {
-    .filter-section { top: var(--nav-h); }
-  }
-
-  .filter-group {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-5);
-    margin-bottom: var(--spacing-5);
-    flex-wrap: wrap;
-  }
-
-  .filter-group:last-child {
-    margin-bottom: 0;
-  }
-
-  /* Mobile collapse — <details> wrapped; summary only visible <768px */
-  .filter-summary {
-    display: none;
-  }
-
-  .filter-summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .filter-summary-icon::before {
-    content: '−';
-  }
-
-  .filter-details:not([open]) .filter-summary-icon::before {
-    content: '+';
-  }
-
-  @media (max-width: 767px) {
-    .filter-summary {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--spacing-5);
-      padding: var(--spacing-4) var(--spacing-5);
-      border: 1px solid var(--color-hairline);
-      border-radius: var(--radius-md);
-      background: var(--color-soft-stone);
-      font-family: var(--font-mono);
-      font-size: var(--text-mono-label);
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-mono);
-      color: var(--color-ink);
-      cursor: pointer;
-      list-style: none;
-    }
-
-    .filter-summary:hover {
-      border-color: var(--color-coral-text);
-    }
-
-    .filter-body {
-      padding-block-start: var(--spacing-5);
-    }
-
-    .filter-details:not([open]) .filter-body {
-      display: none;
-    }
-  }
-
-  .filter-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-label);
-    font-weight: 500;
-    color: var(--color-coral-text);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-    min-width: 4rem;
-  }
-
-  .filter-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-2);
-  }
-
-  .entry-card-wrapper {
-    transition: opacity 0.2s ease;
-  }
-
-  .entry-card-wrapper.hidden {
-    display: none;
-  }
-
-  .garden-empty {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: var(--text-body);
-    color: var(--color-muted-slate);
-    text-align: center;
-    padding-block: var(--spacing-15);
-    margin: 0;
-  }
-
-  .garden-random-link {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: var(--text-body);
-    color: var(--color-muted-slate);
-    text-align: center;
-    margin-block-start: var(--spacing-12);
-  }
-
-  .garden-random-link a {
-    color: var(--color-action-blue);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    transition: color var(--duration-button) ease;
-  }
-
-  .garden-random-link a:hover {
-    color: var(--color-heading);
-  }
-</style>
 
 <script>
   function initGardenFilter() {
@@ -368,17 +165,15 @@ const onThisDayItems = onThisDayMatches.map((m) => ({
 
     function setActive(container: Element | null, selected: HTMLElement) {
       container?.querySelectorAll('button').forEach((b) => {
-        b.classList.remove('topic-chip-active');
         b.setAttribute('aria-checked', 'false');
         b.setAttribute('tabindex', '-1');
       });
-      selected.classList.add('topic-chip-active');
       selected.setAttribute('aria-checked', 'true');
       selected.setAttribute('tabindex', '0');
     }
 
     function applyFilters() {
-      const cards = grid!.querySelectorAll('.entry-card-wrapper');
+      const cards = grid!.querySelectorAll<HTMLElement>('[data-type]');
       let visibleCount = 0;
       cards.forEach((card) => {
         const cardType = card.getAttribute('data-type');
@@ -390,10 +185,10 @@ const onThisDayItems = onThisDayMatches.map((m) => ({
         const growthMatch = activeGrowth === 'all' || cardGrowth === activeGrowth;
 
         if (typeMatch && topicMatch && growthMatch) {
-          (card as HTMLElement).style.display = '';
+          card.style.display = '';
           visibleCount += 1;
         } else {
-          (card as HTMLElement).style.display = 'none';
+          card.style.display = 'none';
         }
       });
 
