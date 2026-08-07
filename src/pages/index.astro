@@ -41,6 +41,19 @@ const curatedPicks = [
   { title: 'Design Systems Are Grammar, Not Paint', href: '/essays/design-systems-are-grammar' },
   { title: 'Token-as-Grammar', href: '/patterns/token-as-grammar' },
 ];
+
+// Build-time sanity: warn if any curated pick points at a missing entry.
+const validSlugs = new Set([
+  ...allEssays.map((e) => `essays/${e.id}`),
+  ...allNotes.map((n) => `notes/${n.id}`),
+  ...allPatterns.map((p) => `patterns/${p.id}`),
+]);
+for (const pick of curatedPicks) {
+  const path = pick.href.replace(/^\//, '');
+  if (!validSlugs.has(path)) {
+    console.warn(`[curated-picks] broken link: "${pick.title}" → ${pick.href}`);
+  }
+}
 ---
 
 <Layout title="phurix" description="Personal website of Phuriwaj Ruengnaowaroj">
