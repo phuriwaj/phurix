@@ -55,20 +55,20 @@ const backlinkSources = [
       mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
     })}
   />
-  <article class="pattern-article">
-    <header class="pattern-header container-phx">
-      <p class="section-eyebrow">
-        <a href="/patterns" class="back-link">← Patterns</a>
+  <article class="py-15">
+    <header class="container-phx max-w-[65ch] mx-auto mb-15">
+      <p class="font-mono text-mono-label uppercase tracking-mono text-coral-text font-medium mb-5">
+        <a href="/patterns" class="text-action-blue font-medium no-underline transition-colors duration-button ease hover:text-heading">← Patterns</a>
       </p>
 
-      <div class="pattern-art">
+      <div class="aspect-[4/3] rounded-lg overflow-hidden mb-8 max-w-[32rem] [&_svg]:w-full [&_svg]:h-full [&_svg]:block [&_img]:w-full [&_img]:h-full [&_img]:block">
         <TopicPhoto topic={artTopic} scale="md" showCredit={true} />
       </div>
 
-      <h1 class="pattern-h1">{pattern.data.title}</h1>
-      <p class="pattern-lede">{pattern.data.lede}</p>
-      <div class="pattern-meta-row">
-        <time datetime={pattern.data.date.toISOString()} class="pattern-date">
+      <h1 class="font-display text-card-heading font-normal text-heading leading-[1.15] tracking-display-tight mb-5">{pattern.data.title}</h1>
+      <p class="font-serif text-body-lg leading-[1.5] text-muted-slate mb-7">{pattern.data.lede}</p>
+      <div class="flex items-center gap-5 flex-wrap font-mono text-micro text-muted-slate tracking-mono uppercase">
+        <time datetime={pattern.data.date.toISOString()} class="font-medium">
           {new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
             month: 'long',
@@ -78,20 +78,20 @@ const backlinkSources = [
       </div>
     </header>
 
-    <div class="pattern-body container-phx">
+    <div class="container-phx max-w-[65ch] mx-auto">
       <div class="prose">
         <Content />
       </div>
     </div>
 
     {relatedItems.length > 0 && (
-      <aside class="pattern-related container-phx">
-        <p class="pattern-related-label">Used in:</p>
-        <ul class="pattern-related-list">
+      <aside class="container-phx max-w-[65ch] mx-auto mt-12 pt-7 border-t border-hairline">
+        <p class="font-mono text-mono-label font-medium uppercase tracking-mono text-coral-text mb-4">Used in:</p>
+        <ul class="list-none p-0 m-0 font-serif text-body text-ink [&_a]:text-action-blue [&_a]:underline [&_a]:underline-offset-2 [&_a]:transition-colors [&_a]:duration-button [&_a]:ease [&_a:hover]:text-heading">
           {relatedItems.map((entry, i) => (
             <li>
               <a href={`/patterns/${entry.id}`}>{entry.data.title}</a>
-              {i < relatedItems.length - 1 && <span class="pattern-related-sep"> · </span>}
+              {i < relatedItems.length - 1 && <span class="text-muted-slate ms-[0.3em]"> · </span>}
             </li>
           ))}
         </ul>
@@ -99,165 +99,22 @@ const backlinkSources = [
     )}
 
     {backlinkSources.length > 0 && (
-      <aside class="pattern-related container-phx">
-        <p class="pattern-related-label">Linked from:</p>
-        <ul class="pattern-related-list">
+      <aside class="container-phx max-w-[65ch] mx-auto mt-12 pt-7 border-t border-hairline">
+        <p class="font-mono text-mono-label font-medium uppercase tracking-mono text-coral-text mb-4">Linked from:</p>
+        <ul class="list-none p-0 m-0 font-serif text-body text-ink [&_a]:text-action-blue [&_a]:underline [&_a]:underline-offset-2 [&_a]:transition-colors [&_a]:duration-button [&_a]:ease [&_a:hover]:text-heading">
           {backlinkSources.map(({ entry: source, collection: coll }, i) => (
             <li>
-              <span class="pattern-related-collection">{coll}/</span>
+              <span class="text-muted-slate font-mono text-micro me-[0.2em] tracking-mono">{coll}/</span>
               <a href={`/${coll}/${source.id}`}>{source.data.title}</a>
-              {i < backlinkSources.length - 1 && <span class="pattern-related-sep"> · </span>}
+              {i < backlinkSources.length - 1 && <span class="text-muted-slate ms-[0.3em]"> · </span>}
             </li>
           ))}
         </ul>
       </aside>
     )}
 
-    <footer class="pattern-footer container-phx">
-      <a href="/patterns" class="back-link">← Back to all patterns</a>
+    <footer class="container-phx max-w-[65ch] mt-15 pt-8 border-t border-hairline">
+      <a href="/patterns" class="text-action-blue font-medium no-underline transition-colors duration-button ease hover:text-heading">← Back to all patterns</a>
     </footer>
   </article>
 </Layout>
-
-<style>
-  .pattern-article {
-    padding-block: var(--spacing-15);
-  }
-
-  .pattern-header {
-    max-width: 65ch;
-    margin-bottom: var(--spacing-15);
-    margin-inline: auto;
-  }
-
-  .pattern-art {
-    aspect-ratio: 4 / 3;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    margin-bottom: var(--spacing-8);
-    max-width: 32rem;
-  }
-
-  .pattern-art :global(svg),
-  .pattern-art :global(img) {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  .section-eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-label);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-    color: var(--color-coral-text);
-    font-weight: 500;
-    margin-bottom: var(--spacing-5);
-  }
-
-  .back-link {
-    color: var(--color-action-blue);
-    font-weight: 500;
-    text-decoration: none;
-    transition: color var(--duration-button) ease;
-  }
-
-  .back-link:hover {
-    color: var(--color-heading);
-  }
-
-  .pattern-h1 {
-    font-family: var(--font-display);
-    font-size: var(--text-card-heading);
-    font-weight: 400;
-    color: var(--color-heading);
-    line-height: 1.15;
-    letter-spacing: var(--tracking-display-tight);
-    margin-bottom: var(--spacing-5);
-  }
-
-  .pattern-lede {
-    font-family: var(--font-serif);
-    font-size: var(--text-body-lg);
-    line-height: 1.5;
-    color: var(--color-muted-slate);
-    margin-bottom: var(--spacing-7);
-  }
-
-  .pattern-meta-row {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-5);
-    flex-wrap: wrap;
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    color: var(--color-muted-slate);
-    letter-spacing: var(--tracking-mono);
-    text-transform: uppercase;
-  }
-
-  .pattern-date { font-weight: 500; }
-
-  .pattern-body {
-    max-width: 65ch;
-    margin-inline: auto;
-  }
-
-  .pattern-related {
-    max-width: 65ch;
-    margin-inline: auto;
-    margin-top: var(--spacing-12);
-    padding-top: var(--spacing-7);
-    border-top: 1px solid var(--color-hairline);
-  }
-
-  .pattern-related-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-label);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-mono);
-    color: var(--color-coral-text);
-    margin-bottom: var(--spacing-4);
-  }
-
-  .pattern-related-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-family: var(--font-serif);
-    font-size: var(--text-body);
-    color: var(--color-ink);
-  }
-
-  .pattern-related-list a {
-    color: var(--color-action-blue);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    transition: color var(--duration-button) ease;
-  }
-
-  .pattern-related-list a:hover {
-    color: var(--color-heading);
-  }
-
-  .pattern-related-sep {
-    color: var(--color-muted-slate);
-    margin-inline-start: 0.3em;
-  }
-
-  .pattern-related-collection {
-    color: var(--color-muted-slate);
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    margin-inline-end: 0.2em;
-    letter-spacing: var(--tracking-mono);
-  }
-
-  .pattern-footer {
-    margin-top: var(--spacing-15);
-    padding-top: var(--spacing-8);
-    border-top: 1px solid var(--color-hairline);
-    max-width: 65ch;
-  }
-</style>
