@@ -190,23 +190,20 @@ merged:
 
 | Component | Tokens used |
 |-----------|-------------|
-| **Button** | `--font-sans`, `--radius-pill`, `--duration-button`, `--ease-out-soft`, `--color-near-black`/`--color-cohere-black` (primary), `--color-on-dark` (on-dark). |
-| **Card** | `--radius-md`, `--color-canvas`, `--color-hairline`, `--color-border-light`, `--color-near-black`, `--color-on-dark`. |
-| **Footer** | `--color-near-black`, `--color-on-dark`, `--color-on-dark-muted`, `--color-coral`, `--color-soft-coral`, `--font-mono`. |
-| **Nav** | `--font-display`, `--font-sans`, `--color-canvas`, `--color-cohere-black`, `--color-hairline`, `--color-action-blue`, `--color-ink`. |
-| **FeatureBand** | `--color-deep-green` / `--color-dark-navy`, `--font-display`, `--color-on-dark`, `--color-on-dark-muted`, `--radius-lg`. |
-| **NewsletterBand** | `--color-near-black`, `--color-coral`, `--color-on-dark`, `--color-on-dark-muted`, `--font-display`, `--font-mono`. |
-| **GardenCard** | `--color-hairline`, `--color-soft-stone`, `--color-coral-text` (type label), `--color-ink`, `--color-muted-slate`, `--font-display`, `--font-mono`. |
-| **BookTile** | `--radius-sm`, `--color-coral`, `--color-ink`, `--font-display`, `--font-mono`, `--color-on-dark`. |
-| **GrowthBadge** | `--font-mono`, `--tracking-mono`, `--color-action-blue`/`--color-pale-blue-wash` (seedling), `--color-coral-text` (growing), `--color-evergreen-text`/`--color-pale-green-wash` (evergreen). |
-| **Timeline** | `--color-hairline`, `--color-ink`, `--color-muted-slate`, `--font-display`, `--font-mono`. |
-| **TopicChip** | `--font-mono`, `--color-coral-text` (default label), `--color-coral` (border + active fill), `--color-cohere-black` (active label), `--radius-pill` (sm/md) / `--radius-xl` (lg), `--tracking-mono`. |
-| **TopicPhoto** | `--color-soft-stone`, `--color-on-dark`. |
-| **CuratedPicks** | `--color-coral-text` (heading), `--color-action-blue`, `--color-hairline`, `--font-display` (italic). |
-| **CuratedMark** | `--color-coral-text`, `--font-display`. |
-| **Accordion** | `--color-hairline`, `--color-action-blue`, `--color-ink`, `--font-display`, `--duration-expander`. |
-| **CollectionGrid** | `--spacing-7` / `--spacing-10` / `--spacing-12` (gap scale), `--color-pale-green-wash` / `--color-pale-blue-wash` (tone). |
-| **AnnouncementBar** | `--color-cohere-black`, `--color-on-dark`, `--color-on-dark-muted`, `--color-soft-coral`, `--font-sans`, `--text-micro`. |
+| **`Button`** (shadcn) | `--radius-md` (pill), `--duration-button`, `--color-primary` (→ `--color-near-black`), `--color-primary-foreground` (→ `--color-on-dark`), `--color-ring` (focus). Variants via CVA. |
+| **`InfiniteSlider`** (shadcn) | `--color-foreground`, `--color-muted-foreground`. Motion via `framer-motion` `useMotionValue`. |
+| **`ProgressiveBlur`** (shadcn) | `--color-foreground`, `--color-background`. Layered `radial-gradient` mask. |
+| **`HeroSection`** | `--color-background`, `--color-foreground`, `--color-muted-foreground`, `--color-foreground` text-balance, `--color-ring` for focus. |
+| **`GardenCard`** | `--color-hairline`, `--color-soft-stone`, `--color-coral-text` (type label), `--color-ink`, `--color-muted-slate`, `--font-display`, `--font-mono`. |
+| **`CollectionGrid`** | `--spacing-7` / `--spacing-10` / `--spacing-12` (gap scale), `--color-pale-green-wash` / `--color-pale-blue-wash` (tone). |
+| **`TopicChip`** | `--font-mono`, `--color-coral-text` (default label), `--color-coral` (border + active fill), `--color-cohere-black` (active label), `--radius-pill` (sm/md) / `--radius-xl` (lg), `--tracking-mono`. Active state: `aria-checked:bg-coral` variant on filter chips. |
+| **`CuratedPicks`** | `--color-coral-text` (heading), `--color-action-blue`, `--color-hairline`, `--font-display` (italic). |
+| **`GrowthBadge`** | `--font-mono`, `--tracking-mono`, `--color-action-blue`/`--color-pale-blue-wash` (seedling), `--color-coral-text` (growing), `--color-evergreen-text`/`--color-pale-green-wash` (evergreen). |
+| **`BookTile`** | `--radius-sm`, `--color-coral`, `--color-ink`, `--font-display`, `--font-mono`, `--color-on-dark`. |
+| **`TopicPhoto`** | `--color-soft-stone`, `--color-on-dark`. Built-time WebP via `astro:assets`. |
+| **`Timeline`** | `--color-hairline`, `--color-ink`, `--color-muted-slate`, `--font-display`, `--font-mono`. |
+| **`Layout.astro`** | `--font-display`, `--font-sans`, `--color-canvas`, `--color-cohere-black`, `--color-hairline`, `--color-action-blue`, `--color-ink` (nav/footer), `--color-on-dark`, `--color-on-dark-muted` (announcement strip). |
+| **Detail-page reading frame** | `--font-display` (title), `--font-serif` (lede), `--font-mono` (meta), `--color-heading`, `--color-muted-slate`, `--color-hairline` (dividers), `.prose` (body, in `global.css`). |
 
 ---
 

@@ -140,61 +140,102 @@ Images are not decorative backdrops for text except in CTA bands. Most imagery s
 
 ## 7. Components
 
-### **`button-primary`**
+The site uses **shadcn/ui primitives** mounted as Astro islands, with
+all page markup rendered as Tailwind 4 utility classes. Token names below
+refer to the shadcn semantic palette aliased to the underlying Cohere tokens
+(see `theme.css` for the bridge).
 
-Near-black or white pill CTA, depending on surface contrast. Uses 14px-16px Unica77, 12px 24px padding, and a 32px pill radius. This is the primary action style for "Request a demo", "Submit", and hero CTAs.
+### **`Button`** — `src/components/ui/button.tsx`
 
-### **`button-secondary`**
+shadcn primitive with CVA variants (`default`, `outline`, `ghost`,
+`secondary`, `destructive`, `link`). All variants render at 32px pill radius
+via `--radius-md`, animate on `--duration-button`, and surface as a React
+island hydrated on demand. Supports `asChild` (Radix Slot) so an `<a>` child
+renders the visual style while keeping anchor semantics.
 
-Text-only action link, usually underlined or rule-aligned, with no filled background. Used for "Explore products", "Try the Playground", newsletter signup, and secondary hero actions.
+### **`InfiniteSlider`** — `src/components/ui/infinite-slider.tsx`
 
-### **`button-pill-outline`**
+Marquee-style horizontal scroller powered by framer-motion's
+`useMotionValue/animate/motion`. Used by the home hero logo strip. Wraps
+content in a measured rail with `data-reverse` for direction.
 
-Outlined pill control with transparent fill, 1px dark border, and 30px radius. Used for research filters, topic tags, and lightweight taxonomy controls.
+### **`ProgressiveBlur`** — `src/components/ui/progressive-blur.tsx`
 
-### **`announcement-bar`**
+Multi-layer radial-gradient mask for softening image edges. Used as an
+overlay above and below hero-section-5 media to fade into the page
+background. Built on `motion/react` for any future entrance animation.
 
-Full-width black strip above the nav, 36px tall, centered microcopy with an underlined "Learn more" link and a close control at the far right.
+### **`HeroSection`** — `src/components/blocks/hero-section-5.tsx`
 
-### **`hero-photo-card`**
+Home-page hero composition: video/image backdrop, layered blur masks,
+logo infinite slider, scroll-aware nav. Replaces the prior editorial
+`AnimatedHero.tsx` + `hero.css`. All internal links rewritten to plain
+`<a>` (no Next.js `Link` dependency). Mounted with `client:load` on `/`.
 
-Rounded media card used in the home hero and solution pages. It combines photography or abstract imagery with an overlaid dark agent-console module. Radius is usually 22px on large cards and 8px on smaller thumbnails.
+### **Page sections** — direct Tailwind markup
 
-### **`agent-console-card`**
+There is no `AnnouncementBar`, `FeatureBand`, `ContactFormCard`, or
+`FooterNewsletter` component any longer. Each surface is composed
+inline in `Layout.astro` (announcement strip, footer) or in the consuming
+page (newsletter closing band, contact channels) using Tailwind utilities
+mapped to existing tokens — no scoped `<style>` blocks.
 
-Dark product mockup panel showing agent names, status chips, integration badges, prompt fields, and generated response cards. Background is near-black, text is white or muted, and small accent chips use product colors.
+### **`GardenCard`** — `src/components/GardenCard.astro`
 
-### **`trust-logo-strip`**
+The single most-shared content card. Renders title, type label (mono
+uppercase), excerpt/lede, date, topic chips, optional growth badge.
+No scoped CSS; all layout via Tailwind utilities.
 
-Centered copy above a row of monochrome customer logos. It is intentionally quiet: no cards, no borders, just large horizontal spacing and black or white logos depending on the background.
+### **`CollectionGrid`** — `src/components/CollectionGrid.astro`
 
-### **`capability-card`**
+Lightweight grid wrapper with `cols` (2/3/4) and `gap` (`sm`/`md`/`lg`)
+props. Reduces Tailwind grid-class verbosity on collection indexes.
 
-Content block with thin-line geometric illustration, 24px heading, body copy, and a text link. On light backgrounds, cards often have only a top rule or a subtle image/card relationship rather than full boxing.
+### **`TopicChip`** — `src/components/TopicChip.astro`
 
-### **`dark-feature-band`**
+Pill control with three sizes (`sm`, `md`, `lg`). Active state driven by
+the `aria-checked` Tailwind variant on filter radiogroups (see `/garden`),
+or a static `.active` boolean prop for other callers.
 
-Deep green or navy full-width section used for product capabilities, security claims, and feature breakdowns. Text turns white; cards use darker translucent surfaces, pale borders, and abstract line illustrations.
+### **`CuratedPicks`** — `src/components/CuratedPicks.astro`
 
-### **`product-card`**
+Three-up editorial rail with a coral eyebrow label and italic display
+type. Used on `/` and `/essays`.
 
-Warm stone card used for product/model summaries. Typically 3-column on desktop, with 8px radius, generous padding, a small pill button, a divider line, and checkmark bullet rows.
+### **`GrowthBadge`** — `src/components/GrowthBadge.astro`
 
-### **`blog-filter-chip`**
+Mono uppercase growth-stage badge. Seedling → blue, Growing → coral,
+Evergreen → evergreen. Pill shape via `--radius-pill`.
 
-Large coral taxonomy chip used on the blog index. Active chips invert to coral fill with dark text; inactive chips use coral outline and pale fill. Typography is oversized relative to typical filters, making the taxonomy a hero-level control.
+### **`BookTile`** — `src/components/BookTile.astro`
 
-### **`research-table`**
+Library shelf tile. Cover color from `--coverColor` content token; renders
+title/author/year stacked under the cover. Deep-linkable via `id` prop.
 
-Rule-separated publication list with title left, topic pills centered, and date right. Rows are tall, white, and border-driven; filters above use many compact outlined pills.
+### **`TopicPhoto`** — `src/components/TopicPhoto.astro`
 
-### **`contact-form-card`**
+`astro:assets` `<Image>` wrapper. Generates a WebP at build, responsive
+`sizes`, with credit caption underneath. Wrapping `<figure>` uses
+Tailwind utilities; the `<Image>` keeps its generated markup.
 
-Rounded white form panel set against dark green or warm stone sections. Inputs are rectangular with thin gray borders, 12px-16px padding, and compact labels/placeholders. Submit uses the same near-black pill style as primary CTAs.
+### **`Layout.astro`**
 
-### **`footer-newsletter`**
+Universal chrome — `<AnnouncementBar />` slot, `<Nav />`, `<slot />`,
+`<Footer />`, `<ClientRouter />` for view transitions. Stripped of all
+scoped CSS; wrapper elements are utility-classed.
 
-Dark footer subscription block with coral "AI moves fast" label, white headline, muted legal microcopy, a single-line email field, and arrow submit marker. Footer columns use white section labels and muted links.
+### **Detail-page reading frame**
+
+Essay, note, pattern, practice detail pages share a header structure:
+`back-link`, optional `TopicPhoto` art, display title, meta row (date,
+read-time, growth badge, cadence for practices), topic chips, `<Content />`
+inside `.prose`, prev/next nav, Related / Linked-from aside.
+
+The `.prose` typography class is the **one scoped-style exception** that
+remains — selectors like `.prose h2` cannot be expressed as Tailwind
+utilities without a typography plugin, and `.prose` already lives in
+`src/styles/global.css` for everyone. Detail pages do not add their own
+`<style>`.
 
 ## 8. Do's and Don'ts
 
