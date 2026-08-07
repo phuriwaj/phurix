@@ -58,9 +58,11 @@ const allTopics = [
 
 const today = new Date();
 const onThisDayMatches = findOnThisDay(allEntries, today);
-const onThisDay = onThisDayMatches[0] ?? null;
-const onThisDayHref = onThisDay ? hrefFor(onThisDay) : '#';
-const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.getFullYear();
+const onThisDayItems = onThisDayMatches.map((m) => ({
+  title: m.data.title,
+  href: hrefFor(m),
+  year: m.displayDate.getFullYear(),
+}));
 ---
 
 <Layout title="Garden" description="Everything I've written, in reverse chronological order.">
@@ -74,11 +76,18 @@ const onThisDayYear = onThisDay ? onThisDay.displayDate.getFullYear() : today.ge
     </div>
   </section>
 
-  {onThisDay && (
+  {onThisDayItems.length > 0 && (
     <section class="on-this-day">
       <div class="container-phx">
         <p class="on-this-day-line">
-          On this day in {onThisDayYear} — <a href={onThisDayHref}>{onThisDay.data.title}</a>
+          On this day —{' '}
+          {onThisDayItems.map((item, i) => (
+            <span>
+              {i > 0 && ', '}
+              <a href={item.href}>{item.title}</a>
+              <span class="on-this-day-year"> ({item.year})</span>
+            </span>
+          ))}
         </p>
       </div>
     </section>
