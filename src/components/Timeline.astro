@@ -18,115 +18,21 @@ interface Props {
 const { entries, class: className = '' } = Astro.props;
 ---
 
-<ol class:list={['timeline', className]}>
+<ol class:list={['list-none p-0 m-0 relative flex flex-col gap-0 before:content-[""] before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-0.5 before:bg-hairline before:rounded-sm', className]}>
   {entries.map((entry) => (
-    <li class="timeline-entry">
-      <div class="timeline-dot" aria-hidden="true" />
-      <div class="timeline-content">
-        <div class="timeline-header">
+    <li class="relative ps-10 pb-8 last:pb-0">
+      <div class="absolute left-0 top-1.5 w-4 h-4 rounded-full bg-canvas border border-ink" aria-hidden="true" />
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-wrap items-baseline justify-between gap-4">
           <div>
-            <span class="timeline-role">{entry.role}</span>
-            <span class="timeline-sep"> — </span>
-            <span class="timeline-org">{entry.org}</span>
+            <span class="font-display text-body font-medium text-ink tracking-display-tight">{entry.role}</span>
+            <span class="text-muted-slate font-normal"> — </span>
+            <span class="font-sans text-body text-ink font-normal">{entry.org}</span>
           </div>
-          <span class="timeline-dates">{entry.dates}</span>
+          <span class="font-mono text-micro text-muted-slate whitespace-nowrap tracking-mono">{entry.dates}</span>
         </div>
-        <p class="timeline-description">{entry.description}</p>
+        <p class="font-sans text-caption text-muted-slate leading-[1.5] m-0">{entry.description}</p>
       </div>
     </li>
   ))}
 </ol>
-
-<style>
-  .timeline {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 7px;
-    top: 8px;
-    bottom: 8px;
-    width: 2px;
-    background: var(--color-hairline);
-    border-radius: 1px;
-  }
-
-  .timeline-entry {
-    position: relative;
-    padding-left: var(--spacing-10);
-    padding-bottom: var(--spacing-8);
-  }
-
-  .timeline-entry:last-child {
-    padding-bottom: 0;
-  }
-
-  .timeline-dot {
-    position: absolute;
-    left: 0;
-    top: 6px;
-    width: 16px;
-    height: 16px;
-    border-radius: var(--radius-full);
-    background: var(--color-canvas);
-    border: 1px solid var(--color-ink);
-  }
-
-  .timeline-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-2);
-  }
-
-  .timeline-header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--spacing-4);
-  }
-
-  .timeline-role {
-    font-family: var(--font-display);
-    font-size: var(--text-body);
-    font-weight: 500;
-    color: var(--color-ink);
-    letter-spacing: var(--tracking-display-tight);
-  }
-
-  .timeline-sep {
-    color: var(--color-muted-slate);
-    font-weight: 400;
-  }
-
-  .timeline-org {
-    font-family: var(--font-sans);
-    font-size: var(--text-body);
-    color: var(--color-ink);
-    font-weight: 400;
-  }
-
-  .timeline-dates {
-    font-family: var(--font-mono);
-    font-size: var(--text-micro);
-    color: var(--color-muted-slate);
-    white-space: nowrap;
-    letter-spacing: var(--tracking-mono);
-  }
-
-  .timeline-description {
-    font-family: var(--font-sans);
-    font-size: var(--text-caption);
-    color: var(--color-muted-slate);
-    line-height: 1.5;
-    margin: 0;
-  }
-</style>

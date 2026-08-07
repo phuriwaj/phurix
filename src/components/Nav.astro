@@ -27,35 +27,35 @@ const isActive = (href: string) => {
 };
 ---
 
-<header class="nav-phx">
-  <div class="nav-inner">
+<header class="fixed top-0 left-0 right-0 z-40 bg-canvas border-b border-hairline h-14 md:h-[7.2rem]">
+  <div class="h-full max-w-[1440px] mx-auto px-7 flex items-center gap-7">
     {/* Wordmark */}
-    <a href="/" class="nav-wordmark" aria-label="phurix home">
-      <span class="nav-wordmark-text">phurix</span>
+    <a href="/" aria-label="phurix home">
+      <span class="font-display font-medium text-[1.8rem] tracking-display-tight text-heading">phurix</span>
     </a>
 
     {/* Hamburger — mobile only */}
     <button
       type="button"
-      class="nav-toggle"
+      class="md:hidden inline-flex ms-auto flex-col justify-center items-center gap-1 w-10 h-10 rounded cursor-pointer [&[aria-expanded=true]_span:nth-child(1)]:translate-y-[6px] [&[aria-expanded=true]_span:nth-child(1)]:rotate-45 [&[aria-expanded=true]_span:nth-child(2)]:opacity-0 [&[aria-expanded=true]_span:nth-child(3)]:-translate-y-[6px] [&[aria-expanded=true]_span:nth-child(3)]:-rotate-45"
       aria-label="Toggle navigation"
       aria-controls="nav-mobile-menu"
       aria-expanded="false"
       data-nav-toggle
     >
-      <span class="nav-toggle-bar" aria-hidden="true"></span>
-      <span class="nav-toggle-bar" aria-hidden="true"></span>
-      <span class="nav-toggle-bar" aria-hidden="true"></span>
+      <span class="block w-[22px] h-0.5 bg-heading rounded-sm transition-[transform,opacity] duration-button ease" aria-hidden="true"></span>
+      <span class="block w-[22px] h-0.5 bg-heading rounded-sm transition-[transform,opacity] duration-button ease" aria-hidden="true"></span>
+      <span class="block w-[22px] h-0.5 bg-heading rounded-sm transition-[transform,opacity] duration-button ease" aria-hidden="true"></span>
     </button>
 
     {/* Primary links (desktop) */}
-    <nav class="nav-links" aria-label="Primary">
+    <nav class="hidden md:flex gap-7" aria-label="Primary">
       {navLinks.map((link) => (
         <a
           href={link.href}
           class:list={[
-            'nav-link',
-            isActive(link.href) && 'nav-link-active',
+            'font-sans text-caption font-medium text-ink py-1 transition-colors duration-button ease no-underline relative hover:text-action-blue',
+            isActive(link.href) && 'text-heading after:content-[""] after:absolute after:-bottom-0.5 after:left-0 after:right-0 after:h-0.5 after:bg-heading after:rounded-sm',
           ]}
         >
           {link.label}
@@ -64,26 +64,26 @@ const isActive = (href: string) => {
     </nav>
 
     {/* SearchBox — right cluster, after primary links */}
-    <div class="nav-search">
+    <div class="hidden md:flex ms-auto">
       <SearchBox />
     </div>
 
     {/* Theme toggle — visible on all viewports, small a11y affordance */}
     <button
       type="button"
-      class="nav-theme-toggle"
+      class="relative w-8 h-8 inline-flex items-center justify-center bg-transparent border-0 rounded-sm text-ink cursor-pointer transition-colors duration-button ease p-0 hover:bg-soft-stone focus-visible:outline-none focus-visible:shadow-focus-ring"
       aria-label="Toggle dark mode"
       data-theme-toggle
     >
-      <span class="nav-theme-toggle-icon-light" aria-hidden="true">☀</span>
-      <span class="nav-theme-toggle-icon-dark" aria-hidden="true">☾</span>
+      <span class="absolute text-[1.6rem] leading-none transition-opacity duration-button ease opacity-0 invisible [html[data-theme=dark]_&]:opacity-100 [html[data-theme=dark]_&]:visible" aria-hidden="true">☀</span>
+      <span class="absolute text-[1.6rem] leading-none transition-opacity duration-button ease opacity-100 visible [html[data-theme=dark]_&]:opacity-0 [html[data-theme=dark]_&]:invisible" aria-hidden="true">☾</span>
     </button>
   </div>
 
   {/* Mobile menu — appears below the bar when hamburger is open */}
   <nav
     id="nav-mobile-menu"
-    class="nav-mobile"
+    class="md:hidden flex flex-col gap-0 bg-canvas border-t border-hairline px-7 py-4 [&[hidden]]:hidden [&:not([hidden])]:block"
     aria-label="Primary mobile"
     data-nav-mobile
     hidden
@@ -92,8 +92,8 @@ const isActive = (href: string) => {
       <a
         href={link.href}
         class:list={[
-          'nav-mobile-link',
-          isActive(link.href) && 'nav-link-active',
+          'block font-sans text-body font-medium text-ink py-5 no-underline border-b border-hairline last:border-b-0 hover:text-action-blue transition-colors duration-button ease',
+          isActive(link.href) && 'text-heading',
         ]}
       >
         {link.label}
@@ -101,213 +101,6 @@ const isActive = (href: string) => {
     ))}
   </nav>
 </header>
-
-<style>
-  .nav-phx {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 40;
-    background: var(--color-canvas);
-    border-bottom: 1px solid var(--color-hairline);
-    height: var(--nav-h-mobile);
-  }
-
-  @media (min-width: 768px) {
-    .nav-phx { height: var(--nav-h); }
-  }
-
-  .nav-inner {
-    height: 100%;
-    max-width: var(--container-xl);
-    margin-inline: auto;
-    padding-inline: var(--spacing-gutter);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-7);
-  }
-
-  .nav-wordmark-text {
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 1.8rem;
-    letter-spacing: var(--tracking-display-tight);
-    color: var(--color-heading);
-  }
-
-  /* Hamburger — visible <768px only */
-  .nav-toggle {
-    display: inline-flex;
-    margin-left: auto;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  @media (min-width: 768px) {
-    .nav-toggle { display: none; }
-  }
-
-  .nav-toggle-bar {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background: var(--color-heading);
-    border-radius: 1px;
-    transition: transform var(--duration-button) ease, opacity var(--duration-button) ease;
-  }
-
-  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
-    transform: translateY(6px) rotate(45deg);
-  }
-  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) {
-    opacity: 0;
-  }
-  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) {
-    transform: translateY(-6px) rotate(-45deg);
-  }
-
-  /* Desktop nav links — hidden <768px, visible ≥768px */
-  .nav-links {
-    display: none;
-    gap: var(--spacing-7);
-  }
-
-  @media (min-width: 768px) {
-    .nav-links { display: flex; }
-  }
-
-  .nav-link {
-    font-family: var(--font-sans);
-    font-size: var(--text-caption);
-    font-weight: 500;
-    color: var(--color-ink);
-    padding-block: var(--spacing-1);
-    transition: color var(--duration-button) ease;
-    text-decoration: none;
-    position: relative;
-  }
-
-  .nav-link:hover { color: var(--color-action-blue); }
-
-  .nav-link-active {
-    color: var(--color-heading);
-  }
-
-  .nav-link-active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--color-heading);
-    border-radius: 1px;
-  }
-
-  /* Search cluster — sits at the right end, after primary links */
-  .nav-search {
-    margin-left: auto;
-    display: none;
-  }
-
-  @media (min-width: 768px) {
-    .nav-search { display: flex; }
-  }
-
-  /* Mobile menu — hidden ≥768px; toggles open below the bar <768px */
-  .nav-mobile {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    background: var(--color-canvas);
-    border-top: 1px solid var(--color-hairline);
-    padding: var(--spacing-4) var(--spacing-gutter) var(--spacing-5);
-  }
-
-  .nav-mobile[hidden] { display: none; }
-
-  @media (min-width: 768px) {
-    .nav-mobile { display: none !important; }
-  }
-
-  .nav-mobile-link {
-    display: block;
-    font-family: var(--font-sans);
-    font-size: var(--text-body);
-    font-weight: 500;
-    color: var(--color-ink);
-    padding-block: var(--spacing-5);
-    text-decoration: none;
-    border-bottom: 1px solid var(--color-hairline);
-  }
-
-  .nav-mobile-link:last-child {
-    border-bottom: none;
-  }
-
-  .nav-mobile-link:hover { color: var(--color-action-blue); }
-
-  /* Theme toggle — small square button, visible on every viewport.
-     Stays BEFORE the hamburger on mobile so it's an always-available
-     accessibility affordance; on desktop it sits at the far right. */
-  .nav-theme-toggle {
-    position: relative;
-    width: 32px;
-    height: 32px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-sm);
-    color: var(--color-ink);
-    cursor: pointer;
-    transition: background-color var(--duration-button) ease;
-    padding: 0;
-  }
-
-  .nav-theme-toggle:hover { background: var(--color-soft-stone); }
-
-  .nav-theme-toggle:focus-visible {
-    outline: none;
-    box-shadow: var(--shadow-focus-ring);
-  }
-
-  .nav-theme-toggle-icon-light,
-  .nav-theme-toggle-icon-dark {
-    position: absolute;
-    font-size: 1.6rem;
-    line-height: 1;
-    transition: opacity var(--duration-button) ease;
-  }
-
-  /* Default (light) → show "go dark" (moon) icon, hide sun. */
-  .nav-theme-toggle-icon-light {
-    opacity: 0;
-    visibility: hidden;
-  }
-  .nav-theme-toggle-icon-dark {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  /* Dark mode → show "go light" (sun) icon, hide moon. */
-  :root[data-theme="dark"] .nav-theme-toggle-icon-light {
-    opacity: 1;
-    visibility: visible;
-  }
-  :root[data-theme="dark"] .nav-theme-toggle-icon-dark {
-    opacity: 0;
-    visibility: hidden;
-  }
-</style>
 
 <script>
   function initNavToggle() {

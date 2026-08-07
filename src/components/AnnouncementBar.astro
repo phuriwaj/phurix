@@ -21,72 +21,19 @@ const {
 } = Astro.props;
 ---
 
-<aside class:list={['announce', className]} data-announce>
-  <p class="announce-copy">
+<aside class:list={['flex items-center justify-center gap-4 bg-cohere-black text-on-dark px-5 h-14 font-sans text-micro text-center relative', className]} data-announce>
+  <p class="m-0 leading-[1.4]">
     {message}
     {' '}
-    <a href={linkHref} class="announce-link">{linkLabel}</a>
+    <a href={linkHref} class="text-on-dark underline underline-offset-2 ms-1.5 hover:text-soft-coral transition-colors duration-button ease">{linkLabel}</a>
   </p>
   <button
     type="button"
-    class="announce-close"
+    class="absolute end-4 top-1/2 -translate-y-1/2 text-on-dark-muted text-[1.4rem] leading-none w-4 h-4 inline-flex items-center justify-center transition-colors duration-button ease hover:text-on-dark"
     aria-label="Dismiss announcement"
     data-announce-close
   >×</button>
 </aside>
-
-<style>
-  .announce {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-4);
-    background: var(--color-cohere-black);
-    color: var(--color-on-dark);
-    padding: 0 var(--spacing-5);
-    height: var(--spacing-13);
-    font-family: var(--font-sans);
-    font-size: var(--text-micro);
-    text-align: center;
-    position: relative;
-  }
-
-  .announce-copy {
-    margin: 0;
-    line-height: 1.4;
-  }
-
-  .announce-link {
-    color: var(--color-on-dark);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    margin-inline-start: 0.4em;
-  }
-
-  .announce-link:hover {
-    color: var(--color-soft-coral);
-  }
-
-  .announce-close {
-    position: absolute;
-    inset-inline-end: var(--spacing-4);
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--color-on-dark-muted);
-    font-size: 1.4rem;
-    line-height: 1;
-    width: 1.6rem;
-    height: 1.6rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: color var(--duration-button) ease;
-  }
-
-  .announce-close:hover {
-    color: var(--color-on-dark);
-  }
-</style>
 
 <script>
   function initAnnouncement() {
