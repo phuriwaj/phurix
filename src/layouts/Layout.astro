@@ -85,9 +85,15 @@ const fullTitle = title === 'phurix' ? title : `${title} — phurix`;
     <Font cssVariable="--font-display" preload />
 
     {/* PostHog analytics — bundled once by Vite, deduped across pages.
-        No-op when PUBLIC_POSTHOG_KEY is unset (see src/scripts/posthog-init.ts). */}
+        No-op when PUBLIC_POSTHOG_KEY is unset (see src/scripts/posthog-init.ts).
+        engagement.ts self-guards on `.prose` presence so it's safe to import
+        globally; it only fires scroll/copy/code-copy events on detail pages.
+        newsletter.ts tracks every form marked data-newsletter (NewsletterBand
+        + Footer + anywhere else). */}
     <script>
       import '@/scripts/posthog-init';
+      import '@/scripts/engagement';
+      import '@/scripts/newsletter';
     </script>
 
     <ClientRouter />

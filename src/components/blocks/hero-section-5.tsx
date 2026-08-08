@@ -41,7 +41,7 @@ export function HeroSection() {
                     size="lg"
                     className="h-12 rounded-full pl-5 pr-3 text-base"
                   >
-                    <a href="#link">
+                    <a data-hero-cta="primary" href="#link">
                       <span className="text-nowrap">Start Building</span>
                       <ChevronRight className="ml-1" />
                     </a>
@@ -53,7 +53,7 @@ export function HeroSection() {
                     variant="ghost"
                     className="h-12 rounded-full px-5 text-base hover:bg-zinc-950/5 dark:hover:bg-white/5"
                   >
-                    <a href="#link">
+                    <a data-hero-cta="secondary" href="#link">
                       <span className="text-nowrap">Request a demo</span>
                     </a>
                   </Button>

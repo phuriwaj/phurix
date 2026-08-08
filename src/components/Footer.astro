@@ -63,7 +63,7 @@ const year = new Date().getFullYear();
       <p class="font-sans text-body text-on-dark-muted leading-[1.5] m-0 mb-7 max-w-[36ch]">
         Letters from a working library, when there's something worth sharing.
       </p>
-      <form action="/api/subscribe" method="post" class="flex items-center gap-2 bg-white/[0.06] border border-white/[0.18] rounded-pill py-1 ps-7 pe-1 max-w-[360px] transition-[border-color,box-shadow] duration-button ease focus-within:border-focus-blue focus-within:shadow-focus-ring">
+      <form action="/api/subscribe" method="post" data-newsletter data-source="footer" class="flex items-center gap-2 bg-white/[0.06] border border-white/[0.18] rounded-pill py-1 ps-7 pe-1 max-w-[360px] transition-[border-color,box-shadow] duration-button ease focus-within:border-focus-blue focus-within:shadow-focus-ring">
         <label for="footer-email" class="sr-only">Email address</label>
         <input
           type="email"
