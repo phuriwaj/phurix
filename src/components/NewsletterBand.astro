@@ -33,7 +33,7 @@ const {
       <h2 class="font-display text-card-heading font-normal text-on-dark leading-[1.2] tracking-display-tight m-0 mb-5">{headline}</h2>
       <p class="font-sans text-body text-on-dark-muted leading-[1.5] m-0">{subhead}</p>
     </div>
-    <form action={action} method="post" class="flex flex-col min-[480px]:flex-row min-[480px]:items-start gap-5 min-w-[280px]">
+    <form action={action} method="post" data-newsletter class="flex flex-col min-[480px]:flex-row min-[480px]:items-start gap-5 min-w-[280px]">
       <label for="newsletter-email" class="sr-only">Email address</label>
       <input
         type="email"
@@ -47,3 +47,25 @@ const {
     </form>
   </div>
 </section>
+
+<script>
+  // Fire-and-forget capture on newsletter submit. We don't await the form
+  // POST — letting the browser proceed with the submit while posthog batches
+  // the event in the background. posthog is optional (no-op when PUBLIC_POSTHOG_KEY
+  // is unset).
+  function init(): void {
+    document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) => {
+      form.addEventListener('submit', () => {
+        const email = (form.querySelector<HTMLInputElement>('input[type="email"]')?.value ?? '').trim();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ph = (window as any).posthog;
+        ph?.capture?.('newsletter_submit_attempt', {
+          source_path: window.location.pathname,
+          email_domain: email.includes('@') ? email.split('@')[1] : null,
+        });
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

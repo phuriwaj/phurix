@@ -246,12 +246,25 @@ const entriesJson = JSON.stringify(entries);
       }
 
       if (e.key === 'Enter') {
+        const query = input.value.trim();
         if (results.length === 0) {
-          window.location.href = `/search/?q=${encodeURIComponent(input.value.trim())}`;
+          // posthog is optional; only fires when SDK initialised with a key.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const ph = (window as any).posthog;
+          ph?.capture?.('search_no_results', { query, source_path: window.location.pathname });
+          window.location.href = `/search/?q=${encodeURIComponent(query)}`;
           return;
         }
         const target = results[activeIndex] ?? results[0];
         e.preventDefault();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ph = (window as any).posthog;
+        ph?.capture?.('search_result_click', {
+          query,
+          position: activeIndex,
+          href: target.getAttribute('href') ?? '',
+          source_path: window.location.pathname,
+        });
         window.location.href = target.href;
         return;
       }
@@ -287,6 +300,26 @@ const entriesJson = JSON.stringify(entries);
         activeIndex = idx;
         setActiveResult(list, idx);
       }
+    });
+
+    list.addEventListener('click', (e) => {
+      const anchor = (e.target as HTMLElement | null)?.closest<HTMLAnchorElement>(
+        '[data-searchbox-result]',
+      );
+      if (!anchor) return;
+      const results = Array.from(
+        list.querySelectorAll<HTMLAnchorElement>('[data-searchbox-result]'),
+      );
+      const idx = results.indexOf(anchor);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const ph = (window as any).posthog;
+      ph?.capture?.('search_result_click', {
+        query: input.value.trim(),
+        position: idx >= 0 ? idx : 0,
+        href: anchor.getAttribute('href') ?? '',
+        source_path: window.location.pathname,
+        trigger: 'mouse',
+      });
     });
 
     document.addEventListener('click', (e) => {
