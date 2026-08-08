@@ -51,3 +51,5 @@ playwright-report/
 # package-lock.json
 # pnpm-lock.yaml
 # yarn.lock
+tests/e2e/.ssl/
+tests/e2e/.preview-live.log
